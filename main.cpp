@@ -1,6 +1,10 @@
 #include <SFML/Graphics.hpp>
 #include <time.h>
 #include <iostream>
+#include "src/app/board.h"
+#include "src/app/piece.h"
+#include "test.h"
+#include "src/app/singlefiletest.cpp"
 
 using namespace sf;
 
@@ -72,6 +76,33 @@ int main(){
     LoadPieceSprites(pieceSprite,pieceTexture);
 
     SetupBoard(pieceSprite,windowX,windowY);
+
+    /*
+        PUT HERE DEBUGGING CODE
+    */
+
+    Board board;
+    Piece piece;
+
+    SingleFileTest sft;
+    sft.SetX(3);
+
+    //Test test;
+    //test.SetX(3);
+    
+    //Board::squareState[9] = 2;
+
+    //std::cout << Board::squareState[9] << std::endl;
+
+    //board.squareState[9] = 2;
+    
+    //std::cout << board.squareState[9] << std::endl;
+
+    //Board::InitializeBoard(windowX,windowY);
+    //Board::PutOnSquare(7,Piece::rook,Piece::black);
+    //Piece::ReadPiece(9);
+
+    ///
 
     while (window.isOpen())
     {
