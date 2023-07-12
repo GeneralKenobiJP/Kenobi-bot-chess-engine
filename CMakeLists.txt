@@ -7,11 +7,31 @@ project(Kenobi-bot-chess-engine VERSION 0.1.0 LANGUAGES C CXX)
 include(CTest)
 enable_testing()
 
+#include_directories(src/app)
+
+#file(GLOB app-executables RELATIVE "src/app" "*.cpp")
+#file(GLOB app-headers RELATIVE "src/app" "*.h")
+
+#set(app-executables 
+#src/app/piece.cpp
+#src/app/board.cpp
+#src/app/test.cpp)
+
+#set(app-headers
+#src/app/piece.h
+#src/app/board.h
+#src/app/test.h)
+
+
+#add_subdirectory(src/kenobi-lib)
+
 add_executable(Kenobi-bot-chess-engine main.cpp)
 
 find_package(SFML COMPONENTS window graphics system audio REQUIRED)
 include_directories(${SFML_INCLUDE_DIR})
-target_link_libraries(Kenobi-bot-chess-engine sfml-network sfml-audio sfml-graphics sfml-window sfml-system)
+include_directories(src/app/)
+add_subdirectory(src/app)
+target_link_libraries(Kenobi-bot-chess-engine sfml-network sfml-audio sfml-graphics sfml-window sfml-system app-lib)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

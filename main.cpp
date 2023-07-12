@@ -3,12 +3,17 @@
 #include <iostream>
 #include "src/app/board.h"
 #include "src/app/piece.h"
-#include "test.h"
-#include "src/app/singlefiletest.cpp"
+#include "src/app/test.h"
+//#include "src/app/singlefiletest.cpp"
 
 using namespace sf;
 
 std::string thisDir = "desktop/github-projects/Kenobi-bot-chess-engine/";
+
+/*int Board::squareState[64];
+coordinates Board::squarePos[64];
+int Board::boardWidth;
+int Board::boardHeight;*/
 
 void LoadPieceSprites(Sprite Sprite[], Texture &texture)
 {
@@ -81,14 +86,18 @@ int main(){
         PUT HERE DEBUGGING CODE
     */
 
-    Board board;
-    Piece piece;
+    
 
-    SingleFileTest sft;
-    sft.SetX(3);
+    //Board board;
+    //Piece piece;
 
-    //Test test;
-    //test.SetX(3);
+    //SingleFileTest sft;
+    //sft.SetX(3);
+
+    
+    Test test;
+    test.x=2;
+    test.SetX(3);
     
     //Board::squareState[9] = 2;
 
@@ -98,9 +107,11 @@ int main(){
     
     //std::cout << board.squareState[9] << std::endl;
 
-    //Board::InitializeBoard(windowX,windowY);
-    //Board::PutOnSquare(7,Piece::rook,Piece::black);
-    //Piece::ReadPiece(9);
+    //Board::squareState = new int[64];
+
+    Board::InitializeBoard(windowX,windowY);
+    Board::PutOnSquare(7,Piece::rook,Piece::black);
+    Piece::ReadPiece(9);
 
     ///
 

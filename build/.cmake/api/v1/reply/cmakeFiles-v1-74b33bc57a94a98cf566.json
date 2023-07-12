@@ -203,6 +203,9 @@
 		{
 			"isExternal" : true,
 			"path" : "/usr/local/Cellar/cmake/3.26.4/share/cmake/Templates/CPackConfig.cmake.in"
+		},
+		{
+			"path" : "src/app/CMakeLists.txt"
 		}
 	],
 	"kind" : "cmakeFiles",

@@ -11,7 +11,8 @@
 		"commands" : 
 		[
 			"add_executable",
-			"target_link_libraries"
+			"target_link_libraries",
+			"include_directories"
 		],
 		"files" : 
 		[
@@ -25,13 +26,19 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 10,
+				"line" : 28,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 14,
+				"line" : 34,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 32,
 				"parent" : 0
 			}
 		]
@@ -48,6 +55,10 @@
 			"includes" : 
 			[
 				{
+					"backtrace" : 3,
+					"path" : "/Users/jakubpietrzak/Desktop/Github-projects/Kenobi-bot-chess-engine/src/app"
+				},
+				{
 					"backtrace" : 2,
 					"isSystem" : true,
 					"path" : "/usr/local/include"
@@ -58,6 +69,13 @@
 			[
 				0
 			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 2,
+			"id" : "app-lib::@ff93792cf40911dae1b8"
 		}
 	],
 	"id" : "Kenobi-bot-chess-engine::@6890427a1f51a3e7e1df",
@@ -100,6 +118,11 @@
 			{
 				"backtrace" : 2,
 				"fragment" : "/usr/local/lib/libsfml-system.2.5.1.dylib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "src/app/libapp-lib.a",
 				"role" : "libraries"
 			}
 		],

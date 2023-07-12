@@ -6,6 +6,10 @@
 			[
 				{
 					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
 					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
 					"minimumCMakeVersion" : 
 					{
@@ -45,6 +49,21 @@
 						27,
 						28
 					]
+				},
+				{
+					"build" : "src/app",
+					"jsonFile" : "directory-src.app-Debug-2e167ed549b5f7501b6a.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0.0"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "src/app",
+					"targetIndexes" : 
+					[
+						29
+					]
 				}
 			],
 			"name" : "Debug",
@@ -53,7 +72,8 @@
 				{
 					"directoryIndexes" : 
 					[
-						0
+						0,
+						1
 					],
 					"name" : "Kenobi-bot-chess-engine",
 					"targetIndexes" : 
@@ -86,7 +106,8 @@
 						25,
 						26,
 						27,
-						28
+						28,
+						29
 					]
 				}
 			],
@@ -221,7 +242,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "Kenobi-bot-chess-engine::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-Kenobi-bot-chess-engine-Debug-a21b2282d9d995d5517c.json",
+					"jsonFile" : "target-Kenobi-bot-chess-engine-Debug-9cda5af3254904c4fd8f.json",
 					"name" : "Kenobi-bot-chess-engine",
 					"projectIndex" : 0
 				},
@@ -293,6 +314,13 @@
 					"id" : "NightlyUpdate::@6890427a1f51a3e7e1df",
 					"jsonFile" : "target-NightlyUpdate-Debug-65e0642ea70ca7eaed2f.json",
 					"name" : "NightlyUpdate",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "app-lib::@ff93792cf40911dae1b8",
+					"jsonFile" : "target-app-lib-Debug-0d2eec20e37e5e3f62c6.json",
+					"name" : "app-lib",
 					"projectIndex" : 0
 				}
 			]

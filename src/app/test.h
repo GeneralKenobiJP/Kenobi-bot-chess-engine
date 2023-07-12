@@ -1,7 +1,8 @@
 class Test
 {
-    int x;
+    //int x;
 
     public:
+    int x;
     void SetX(int a);
 };
