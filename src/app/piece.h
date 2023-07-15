@@ -14,5 +14,7 @@ class Piece
     static const int white = 8;
     static const int black = 16;
 
-    static void ReadPiece(int num);
+    static const int pieceMask = 0b11100;
+
+    static void ReadPiece(int thisNum);
 };

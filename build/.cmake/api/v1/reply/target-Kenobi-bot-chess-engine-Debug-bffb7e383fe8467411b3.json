@@ -97,6 +97,11 @@
 			},
 			{
 				"backtrace" : 2,
+				"fragment" : "src/app/libapp-lib.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
 				"fragment" : "/usr/local/lib/libsfml-network.2.5.1.dylib",
 				"role" : "libraries"
 			},
@@ -118,11 +123,6 @@
 			{
 				"backtrace" : 2,
 				"fragment" : "/usr/local/lib/libsfml-system.2.5.1.dylib",
-				"role" : "libraries"
-			},
-			{
-				"backtrace" : 2,
-				"fragment" : "src/app/libapp-lib.a",
 				"role" : "libraries"
 			}
 		],

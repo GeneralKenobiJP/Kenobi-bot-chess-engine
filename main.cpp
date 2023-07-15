@@ -67,6 +67,7 @@ void DrawPieces(Sprite pieceSprite[], RenderWindow &window)
 int main(){
     const int windowX=600,windowY=600;
     RenderWindow window(VideoMode(windowX,windowY),"the chess");
+    window.setFramerateLimit(30);
 
     Texture boardTexture;
     Texture pieceTexture;
@@ -95,9 +96,9 @@ int main(){
     //sft.SetX(3);
 
     
-    Test test;
-    test.x=2;
-    test.SetX(3);
+    //Test test;
+    //test.x=2;
+    //test.SetX(3);
     
     //Board::squareState[9] = 2;
 
@@ -111,19 +112,37 @@ int main(){
 
     Board::InitializeBoard(windowX,windowY);
     Board::PutOnSquare(7,Piece::rook,Piece::black);
-    Piece::ReadPiece(9);
+    Piece::ReadPiece(Board::squareState[7]);
 
     ///
 
     while (window.isOpen())
     {
         Event event;
+
+        Vector2i mousePosition = Mouse::getPosition(window);
         while (window.pollEvent(event))
         {
             // "close requested" event: we close the window
             if (event.type == Event::Closed)
                 window.close();
+
+            if(event.type == Event::MouseButtonPressed)
+            {
+                std::cout << "down" << std::endl;
+
+                if(event.mouseButton.button == Mouse::Left)
+                {
+                    Board::HandleMouseInput(mousePosition);
+                    std::cout << Board::selectedSquare << std::endl;
+                }
+            }
         }
+
+        /*if(Mouse::isButtonPressed(Mouse::Left))
+        {
+            Board::CheckMousePositionOnPressed(Mouse::getPosition(window));
+        }*/
 
         window.clear();
         window.draw(boardSprite);

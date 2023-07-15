@@ -242,7 +242,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "Kenobi-bot-chess-engine::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-Kenobi-bot-chess-engine-Debug-9cda5af3254904c4fd8f.json",
+					"jsonFile" : "target-Kenobi-bot-chess-engine-Debug-bffb7e383fe8467411b3.json",
 					"name" : "Kenobi-bot-chess-engine",
 					"projectIndex" : 0
 				},
@@ -319,7 +319,7 @@
 				{
 					"directoryIndex" : 1,
 					"id" : "app-lib::@ff93792cf40911dae1b8",
-					"jsonFile" : "target-app-lib-Debug-0d2eec20e37e5e3f62c6.json",
+					"jsonFile" : "target-app-lib-Debug-ad7ed68cfe71caf4b054.json",
 					"name" : "app-lib",
 					"projectIndex" : 0
 				}

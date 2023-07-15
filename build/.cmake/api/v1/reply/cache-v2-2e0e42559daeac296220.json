@@ -1822,6 +1822,18 @@
 			"value" : "OFF"
 		},
 		{
+			"name" : "app-lib_LIB_DEPENDS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Dependencies for the target"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "general;sfml-network;general;sfml-audio;general;sfml-graphics;general;sfml-window;general;sfml-system;"
+		},
+		{
 			"name" : "app-lib_SOURCE_DIR",
 			"properties" : 
 			[

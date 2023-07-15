@@ -1,4 +1,5 @@
 #pragma once
+#include <../../include/SFML/System/Vector2.hpp>
 
 struct coordinates // x and y position of top-left corner
 {
@@ -16,6 +17,9 @@ public:
     static int boardWidth;
     static int boardHeight;
 
+    static short int selectedSquare;
+
     static void InitializeBoard(int x, int y);
     static void PutOnSquare(int num, int piece, int color);
+    static void HandleMouseInput(sf::Vector2i position);
 };

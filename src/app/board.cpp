@@ -4,6 +4,7 @@ int Board::squareState[64];
 coordinates Board::squarePos[64];
 int Board::boardWidth;
 int Board::boardHeight;
+short int Board::selectedSquare;
 
 void Board::InitializeBoard(int x, int y)
 {
@@ -35,7 +36,23 @@ void Board::InitializeBoard(int x, int y)
 
 void Board::PutOnSquare(int num, int piece, int color)
 {
-    Board::squareState[num] = piece | color;
+    Board::squareState[num] = (piece | color);
 }
 
-//int main(){return 0;}
+void Board::HandleMouseInput(sf::Vector2i position)
+{
+    int i=0;
+    int iHolder;
+    while(position.x>Board::squarePos[i].x && i<8)
+    {
+        i++;
+    }
+    i-=1;
+    iHolder = i;
+    while(position.y<Board::squarePos[i].y && i<=64-(8-iHolder))
+    {
+        i+=8;
+    }
+    i-=8;
+    Board::selectedSquare = i;
+}
