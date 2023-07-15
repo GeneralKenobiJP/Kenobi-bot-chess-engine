@@ -22,4 +22,5 @@ class Piece
     static void ReadPiece(int thisNum);
     static void MovePiece(sf::Vector2i pos);
     static void PutPiece(int posX, int posY);
+    static void SetPiece(int pieceType, int pieceColor, int squareIndex);
 };

@@ -57,6 +57,7 @@ void Board::HandleMouseInput(sf::Vector2i position)
     }
     i-=8;
     Board::selectedSquare = i;
+    //add highlighting
 }
 
 void Board::HandleMouseReleased(sf::Vector2i position)
@@ -70,6 +71,6 @@ void Board::HandleMouseReleased(sf::Vector2i position)
                 break;
             }
         if(i==63)
-            Piece::PutPiece(Board::squarePos[63].x,Board::squarePos[63].y);
+            Piece::PutPiece(Board::squarePos[63].x,Board::squarePos[63].y); //foolproof code ensuring piece ejection into a sub-orbital flight is impossible
     }
 }
