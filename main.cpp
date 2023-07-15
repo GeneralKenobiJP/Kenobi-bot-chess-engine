@@ -15,6 +15,8 @@ coordinates Board::squarePos[64];
 int Board::boardWidth;
 int Board::boardHeight;*/
 
+const int NUM_PIECES = 6;
+
 void LoadPieceSprites(Sprite Sprite[], Texture &texture)
 {
     int startX = 30;
@@ -28,7 +30,7 @@ void LoadPieceSprites(Sprite Sprite[], Texture &texture)
     int deltaX = (width-endXSub-startX)/6;
     int deltaY = (height-endYSub-startY)/2;
 
-    for(int i=0;i<2;i++)
+    for(int i=0;i<1;i++) ///////////CHANGE BACK TO i<2 /////////////////
     {
         curX = startX;
         for(int j=0;j<6;j++)
@@ -37,7 +39,7 @@ void LoadPieceSprites(Sprite Sprite[], Texture &texture)
             Sprite[6*i+j].setTextureRect(IntRect(curX,curY,deltaX,deltaY));
             curX+=deltaX;
         }
-        curY+=deltaY;
+        curY-=deltaY;
     }
 }
 
@@ -58,7 +60,7 @@ void SetupBoard(Sprite pieceSprite[],int width, int height)
 
 void DrawPieces(Sprite pieceSprite[], RenderWindow &window)
 {
-    for(int i=0;i<6;i++)
+    for(int i=0;i<NUM_PIECES;i++)
     {
         window.draw(pieceSprite[i]);
     }
@@ -133,10 +135,42 @@ int main(){
 
                 if(event.mouseButton.button == Mouse::Left)
                 {
-                    Board::HandleMouseInput(mousePosition);
+                    bool isEmpty = false;
+                    Board::HandleMouseInput(mousePosition); //useless as for now
                     std::cout << Board::selectedSquare << std::endl;
+                    for(int i=0;i<NUM_PIECES;i++)
+                    {
+                        if(pieceSprite[i].getGlobalBounds().contains(mousePosition.x,mousePosition.y))
+                        {
+                            std::cout << "true" << std::endl;
+                            Piece::spritePtr = &pieceSprite[i];
+                            break; //
+                        }
+                        Board::isMove=false;
+                        std::cout << "false" << std::endl;
+                        if(i==NUM_PIECES-1)
+                            isEmpty = true;
+                    }
+                    if(!isEmpty)
+                        Board::isMove = true;
                 }
             }
+
+            if(event.type == Event::MouseButtonReleased)
+            {
+                std::cout << "released" << std::endl;
+
+                Board::isMove = false;
+
+                Board::HandleMouseReleased(mousePosition);
+            }
+        }
+
+        if(Board::isMove)
+        {
+            std::cout << Piece::spritePtr << std::endl;
+            //std::cout << Piece::spritePtr->getGlobalBounds().left << std::endl;
+            Piece::MovePiece(mousePosition);
         }
 
         /*if(Mouse::isButtonPressed(Mouse::Left))

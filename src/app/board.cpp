@@ -1,10 +1,12 @@
 #include "board.h"
+#include "piece.h"
 
 int Board::squareState[64];
 coordinates Board::squarePos[64];
 int Board::boardWidth;
 int Board::boardHeight;
 short int Board::selectedSquare;
+bool Board::isMove=0;
 
 void Board::InitializeBoard(int x, int y)
 {
@@ -55,4 +57,19 @@ void Board::HandleMouseInput(sf::Vector2i position)
     }
     i-=8;
     Board::selectedSquare = i;
+}
+
+void Board::HandleMouseReleased(sf::Vector2i position)
+{
+    for(int i=0;i<64;i++)
+    {
+        if(position.x>=Board::squarePos[i].x && position.x<Board::squarePos[i].x+Board::squarePos[i].width)
+            if(position.y>=Board::squarePos[i].y && position.y < Board::squarePos[i].y+Board::squarePos[i].height)
+            {
+                Piece::PutPiece(Board::squarePos[i].x,Board::squarePos[i].y);
+                break;
+            }
+        if(i==63)
+            Piece::PutPiece(Board::squarePos[63].x,Board::squarePos[63].y);
+    }
 }

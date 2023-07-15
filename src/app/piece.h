@@ -1,4 +1,5 @@
 #pragma once
+#include <../../include/SFML/Graphics/Sprite.hpp>
 
 class Piece
 {
@@ -16,5 +17,9 @@ class Piece
 
     static const int pieceMask = 0b11100;
 
+    static sf::Sprite* spritePtr;
+
     static void ReadPiece(int thisNum);
+    static void MovePiece(sf::Vector2i pos);
+    static void PutPiece(int posX, int posY);
 };

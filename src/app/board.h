@@ -19,7 +19,10 @@ public:
 
     static short int selectedSquare;
 
+    static bool isMove;
+
     static void InitializeBoard(int x, int y);
     static void PutOnSquare(int num, int piece, int color);
     static void HandleMouseInput(sf::Vector2i position);
+    static void HandleMouseReleased(sf::Vector2i position);
 };

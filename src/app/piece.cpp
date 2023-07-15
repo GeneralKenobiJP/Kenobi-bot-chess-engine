@@ -1,5 +1,8 @@
 #include "piece.h"
+#include "board.h"
 #include <iostream>
+
+sf::Sprite* Piece::spritePtr;
 
 void Piece::ReadPiece(int thisNum)
 {
@@ -12,4 +15,15 @@ void Piece::ReadPiece(int thisNum)
     std::cout << thisColor << std::endl;
 }
 
-//int main(){return 0;}
+void Piece::MovePiece(sf::Vector2i pos)
+{
+    int x = Board::squarePos[0].width / 2;
+    int y = Board::squarePos[0].height / 2;
+    std::cout << "move" << std::endl;
+    Piece::spritePtr->setPosition(pos.x-x,pos.y-y);
+}
+void Piece::PutPiece(int posX, int posY)
+{
+    std::cout << "move" << std::endl;
+    Piece::spritePtr->setPosition(posX,posY);
+}
