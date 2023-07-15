@@ -1,12 +1,13 @@
 #pragma once
-#include <../../include/SFML/Graphics/Sprite.hpp>
-#include <../../include/SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics.hpp>
 
 class SpriteHandler //this class does not handle boardSprite, which is handled by main.cpp instead
 {
 
     public:
-    //sf::Sprite pieceSprite[12];
+    static sf::Sprite pieceSprite[12];
 
     static void LoadPieceSprites(sf::Sprite Sprite[], sf::Texture &texture);
+    static void SetupBoard(sf::Sprite pieceSprite[],int width, int height);
+    static void DrawPieces(sf::Sprite pieceSprite[], sf::RenderWindow &window);
 };

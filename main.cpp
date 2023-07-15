@@ -17,29 +17,6 @@ int Board::boardHeight;*/
 
 const int NUM_PIECES = 6;
 
-void SetupBoard(Sprite pieceSprite[],int width, int height)
-{
-    int curX=0;
-    int curY=0;
-    int deltaX=width/8;
-    int deltaY=height/8;
-
-    for(int i=0;i<6;i++)
-    {
-        pieceSprite[i].setPosition(curX,curY);
-        pieceSprite[i].setScale(0.23,0.23);
-        curX+=deltaX;
-    }
-}
-
-void DrawPieces(Sprite pieceSprite[], RenderWindow &window)
-{
-    for(int i=0;i<NUM_PIECES;i++)
-    {
-        window.draw(pieceSprite[i]);
-    }
-}
-
 int main(){
     const int windowX=600,windowY=600;
     RenderWindow window(VideoMode(windowX,windowY),"the chess");
@@ -53,44 +30,20 @@ int main(){
     pieceTexture.setSmooth(true);
 
     Sprite boardSprite(boardTexture);
-    Sprite pieceSprite[12];
 
-    SpriteHandler::LoadPieceSprites(pieceSprite,pieceTexture);
+    SpriteHandler::LoadPieceSprites(SpriteHandler::pieceSprite,pieceTexture);
 
-    SetupBoard(pieceSprite,windowX,windowY);
+    SpriteHandler::SetupBoard(SpriteHandler::pieceSprite,windowX,windowY);
 
     /*
         PUT HERE DEBUGGING CODE
     */
 
-    
-
-    //Board board;
-    //Piece piece;
-
-    //SingleFileTest sft;
-    //sft.SetX(3);
-
-    
-    //Test test;
-    //test.x=2;
-    //test.SetX(3);
-    
-    //Board::squareState[9] = 2;
-
-    //std::cout << Board::squareState[9] << std::endl;
-
-    //board.squareState[9] = 2;
-    
-    //std::cout << board.squareState[9] << std::endl;
-
-    //Board::squareState = new int[64];
-
     Board::InitializeBoard(windowX,windowY);
     Board::PutOnSquare(7,Piece::rook,Piece::black);
     Piece::ReadPiece(Board::squareState[7]);
 
-    ///
+    /// DEBUGGING CODE ENDS HERE
 
     while (window.isOpen())
     {
@@ -114,10 +67,10 @@ int main(){
                     //std::cout << Board::selectedSquare << std::endl;
                     for(int i=0;i<NUM_PIECES;i++)
                     {
-                        if(pieceSprite[i].getGlobalBounds().contains(mousePosition.x,mousePosition.y))
+                        if(SpriteHandler::pieceSprite[i].getGlobalBounds().contains(mousePosition.x,mousePosition.y))
                         {
                             //std::cout << "true" << std::endl;
-                            Piece::spritePtr = &pieceSprite[i];
+                            Piece::spritePtr = &SpriteHandler::pieceSprite[i];
                             break; //
                         }
                         Board::isMove=false;
@@ -155,7 +108,7 @@ int main(){
         window.clear();
         window.draw(boardSprite);
         //window.draw(pieceSprite[1]);
-        DrawPieces(pieceSprite,window);
+        SpriteHandler::DrawPieces(SpriteHandler::pieceSprite,window);
         window.display();
     }
     return 0;

@@ -1,6 +1,8 @@
 #include "SpriteHandler.h"
 
-void LoadPieceSprites(sf::Sprite Sprite[], sf::Texture &texture)
+sf::Sprite SpriteHandler::pieceSprite[12];
+
+void SpriteHandler::LoadPieceSprites(sf::Sprite Sprite[], sf::Texture &texture)
 {
     int startX = 30;
     int startY = 0;
@@ -22,9 +24,32 @@ void LoadPieceSprites(sf::Sprite Sprite[], sf::Texture &texture)
         for(int j=0;j<6;j++)
         {
             Sprite[6*i+j].setTexture(texture);
-            Sprite[6*i+j].setTextureRect(IntRect(curX,curY,deltaX,deltaY));
+            Sprite[6*i+j].setTextureRect(sf::IntRect(curX,curY,deltaX,deltaY));
             curX+=deltaX;
         }
         curY-=deltaY;
+    }
+}
+
+void SpriteHandler::SetupBoard(sf::Sprite pieceSprite[],int width, int height)
+{
+    int curX=0;
+    int curY=0;
+    int deltaX=width/8;
+    int deltaY=height/8;
+
+    for(int i=0;i<6;i++)
+    {
+        pieceSprite[i].setPosition(curX,curY);
+        pieceSprite[i].setScale(0.23,0.23);
+        curX+=deltaX;
+    }
+}
+
+void SpriteHandler::DrawPieces(sf::Sprite pieceSprite[], sf::RenderWindow &window)
+{
+    for(int i=0;i<6;i++)
+    {
+        window.draw(pieceSprite[i]);
     }
 }
