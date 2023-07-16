@@ -5,6 +5,7 @@
 #include "src/app/piece.h"
 #include "src/app/test.h"
 #include "src/app/SpriteHandler.h"
+#include "src/app/fenUtility.h"
 
 using namespace sf;
 
@@ -42,6 +43,8 @@ int main(){
     Board::InitializeBoard(windowX,windowY);
     Board::PutOnSquare(7,Piece::rook,Piece::black);
     Piece::ReadPiece(Board::squareState[7]);
+
+    FEN::ReadPosition(FEN::startFEN);
 
     /// DEBUGGING CODE ENDS HERE
 

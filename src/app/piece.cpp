@@ -1,5 +1,6 @@
 #include "piece.h"
 #include "board.h"
+#include "SpriteHandler.h"
 #include <iostream>
 
 sf::Sprite* Piece::spritePtr;
@@ -28,6 +29,7 @@ void Piece::PutPiece(int posX, int posY)
 }
 void Piece::SetPiece(int pieceType, int pieceColor, int squareIndex)
 {
-    
+    SpriteHandler::pieceNum++;
+    SpriteHandler::SelectPieceTexture(SpriteHandler::pieceNum,pieceType,pieceColor);
     Board::PutOnSquare(squareIndex, pieceType, pieceColor);
 }
