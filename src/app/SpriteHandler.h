@@ -4,9 +4,9 @@
 class SpriteHandler //this class does not handle boardSprite, which is handled by main.cpp instead
 {
     private:
-    static sf::IntRect pieceTextureRect[12];
 
     public:
+    static sf::IntRect pieceTextureRect[12];
     static sf::Sprite pieceSprite[16];
     static int pieceNum;
 

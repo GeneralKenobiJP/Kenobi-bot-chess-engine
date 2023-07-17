@@ -34,17 +34,25 @@ int main(){
 
     SpriteHandler::LoadPieceSprites(SpriteHandler::pieceSprite,pieceTexture);
 
-    SpriteHandler::SetupBoard(SpriteHandler::pieceSprite,windowX,windowY);
+    //SpriteHandler::SetupBoard(SpriteHandler::pieceSprite,windowX,windowY);
 
     /*
         PUT HERE DEBUGGING CODE
     */
 
     Board::InitializeBoard(windowX,windowY);
-    Board::PutOnSquare(7,Piece::rook,Piece::black);
-    Piece::ReadPiece(Board::squareState[7]);
+    //Board::PutOnSquare(7,Piece::rook,Piece::black);
+    //Piece::ReadPiece(Board::squareState[7]);
 
-    FEN::ReadPosition(FEN::startFEN);
+    //Piece::SetPiece(Piece::queen, Piece::white, 0);
+    //Piece::SetPiece(Piece::knight, Piece::black, 1);
+    //Piece::SetPiece(Piece::pawn, Piece::black, 2);
+    //Piece::ReadPiece(Board::squareState[0]);
+    //Piece::ReadPiece(Board::squareState[1]);
+    //Piece::ReadPiece(Board::squareState[2]);
+    //Piece::ReadPiece(Board::squareState[57]);
+    //Piece::ReadPiece(Board::squareState[58]);
+    //FEN::ReadPosition(FEN::startFEN);
 
     /// DEBUGGING CODE ENDS HERE
 

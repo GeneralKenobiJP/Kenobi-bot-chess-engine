@@ -1,5 +1,6 @@
 #include "SpriteHandler.h"
 #include "piece.h"
+#include <iostream>
 
 sf::IntRect SpriteHandler::pieceTextureRect[12];
 sf::Sprite SpriteHandler::pieceSprite[16];
@@ -28,53 +29,67 @@ void SpriteHandler::LoadPieceSprites(sf::Sprite Sprite[], sf::Texture &texture)
         {
             Sprite[6*i+j].setTexture(texture);
             SpriteHandler::pieceTextureRect[6*i+j] = sf::IntRect(curX,curY,deltaX,deltaY);
+            //std::cout << "Here:" << SpriteHandler::pieceTextureRect[6*i+j].left << std::endl;
+            //std::cout << SpriteHandler::pieceTextureRect[6*i+j].top << std::endl;
+            //std::cout << SpriteHandler::pieceTextureRect[6*i+j].width << std::endl;
+            //std::cout << SpriteHandler::pieceTextureRect[6*i+j].height << "stop" << std::endl;
             curX+=deltaX;
         }
-        curY-=deltaY;
+        curY+=deltaY;
     }
 }
 
 void SpriteHandler::SelectPieceTexture(int spriteIndex, int targetPieceType, int targetPieceColor)
 {
     int rectIndex=0;
-    int targetPieceIndex = (targetPieceType | targetPieceColor) & Piece::pieceMask;
-    targetPieceIndex /= 4;
+    int targetPieceIndex = targetPieceType | targetPieceColor;
+    std::cout << targetPieceIndex << std::endl;
 
     ///KING - QUEEN - BISHOP - KNIGHT - ROOK - PAWN (white - black)
     ///0    - 1     - 2     - 3     - 4     - 5     (+0 - +6)
 
-    if(targetPieceIndex>5) //checks if black and simplifies code
+    if(targetPieceIndex>15) //checks if black and simplifies code
     {
         rectIndex+=6;
-        targetPieceIndex-=6;
+        targetPieceIndex-=8;
     }
+    targetPieceIndex -= 8;
+
+    std::cout << targetPieceIndex << std::endl; //same piece type as above, but now colorless
 
     switch(targetPieceIndex)
     {
-        case 0: //king
+        case 1: //king
             rectIndex = 0;
             break;
-        case 1: //pawn
+        case 2: //pawn
             rectIndex = 5;
             break;
-        case 2: //knight
+        case 3: //knight
             rectIndex = 3;
             break;
-        case 3: //bishop
+        case 4: //bishop
             rectIndex = 2;
             break;
-        case 4: //rook
+        case 5: //rook
             rectIndex = 4;
             break;
-        case 5: //queen
+        case 6: //queen
             rectIndex = 1;
             break;
     }
+    std::cout << "rectIndex: " << rectIndex << std::endl;
 
-    SpriteHandler::pieceSprite[spriteIndex].setTextureRect(SpriteHandler::pieceTextureRect[rectIndex]); 
+    SpriteHandler::pieceSprite[spriteIndex].setTextureRect(SpriteHandler::pieceTextureRect[rectIndex]);
+    sf::IntRect checkRect = SpriteHandler::pieceSprite[spriteIndex].getTextureRect();
+    //std::cout << "Here:" << checkRect.left << std::endl;
+    //std::cout << checkRect.top << std::endl;
+    //std::cout << checkRect.width << std::endl;
+    //std::cout << checkRect.height << "stop" << std::endl;
+    SpriteHandler::pieceSprite[spriteIndex].setScale(0.23,0.23);
 }
 
-void SpriteHandler::SetupBoard(sf::Sprite pieceSprite[],int width, int height)
+void SpriteHandler::SetupBoard(sf::Sprite pieceSprite[],int width, int height) /////////OBSOLETE FUNCTION (i think)/////////
 {
     int curX=0;
     int curY=0;
@@ -93,6 +108,6 @@ void SpriteHandler::DrawPieces(sf::Sprite pieceSprite[], sf::RenderWindow &windo
 {
     for(int i=0;i<SpriteHandler::pieceNum;i++)
     {
-        window.draw(pieceSprite[i]);
+        window.draw(SpriteHandler::pieceSprite[i]);
     }
 }

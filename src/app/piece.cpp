@@ -27,9 +27,18 @@ void Piece::PutPiece(int posX, int posY)
     //std::cout << "put" << std::endl;
     Piece::spritePtr->setPosition(posX,posY);
 }
+void Piece::PutPieceSprite(int posX, int posY, int spriteIndex)
+{
+    SpriteHandler::pieceSprite[spriteIndex].setPosition(posX,posY);
+}
 void Piece::SetPiece(int pieceType, int pieceColor, int squareIndex)
 {
-    SpriteHandler::pieceNum++;
+    //std::cout << "Square: " << Board::squarePos[squareIndex].x << std::endl;
+    //std::cout << "Square: " << Board::squarePos[squareIndex].y << std::endl;
     SpriteHandler::SelectPieceTexture(SpriteHandler::pieceNum,pieceType,pieceColor);
     Board::PutOnSquare(squareIndex, pieceType, pieceColor);
+    Piece::PutPieceSprite(Board::squarePos[squareIndex].x,Board::squarePos[squareIndex].y-Board::squarePos[0].height,SpriteHandler::pieceNum);
+    //std::cout << "From " << SpriteHandler::pieceNum << std::flush;;
+    SpriteHandler::pieceNum++;
+    //std::cout << " to " << SpriteHandler::pieceNum << std::endl;
 }
