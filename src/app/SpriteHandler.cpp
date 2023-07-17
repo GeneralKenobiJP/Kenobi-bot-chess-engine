@@ -3,7 +3,7 @@
 #include <iostream>
 
 sf::IntRect SpriteHandler::pieceTextureRect[12];
-sf::Sprite SpriteHandler::pieceSprite[16];
+sf::Sprite SpriteHandler::pieceSprite[32];
 int SpriteHandler::pieceNum=0;
 
 void SpriteHandler::LoadPieceSprites(sf::Sprite Sprite[], sf::Texture &texture)
@@ -37,13 +37,17 @@ void SpriteHandler::LoadPieceSprites(sf::Sprite Sprite[], sf::Texture &texture)
         }
         curY+=deltaY;
     }
+    for(int i=12;i<16;i++)
+    {
+        Sprite[i].setTexture(texture);
+    }
 }
 
 void SpriteHandler::SelectPieceTexture(int spriteIndex, int targetPieceType, int targetPieceColor)
 {
     int rectIndex=0;
     int targetPieceIndex = targetPieceType | targetPieceColor;
-    std::cout << targetPieceIndex << std::endl;
+    //std::cout << targetPieceIndex << std::endl;
 
     ///KING - QUEEN - BISHOP - KNIGHT - ROOK - PAWN (white - black)
     ///0    - 1     - 2     - 3     - 4     - 5     (+0 - +6)
@@ -55,7 +59,7 @@ void SpriteHandler::SelectPieceTexture(int spriteIndex, int targetPieceType, int
     }
     targetPieceIndex -= 8;
 
-    std::cout << targetPieceIndex << std::endl; //same piece type as above, but now colorless
+    //std::cout << targetPieceIndex << std::endl; //same piece type as above, but now colorless
 
     switch(targetPieceIndex)
     {
@@ -78,7 +82,7 @@ void SpriteHandler::SelectPieceTexture(int spriteIndex, int targetPieceType, int
             rectIndex = 1;
             break;
     }
-    std::cout << "rectIndex: " << rectIndex << std::endl;
+    //std::cout << "rectIndex: " << rectIndex << std::endl;
 
     SpriteHandler::pieceSprite[spriteIndex].setTextureRect(SpriteHandler::pieceTextureRect[rectIndex]);
     sf::IntRect checkRect = SpriteHandler::pieceSprite[spriteIndex].getTextureRect();
@@ -106,8 +110,11 @@ void SpriteHandler::SetupBoard(sf::Sprite pieceSprite[],int width, int height) /
 
 void SpriteHandler::DrawPieces(sf::Sprite pieceSprite[], sf::RenderWindow &window)
 {
+    //std::cout << "pieceNum: " << SpriteHandler::pieceNum << std::endl;
     for(int i=0;i<SpriteHandler::pieceNum;i++)
     {
         window.draw(SpriteHandler::pieceSprite[i]);
+        //std::cout << "drew: " << i << std::endl;
     }
+    //std::cout << "loop looped itself" << std::endl;
 }

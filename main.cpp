@@ -52,12 +52,13 @@ int main(){
     //Piece::ReadPiece(Board::squareState[2]);
     //Piece::ReadPiece(Board::squareState[57]);
     //Piece::ReadPiece(Board::squareState[58]);
-    //FEN::ReadPosition(FEN::startFEN);
+    FEN::ReadPosition(FEN::startFEN);
 
     /// DEBUGGING CODE ENDS HERE
 
     while (window.isOpen())
     {
+        //std::cout << "'ere we're" << std::endl;
         Event event;
 
         Vector2i mousePosition = Mouse::getPosition(window);
@@ -120,7 +121,9 @@ int main(){
         window.draw(boardSprite);
         //window.draw(pieceSprite[1]);
         SpriteHandler::DrawPieces(SpriteHandler::pieceSprite,window);
+        //std::cout << "before display" << std::endl;
         window.display();
+        //std::cout << "'ere we got" << std::endl;
     }
     return 0;
 }

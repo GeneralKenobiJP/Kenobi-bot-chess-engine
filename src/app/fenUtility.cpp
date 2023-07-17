@@ -1,5 +1,6 @@
 #include "fenUtility.h"
 #include <ctype.h>
+#include <iostream>
 
 const std::string FEN::startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
@@ -34,32 +35,45 @@ void FEN::ReadPosition(std::string fenTxt) //static
     int currentRank = 7; //8 actually
     int currentSquare;
 
-    while(fenTxt[0]!=' ') //define the condition here
+    int debugNum = 0;
+
+    while(fenTxt[0]!=' ')
     {
+        std::cout << fenTxt << std::endl;
+        debugNum++;
+
+        std::cout << "Debug: " << debugNum << std::endl;
+
         if(fenTxt[0]=='/')
         {
             currentFile = 0;
             currentRank -= 1;
-            fenTxt.substr(1,fenTxt.length()-1);
+            fenTxt = fenTxt.substr(1,fenTxt.length()-1);
             continue;
         }
         if(isdigit(fenTxt[0]))
         {
             currentFile+=(int)fenTxt[0];
-            fenTxt.substr(1,fenTxt.length()-1);
+            fenTxt = fenTxt.substr(1,fenTxt.length()-1);
             continue;
         }
         currentSquare = currentRank*8 + currentFile;
         if(fenTxt[0]>90) //checks if lowercase
         {
+            std::cout << currentSquare << std::endl;
             Piece::SetPiece(ReadLetter(fenTxt[0]),Piece::black,currentSquare);
-            fenTxt.substr(1,fenTxt.length()-1);
+            fenTxt = fenTxt.substr(1,fenTxt.length()-1);
+            currentFile++;
             continue;
         }
         //uppercase here
+        std::cout << currentSquare << std::endl;
         Piece::SetPiece(ReadLetter(fenTxt[0]+32),Piece::white,currentSquare);
-        fenTxt.substr(1,fenTxt.length()-1);
+        fenTxt = fenTxt.substr(1,fenTxt.length()-1);
+        currentFile++;
+        std::cout << "hello" << std::endl;
     }
+    std::cout << "done" << std::endl;
 }
 
 //GetPosition

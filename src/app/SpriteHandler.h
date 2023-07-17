@@ -7,7 +7,7 @@ class SpriteHandler //this class does not handle boardSprite, which is handled b
 
     public:
     static sf::IntRect pieceTextureRect[12];
-    static sf::Sprite pieceSprite[16];
+    static sf::Sprite pieceSprite[32];
     static int pieceNum;
 
     static void LoadPieceSprites(sf::Sprite Sprite[], sf::Texture &texture);
