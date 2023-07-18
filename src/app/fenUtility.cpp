@@ -60,6 +60,7 @@ void FEN::ReadPosition(std::string fenTxt) //static
         currentSquare = currentRank*8 + currentFile;
         if(fenTxt[0]>90) //checks if lowercase
         {
+            std::cout << "black" << std::endl;
             std::cout << currentSquare << std::endl;
             Piece::SetPiece(ReadLetter(fenTxt[0]),Piece::black,currentSquare);
             fenTxt = fenTxt.substr(1,fenTxt.length()-1);

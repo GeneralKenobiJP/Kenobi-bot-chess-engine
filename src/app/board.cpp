@@ -5,7 +5,7 @@ int Board::squareState[64];
 coordinates Board::squarePos[64];
 int Board::boardWidth;
 int Board::boardHeight;
-short int Board::selectedSquare;
+short int Board::selectedSquare=-1;
 bool Board::isMove=0;
 
 void Board::InitializeBoard(int x, int y)
@@ -15,6 +15,8 @@ void Board::InitializeBoard(int x, int y)
     int deltaX=x/8;
     int deltaY=y/8;
     int curIt;
+
+    curY-=deltaY;
 
     Board::boardWidth=x;
     Board::boardHeight=y;
@@ -39,6 +41,11 @@ void Board::InitializeBoard(int x, int y)
 void Board::PutOnSquare(int num, int piece, int color)
 {
     Board::squareState[num] = (piece | color);
+}
+
+void Board::RemoveFromSquare(int num)
+{
+    Board::squareState[num] = Piece::none;
 }
 
 void Board::HandleMouseInput(sf::Vector2i position)
@@ -73,4 +80,11 @@ void Board::HandleMouseReleased(sf::Vector2i position)
         if(i==63)
             Piece::PutPiece(Board::squarePos[63].x,Board::squarePos[63].y); //foolproof code ensuring piece ejection into a sub-orbital flight is impossible
     }
+    Board::RemoveFromSquare(Board::selectedSquare);
+}
+
+void Board::DisableSelection()
+{
+    Board::selectedSquare = -1;
+    Piece::spritePtr = nullptr;
 }

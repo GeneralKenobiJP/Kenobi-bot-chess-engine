@@ -10,6 +10,7 @@
 using namespace sf;
 
 std::string thisDir = "desktop/github-projects/Kenobi-bot-chess-engine/";
+const int FPS_RATE = 20; //set to 30 for release
 
 /*int Board::squareState[64];
 coordinates Board::squarePos[64];
@@ -21,7 +22,7 @@ const int NUM_PIECES = 6;
 int main(){
     const int windowX=600,windowY=600;
     RenderWindow window(VideoMode(windowX,windowY),"the chess");
-    window.setFramerateLimit(30);
+    window.setFramerateLimit(FPS_RATE);
 
     Texture boardTexture;
     Texture pieceTexture;
@@ -47,12 +48,17 @@ int main(){
     //Piece::SetPiece(Piece::queen, Piece::white, 0);
     //Piece::SetPiece(Piece::knight, Piece::black, 1);
     //Piece::SetPiece(Piece::pawn, Piece::black, 2);
-    //Piece::ReadPiece(Board::squareState[0]);
-    //Piece::ReadPiece(Board::squareState[1]);
-    //Piece::ReadPiece(Board::squareState[2]);
     //Piece::ReadPiece(Board::squareState[57]);
     //Piece::ReadPiece(Board::squareState[58]);
     FEN::ReadPosition(FEN::startFEN);
+
+    std::cout << "Pieces are hereby read" << std::endl;
+    Piece::ReadPiece(Board::squareState[56]);
+    Piece::ReadPiece(Board::squareState[57]);
+    Piece::ReadPiece(Board::squareState[62]);
+    Piece::ReadPiece(Board::squareState[0]);
+    Piece::ReadPiece(Board::squareState[1]);
+    Piece::ReadPiece(Board::squareState[2]);
 
     /// DEBUGGING CODE ENDS HERE
 
@@ -77,7 +83,7 @@ int main(){
                     bool isEmpty = false;
                     Board::HandleMouseInput(mousePosition); //useless as for now
                     //std::cout << Board::selectedSquare << std::endl;
-                    for(int i=0;i<NUM_PIECES;i++)
+                    for(int i=0;i<SpriteHandler::pieceNum;i++)
                     {
                         if(SpriteHandler::pieceSprite[i].getGlobalBounds().contains(mousePosition.x,mousePosition.y))
                         {
@@ -87,21 +93,37 @@ int main(){
                         }
                         Board::isMove=false;
                         //std::cout << "false" << std::endl;
-                        if(i==NUM_PIECES-1)
+                        if(i==SpriteHandler::pieceNum-1)
                             isEmpty = true;
                     }
                     if(!isEmpty)
                         Board::isMove = true;
+                    else
+                        Piece::spritePtr = nullptr;
+                }
+                if(event.mouseButton.button == Mouse::Right)
+                {
+                    Board::DisableSelection();
+                }
+            }
+            if(event.type == Event::KeyPressed)
+            {
+                if(event.key.code == Keyboard::Escape)
+                {
+                    std::cout << "disabled" << std::endl;
+                    Board::DisableSelection();
                 }
             }
 
-            if(event.type == Event::MouseButtonReleased)
+            if(event.type == Event::MouseButtonReleased && Board::isMove)
             {
                 //std::cout << "released" << std::endl;
 
                 Board::isMove = false;
 
                 Board::HandleMouseReleased(mousePosition);
+
+                Board::selectedSquare = -1;
             }
         }
 

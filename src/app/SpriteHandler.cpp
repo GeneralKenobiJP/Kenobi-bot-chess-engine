@@ -37,7 +37,7 @@ void SpriteHandler::LoadPieceSprites(sf::Sprite Sprite[], sf::Texture &texture)
         }
         curY+=deltaY;
     }
-    for(int i=12;i<16;i++)
+    for(int i=12;i<32;i++)
     {
         Sprite[i].setTexture(texture);
     }
@@ -64,22 +64,22 @@ void SpriteHandler::SelectPieceTexture(int spriteIndex, int targetPieceType, int
     switch(targetPieceIndex)
     {
         case 1: //king
-            rectIndex = 0;
+            rectIndex += 0;
             break;
         case 2: //pawn
-            rectIndex = 5;
+            rectIndex += 5;
             break;
         case 3: //knight
-            rectIndex = 3;
+            rectIndex += 3;
             break;
         case 4: //bishop
-            rectIndex = 2;
+            rectIndex += 2;
             break;
         case 5: //rook
-            rectIndex = 4;
+            rectIndex += 4;
             break;
         case 6: //queen
-            rectIndex = 1;
+            rectIndex += 1;
             break;
     }
     //std::cout << "rectIndex: " << rectIndex << std::endl;
