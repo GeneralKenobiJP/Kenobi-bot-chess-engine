@@ -11,7 +11,7 @@ class FEN
     public:
     static const std::string startFEN;
     
-    void ReadPosition();
-    static void ReadPosition(std::string fenTxt);
+    void ReadPosition(); //Read FENtext of an object of the FEN class
+    static void ReadPosition(std::string fenTxt); //set the board according to the fenTxt
     //void GetPosition();
 };

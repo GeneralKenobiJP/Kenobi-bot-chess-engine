@@ -12,11 +12,6 @@ using namespace sf;
 std::string thisDir = "desktop/github-projects/Kenobi-bot-chess-engine/";
 const int FPS_RATE = 20; //set to 30 for release
 
-/*int Board::squareState[64];
-coordinates Board::squarePos[64];
-int Board::boardWidth;
-int Board::boardHeight;*/
-
 const int NUM_PIECES = 6;
 
 int main(){
@@ -33,32 +28,15 @@ int main(){
 
     Sprite boardSprite(boardTexture);
 
-    SpriteHandler::LoadPieceSprites(SpriteHandler::pieceSprite,pieceTexture);
-
-    //SpriteHandler::SetupBoard(SpriteHandler::pieceSprite,windowX,windowY);
+    SpriteHandler::LoadPieceSprites(SpriteHandler::pieceSprite,pieceTexture); //we are loading textures
 
     /*
         PUT HERE DEBUGGING CODE
     */
 
     Board::InitializeBoard(windowX,windowY);
-    //Board::PutOnSquare(7,Piece::rook,Piece::black);
-    //Piece::ReadPiece(Board::squareState[7]);
 
-    //Piece::SetPiece(Piece::queen, Piece::white, 0);
-    //Piece::SetPiece(Piece::knight, Piece::black, 1);
-    //Piece::SetPiece(Piece::pawn, Piece::black, 2);
-    //Piece::ReadPiece(Board::squareState[57]);
-    //Piece::ReadPiece(Board::squareState[58]);
     FEN::ReadPosition(FEN::startFEN);
-
-    std::cout << "Pieces are hereby read" << std::endl;
-    Piece::ReadPiece(Board::squareState[56]);
-    Piece::ReadPiece(Board::squareState[57]);
-    Piece::ReadPiece(Board::squareState[62]);
-    Piece::ReadPiece(Board::squareState[0]);
-    Piece::ReadPiece(Board::squareState[1]);
-    Piece::ReadPiece(Board::squareState[2]);
 
     /// DEBUGGING CODE ENDS HERE
 
@@ -81,7 +59,7 @@ int main(){
                 if(event.mouseButton.button == Mouse::Left)
                 {
                     bool isEmpty = false;
-                    Board::HandleMouseInput(mousePosition); //useless as for now
+                    Board::HandleMouseInput(mousePosition);
                     //std::cout << Board::selectedSquare << std::endl;
                     for(int i=0;i<SpriteHandler::pieceNum;i++)
                     {
@@ -129,23 +107,13 @@ int main(){
 
         if(Board::isMove)
         {
-            //std::cout << Piece::spritePtr << std::endl;
-            //std::cout << Piece::spritePtr->getGlobalBounds().left << std::endl;
             Piece::MovePiece(mousePosition);
         }
 
-        /*if(Mouse::isButtonPressed(Mouse::Left))
-        {
-            Board::CheckMousePositionOnPressed(Mouse::getPosition(window));
-        }*/
-
         window.clear();
         window.draw(boardSprite);
-        //window.draw(pieceSprite[1]);
         SpriteHandler::DrawPieces(SpriteHandler::pieceSprite,window);
-        //std::cout << "before display" << std::endl;
         window.display();
-        //std::cout << "'ere we got" << std::endl;
     }
     return 0;
 }

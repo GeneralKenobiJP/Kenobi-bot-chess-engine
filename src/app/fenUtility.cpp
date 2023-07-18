@@ -35,14 +35,14 @@ void FEN::ReadPosition(std::string fenTxt) //static
     int currentRank = 7; //8 actually
     int currentSquare;
 
-    int debugNum = 0;
+    //int debugNum = 0;
 
     while(fenTxt[0]!=' ')
     {
         std::cout << fenTxt << std::endl;
-        debugNum++;
+        //debugNum++;
 
-        std::cout << "Debug: " << debugNum << std::endl;
+        //std::cout << "Debug: " << debugNum << std::endl;
 
         if(fenTxt[0]=='/')
         {
@@ -60,19 +60,15 @@ void FEN::ReadPosition(std::string fenTxt) //static
         currentSquare = currentRank*8 + currentFile;
         if(fenTxt[0]>90) //checks if lowercase
         {
-            std::cout << "black" << std::endl;
-            std::cout << currentSquare << std::endl;
             Piece::SetPiece(ReadLetter(fenTxt[0]),Piece::black,currentSquare);
             fenTxt = fenTxt.substr(1,fenTxt.length()-1);
             currentFile++;
             continue;
         }
         //uppercase here
-        std::cout << currentSquare << std::endl;
         Piece::SetPiece(ReadLetter(fenTxt[0]+32),Piece::white,currentSquare);
         fenTxt = fenTxt.substr(1,fenTxt.length()-1);
         currentFile++;
-        std::cout << "hello" << std::endl;
     }
     std::cout << "done" << std::endl;
 }

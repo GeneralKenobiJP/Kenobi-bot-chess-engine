@@ -21,10 +21,10 @@ public:
 
     static bool isMove;
 
-    static void InitializeBoard(int x, int y);
-    static void PutOnSquare(int num, int piece, int color);
-    static void RemoveFromSquare(int num);
-    static void HandleMouseInput(sf::Vector2i position);
-    static void HandleMouseReleased(sf::Vector2i position);
-    static void DisableSelection();
+    static void InitializeBoard(int x, int y); //load squarePos and set squareState to 0
+    static void PutOnSquare(int num, int piece, int color); //sets squareState to the input piece
+    static void RemoveFromSquare(int num); //sets squareState to 0
+    static void HandleMouseInput(sf::Vector2i position); //sets selectedSquare
+    static void HandleMouseReleased(sf::Vector2i position); //triggers PutPiece() and RemoveFromSquare() on mouse release
+    static void DisableSelection(); //sets selectedSquare=-1
 };

@@ -21,12 +21,10 @@ void Piece::MovePiece(sf::Vector2i pos)
         return;
     int x = Board::squarePos[0].width / 2;
     int y = Board::squarePos[0].height / 2;
-    //std::cout << "move" << std::endl;
     Piece::spritePtr->setPosition(pos.x-x,pos.y-y);
 }
 void Piece::PutPiece(int posX, int posY)
 {
-    //std::cout << "put" << std::endl;
     Piece::spritePtr->setPosition(posX,posY);
 }
 void Piece::PutPieceSprite(int posX, int posY, int spriteIndex)
@@ -35,12 +33,8 @@ void Piece::PutPieceSprite(int posX, int posY, int spriteIndex)
 }
 void Piece::SetPiece(int pieceType, int pieceColor, int squareIndex)
 {
-    //std::cout << "Square: " << Board::squarePos[squareIndex].x << std::endl;
-    //std::cout << "Square: " << Board::squarePos[squareIndex].y << std::endl;
     SpriteHandler::SelectPieceTexture(SpriteHandler::pieceNum,pieceType,pieceColor);
     Board::PutOnSquare(squareIndex, pieceType, pieceColor);
     Piece::PutPieceSprite(Board::squarePos[squareIndex].x,Board::squarePos[squareIndex].y,SpriteHandler::pieceNum);
-    //std::cout << "From " << SpriteHandler::pieceNum << std::flush;;
     SpriteHandler::pieceNum++;
-    //std::cout << " to " << SpriteHandler::pieceNum << std::endl;
 }
