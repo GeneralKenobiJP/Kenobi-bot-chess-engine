@@ -6,6 +6,7 @@
 #include "src/app/test.h"
 #include "src/app/SpriteHandler.h"
 #include "src/app/fenUtility.h"
+#include "src/app/clock.h"
 
 using namespace sf;
 
@@ -16,7 +17,8 @@ const int NUM_PIECES = 6;
 
 int main(){
     const int windowX=600,windowY=600;
-    RenderWindow window(VideoMode(windowX,windowY),"the chess");
+    const int sideBarX=160;
+    RenderWindow window(VideoMode(windowX+sideBarX,windowY),"the chess");
     window.setFramerateLimit(FPS_RATE);
 
     Texture boardTexture;
@@ -34,7 +36,14 @@ int main(){
         PUT HERE DEBUGGING CODE
     */
 
+    ChessClock whiteClock;
+    ChessClock blackClock;
+
     Board::InitializeBoard(windowX,windowY);
+    whiteClock.InitializeClock(650,400,thisDir);
+    blackClock.InitializeClock(650,200,thisDir);
+    whiteClock.SetTime(600);
+    blackClock.SetTime(600);
 
     FEN::ReadPosition(FEN::startFEN);
 
@@ -76,8 +85,8 @@ int main(){
                     }
                     if(!isEmpty)
                         Board::isMove = true;
-                    else
-                        Piece::spritePtr = nullptr;
+                    //else
+                        //Piece::spritePtr = nullptr;
                 }
                 if(event.mouseButton.button == Mouse::Right)
                 {
@@ -101,7 +110,7 @@ int main(){
 
                 Board::HandleMouseReleased(mousePosition);
 
-                Board::selectedSquare = -1;
+                //Board::selectedSquare = -1;
             }
         }
 
@@ -112,6 +121,8 @@ int main(){
 
         window.clear();
         window.draw(boardSprite);
+        window.draw(whiteClock.clockText);
+        window.draw(blackClock.clockText);
         SpriteHandler::DrawPieces(SpriteHandler::pieceSprite,window);
         window.display();
     }

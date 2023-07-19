@@ -85,6 +85,6 @@ void Board::HandleMouseReleased(sf::Vector2i position)
 
 void Board::DisableSelection()
 {
-    Board::selectedSquare = -1;
+    //Board::selectedSquare = -1;
     Piece::spritePtr = nullptr;
 }
