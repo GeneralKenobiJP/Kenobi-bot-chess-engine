@@ -22,13 +22,51 @@ void ChessClock::SetTime(int startingTime)
     timeLeft = startingTime;
     ChessClock::activePlayer = 0;
 
+    this->SetTimeDisplayFormat();
+}
+void ChessClock::SetTimeDisplayFormat()
+{
     seconds = timeLeft/10;
     minutes = seconds/60;
     seconds = seconds%60;
+    int decimal;
     std::string thisString;
     if(seconds!=0)
         thisString = std::to_string(minutes)+":"+std::to_string(seconds);
     else
         thisString = std::to_string(minutes)+':'+std::to_string(seconds)+'0';
+
+    if(timeLeft<300)
+    {
+        decimal = timeLeft%10;
+        thisString += '.'+std::to_string(decimal);
+    }
+
     clockText.setString(thisString);
+}
+void ChessClock::CountDown(ChessClock &whiteClock, ChessClock &blackClock)
+{
+    clock_t startTime;
+    clock_t endTime;
+    double timeDifference;
+    if(ChessClock::activePlayer!=0)
+    {
+        startTime = clock();
+        endTime = startTime+0.1*CLOCKS_PER_SEC; //0.1 = 0.1s
+        while(clock() < endTime);
+        if(ChessClock::activePlayer==1)
+        {
+            whiteClock.timeLeft-=1;
+            whiteClock.SetTimeDisplayFormat();
+        }
+        else
+        {
+            blackClock.timeLeft-=1;
+            blackClock.SetTimeDisplayFormat();
+        }
+    }
+}
+void ChessClock::SetActivePlayer(unsigned short playerID)
+{
+    ChessClock::activePlayer = playerID;
 }

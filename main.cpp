@@ -11,9 +11,9 @@
 using namespace sf;
 
 std::string thisDir = "desktop/github-projects/Kenobi-bot-chess-engine/";
-const int FPS_RATE = 20; //set to 30 for release
+const int FPS_RATE = 30; //set to 30 or 60 for release
 
-const int NUM_PIECES = 6;
+//const int NUM_PIECES = 6;
 
 int main(){
     const int windowX=600,windowY=600;
@@ -46,6 +46,7 @@ int main(){
     blackClock.SetTime(600);
 
     FEN::ReadPosition(FEN::startFEN);
+    ChessClock::SetActivePlayer(1);
 
     /// DEBUGGING CODE ENDS HERE
 
@@ -118,6 +119,8 @@ int main(){
         {
             Piece::MovePiece(mousePosition);
         }
+
+        ChessClock::CountDown(whiteClock,blackClock);
 
         window.clear();
         window.draw(boardSprite);
