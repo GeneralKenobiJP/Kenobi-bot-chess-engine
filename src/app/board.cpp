@@ -1,5 +1,6 @@
 #include "board.h"
 #include "piece.h"
+#include <cmath>
 
 int Board::squareState[64];
 coordinates Board::squarePos[64];
@@ -87,4 +88,25 @@ void Board::DisableSelection()
 {
     //Board::selectedSquare = -1;
     Piece::spritePtr = nullptr;
+}
+
+void Board::ReadSquare(int squareIndex, int &file, int &rank)
+{
+    file = squareIndex%8;
+    rank = squareIndex/8;
+}
+
+int Board::CalculateDistance(int squareA, int squareB)
+{
+    int fileA;
+    int fileB;
+    int rankA;
+    int rankB;
+
+    Board::ReadSquare(squareA,fileA,rankA);
+    Board::ReadSquare(squareB,fileB,rankB);
+
+    int dist = std::abs(fileA-fileB) + std::abs(rankA-rankB);
+
+    return dist;
 }

@@ -39,7 +39,7 @@ void FEN::ReadPosition(std::string fenTxt) //static
 
     while(fenTxt[0]!=' ')
     {
-        std::cout << fenTxt << std::endl;
+        //std::cout << fenTxt << std::endl;
         //debugNum++;
 
         //std::cout << "Debug: " << debugNum << std::endl;
@@ -70,7 +70,7 @@ void FEN::ReadPosition(std::string fenTxt) //static
         fenTxt = fenTxt.substr(1,fenTxt.length()-1);
         currentFile++;
     }
-    std::cout << "done" << std::endl;
+    //std::cout << "done" << std::endl;
 }
 
 //GetPosition

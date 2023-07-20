@@ -7,6 +7,7 @@
 #include "src/app/SpriteHandler.h"
 #include "src/app/fenUtility.h"
 #include "src/app/clock.h"
+#include "src/app/MoveTable.h"
 #include <thread>
 
 using namespace sf;
@@ -41,6 +42,8 @@ int main(){
     ChessClock blackClock;
 
     Board::InitializeBoard(windowX,windowY);
+    MoveTable::CalculateStartMoveData();
+
     whiteClock.InitializeClock(650,400,thisDir);
     blackClock.InitializeClock(650,200,thisDir);
     whiteClock.SetTime(600);
