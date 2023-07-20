@@ -2,6 +2,7 @@
 #include <../../include/SFML/Graphics/Font.hpp>
 #include <../../include/SFML/Graphics/Text.hpp>
 #include <time.h>
+#include <../../include/SFML/System/Clock.hpp>
 
 class ChessClock
 { //private as for now
@@ -19,10 +20,12 @@ class ChessClock
 
     public:
     sf::Text clockText;
+    static ChessClock* chessClockPtr;
 
     void InitializeClock(int posX, int posY, std::string dir); //initializes clock and sets positions to the input, it takes root directory for font search
     void SetTime(int startingTime);
     static void CountDown(ChessClock &whiteClock, ChessClock &blackClock); //decreases the timer
-    static void SetActivePlayer(unsigned short playerID);
+    static void SetActivePlayer(unsigned short playerID, ChessClock &thisClock);
+    //static void ThreadClock(ChessClock &whiteClock, ChessClock &blackClock); //function used for multi-threading the clock
     //maybe void Flag
 };

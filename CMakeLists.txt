@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(Kenobi-bot-chess-engine VERSION 0.1.0 LANGUAGES C CXX)
+set (CMAKE_CXX_STANDARD 17)
+#target_compile_features(Kenobi-bot-chess-engine PUBLIC cxx_std_17)
 
 #set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "include/SFML/lib/")
 #set(CMAKE_PREFIX_PATH "include/SFML/CMake/")

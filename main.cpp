@@ -7,6 +7,7 @@
 #include "src/app/SpriteHandler.h"
 #include "src/app/fenUtility.h"
 #include "src/app/clock.h"
+#include <thread>
 
 using namespace sf;
 
@@ -46,7 +47,7 @@ int main(){
     blackClock.SetTime(600);
 
     FEN::ReadPosition(FEN::startFEN);
-    ChessClock::SetActivePlayer(1);
+    ChessClock::SetActivePlayer(1,whiteClock);
 
     /// DEBUGGING CODE ENDS HERE
 
@@ -120,6 +121,7 @@ int main(){
             Piece::MovePiece(mousePosition);
         }
 
+        //std::thread clockThread(ChessClock::CountDown,whiteClock,blackClock);
         ChessClock::CountDown(whiteClock,blackClock);
 
         window.clear();

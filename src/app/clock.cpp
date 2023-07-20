@@ -3,6 +3,7 @@
 
 const std::string FONT_DIR = "img/fonts/Roboto-Light.ttf";
 unsigned short ChessClock::activePlayer;
+ChessClock* ChessClock::chessClockPtr = nullptr;
 
 void ChessClock::InitializeClock(int posX, int posY, std::string dir)
 {
@@ -45,7 +46,7 @@ void ChessClock::SetTimeDisplayFormat()
     clockText.setString(thisString);
 }
 void ChessClock::CountDown(ChessClock &whiteClock, ChessClock &blackClock)
-{
+{/*
     clock_t startTime;
     clock_t endTime;
     double timeDifference;
@@ -64,9 +65,29 @@ void ChessClock::CountDown(ChessClock &whiteClock, ChessClock &blackClock)
             blackClock.timeLeft-=1;
             blackClock.SetTimeDisplayFormat();
         }
+    }*/
+
+    sf::Clock timer;
+    sf::Time startTime;
+    sf::Time endTime;
+    
+
+    if(ChessClock::activePlayer!=0)
+    {
+        
+        startTime = timer.getElapsedTime();
+        endTime = startTime + sf::seconds(0.1f);
+        while(timer.getElapsedTime()<endTime);
+        chessClockPtr->timeLeft-=1;
+        chessClockPtr->SetTimeDisplayFormat();
     }
 }
-void ChessClock::SetActivePlayer(unsigned short playerID)
+void ChessClock::SetActivePlayer(unsigned short playerID, ChessClock &thisClock)
 {
     ChessClock::activePlayer = playerID;
+    ChessClock::chessClockPtr = &thisClock;
 }
+/*void ChessClock::ThreadClock(ChessClock &whiteClock, ChessClock &blackClock)
+{
+    ChessClock::CountDown(whiteClock,blackClock);
+}*/
