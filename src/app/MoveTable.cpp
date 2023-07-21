@@ -76,19 +76,19 @@ std::list<Move> MoveTable::GenerateMoves()
     int pieceColor;
 
     for(int i=0;i<64;i++)
-    {
-        if(Board::squareState[i] == Piece::none)
-            continue;
-        
+    {   
         Piece::ReadPiece(Board::squareState[i],pieceType,pieceColor);
 
-        if(pieceColor/8 != Board::activePlayer)
-            continue;
-        
+        if(pieceColor/8 == Board::activePlayer)
+            break;
+
         if(Piece::IsLongRange(pieceType))
         {
             MoveTable::GenerateLongRangeMoves(i,pieceType,MoveList);
         }
+
+        if(pieceColor != 0)
+            break;
         
     }
 

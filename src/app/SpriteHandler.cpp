@@ -5,6 +5,7 @@
 sf::IntRect SpriteHandler::pieceTextureRect[12];
 sf::Sprite SpriteHandler::pieceSprite[32];
 int SpriteHandler::pieceNum=0;
+const sf::Color SpriteHandler::moveDotColor = sf::Color(50,50,50);
 
 void SpriteHandler::LoadPieceSprites(sf::Sprite Sprite[], sf::Texture &texture)
 {
@@ -102,4 +103,18 @@ void SpriteHandler::DrawPieces(sf::Sprite pieceSprite[], sf::RenderWindow &windo
     {
         window.draw(SpriteHandler::pieceSprite[i]);
     }
+}
+
+void SpriteHandler::DrawMoveDots(int square, std::list<Move> moveList)
+{
+    //std::list<Move> targetMoves;
+    std::list<Move>::iterator it = moveList.begin();
+    std::cout << "cello there" << std::endl;
+    std::cout << moveList.size();
+    for(it=moveList.begin();it!=moveList.end();it++)
+    {
+        std::cout << "we're workin' on it, lads" << std::endl;
+        std::cout << it->startSquare << std::endl;
+    }
+    std::cout << "We're finished, mate" << std::endl;
 }

@@ -7,6 +7,8 @@ struct coordinates // x and y position of top-left corner
     int y;
     int width;
     int height;
+    int centerX;
+    int centerY;
 };
 
 class Board // static

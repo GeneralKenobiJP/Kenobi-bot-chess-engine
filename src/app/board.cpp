@@ -33,6 +33,8 @@ void Board::InitializeBoard(int x, int y)
             Board::squarePos[curIt].y = curY;
             Board::squarePos[curIt].width = deltaX;
             Board::squarePos[curIt].height = deltaY;
+            Board::squarePos[curIt].centerX = curX + deltaX/2;
+            Board::squarePos[curIt].centerY = curY - deltaX/2;
             curX += deltaX;
         }
         curX = 0;

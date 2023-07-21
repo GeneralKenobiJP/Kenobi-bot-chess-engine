@@ -53,6 +53,7 @@ int main(){
     ChessClock::SetActivePlayer(1,whiteClock);
 
     MoveTable::GenerateMoves();
+    SpriteHandler::DrawMoveDots(1,MoveTable::GenerateMoves());
 
     /// DEBUGGING CODE ENDS HERE
 
@@ -106,6 +107,11 @@ int main(){
                 {
                     std::cout << "disabled" << std::endl;
                     Board::DisableSelection();
+                }
+                if(event.key.code == Keyboard::T)
+                {
+                    MoveTable::GenerateMoves();
+                    SpriteHandler::DrawMoveDots(1,MoveTable::GenerateMoves());
                 }
             }
 
