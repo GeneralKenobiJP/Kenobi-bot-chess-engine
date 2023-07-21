@@ -18,6 +18,7 @@ public:
     static int boardHeight;
 
     static short int selectedSquare;
+    static unsigned short activePlayer; //0 = none, 1 = white, 2 = black
 
     static bool isMove;
 

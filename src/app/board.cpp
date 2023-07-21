@@ -8,6 +8,7 @@ int Board::boardWidth;
 int Board::boardHeight;
 short int Board::selectedSquare=-1;
 bool Board::isMove=0;
+unsigned short Board::activePlayer;
 
 void Board::InitializeBoard(int x, int y)
 {
@@ -42,6 +43,7 @@ void Board::InitializeBoard(int x, int y)
 void Board::PutOnSquare(int num, int piece, int color)
 {
     Board::squareState[num] = (piece | color);
+    //Piece::pieceList.
 }
 
 void Board::RemoveFromSquare(int num)

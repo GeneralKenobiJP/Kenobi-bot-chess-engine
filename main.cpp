@@ -52,6 +52,8 @@ int main(){
     FEN::ReadPosition(FEN::startFEN);
     ChessClock::SetActivePlayer(1,whiteClock);
 
+    MoveTable::GenerateMoves();
+
     /// DEBUGGING CODE ENDS HERE
 
     while (window.isOpen())

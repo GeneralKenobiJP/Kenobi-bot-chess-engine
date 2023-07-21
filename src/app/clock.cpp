@@ -1,8 +1,8 @@
 #include "clock.h"
+#include "board.h"
 #include <iostream>
 
 const std::string FONT_DIR = "img/fonts/Roboto-Light.ttf";
-unsigned short ChessClock::activePlayer;
 ChessClock* ChessClock::chessClockPtr = nullptr;
 
 void ChessClock::InitializeClock(int posX, int posY, std::string dir)
@@ -21,7 +21,7 @@ void ChessClock::SetTime(int startingTime)
 {
     timeStart = startingTime;
     timeLeft = startingTime;
-    ChessClock::activePlayer = 0;
+    Board::activePlayer = 0;
 
     this->SetTimeDisplayFormat();
 }
@@ -72,7 +72,7 @@ void ChessClock::CountDown(ChessClock &whiteClock, ChessClock &blackClock)
     sf::Time endTime;
     
 
-    if(ChessClock::activePlayer!=0)
+    if(Board::activePlayer!=0)
     {
         
         startTime = timer.getElapsedTime();
@@ -84,7 +84,7 @@ void ChessClock::CountDown(ChessClock &whiteClock, ChessClock &blackClock)
 }
 void ChessClock::SetActivePlayer(unsigned short playerID, ChessClock &thisClock)
 {
-    ChessClock::activePlayer = playerID;
+    Board::activePlayer = playerID;
     ChessClock::chessClockPtr = &thisClock;
 }
 /*void ChessClock::ThreadClock(ChessClock &whiteClock, ChessClock &blackClock)

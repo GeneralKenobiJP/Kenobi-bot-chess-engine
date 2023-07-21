@@ -1,5 +1,6 @@
 #pragma once
 #include <../../include/SFML/Graphics/Sprite.hpp>
+//#include <list>
 
 class Piece
 {
@@ -17,11 +18,17 @@ class Piece
 
     static const int pieceMask = 0b11100;
 
+    //static std::list<int> pieceList;
+
     static sf::Sprite* spritePtr;
 
-    static void ReadPiece(int thisNum); //log piece type and color from thisNum int
+    static void LogPiece(int thisNum); //log piece type and color from thisNum int
+    static void ReadPiece(int thisNum, int &type, int &color); //read piece type and color from thisNum int, save into input variables
+    static void ReadPieceType(int thisNum, int &type); //read piece type from thisNum int, save into input variables
+    static void ReadPieceColor(int thisNum, int &color); //read piece color from thisNum int, save into input variables
     static void MovePiece(sf::Vector2i pos); //moves piece sprite, with such position adjustments that looks correctly when following the mouse
     static void PutPiece(int posX, int posY); //moves piece sprite to the input position (piecePtr selects the sprite)
     static void PutPieceSprite(int posX, int posY, int spriteIndex); //moves target piece sprite to the input position
     static void SetPiece(int pieceType, int pieceColor, int squareIndex); //initializes a piece, with its texture rect
+    static bool IsLongRange(int pieceType); //checks if a bishop or a rook or a queen
 };
