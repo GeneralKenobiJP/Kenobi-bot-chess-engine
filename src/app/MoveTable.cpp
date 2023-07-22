@@ -2,6 +2,7 @@
 #include <algorithm>
 #include "board.h"
 #include "piece.h"
+#include <iostream>
 
 //We start at N and go clockwise
 
@@ -9,6 +10,7 @@ const short MoveTable::knightShift[8] = {15,17,6,10,-15,-17,-6,-10};
 const short MoveTable::directionShift[8] = {8,9,1,-7,-8,-9,-1,7};
 short MoveTable::numSquaresToEdge[64][8];
 std::vector<std::vector<short>> MoveTable::knightTargetSquares;
+std::list<Move> MoveTable::CurrentMoveList;
 
 void MoveTable::CalculateStartMoveData()
 {
@@ -79,21 +81,26 @@ std::list<Move> MoveTable::GenerateMoves()
     {   
         Piece::ReadPiece(Board::squareState[i],pieceType,pieceColor);
 
-        if(pieceColor/8 == Board::activePlayer)
-            break;
+        if(pieceColor/8 != Board::activePlayer)
+            continue;
 
         if(Piece::IsLongRange(pieceType))
         {
             MoveTable::GenerateLongRangeMoves(i,pieceType,MoveList);
         }
 
-        if(pieceColor != 0)
-            break;
+        //if(pieceColor != 0)
+            //break;
         
     }
 
     return MoveList;
 
+}
+
+void MoveTable::GenerateMoves(std::list<Move> &moveList)
+{
+    moveList = MoveTable::GenerateMoves();
 }
 
 void MoveTable::GenerateLongRangeMoves(int square, int pieceType, std::list<Move> &moveList)
@@ -118,6 +125,7 @@ void MoveTable::GenerateLongRangeMoves(int square, int pieceType, std::list<Move
             }
 
             moveList.push_front(Move(square,targetSquare));
+            std::cout << square << ' ' << targetSquare << std::endl;
 
             if(targetSquarePieceColor != 0)
             {

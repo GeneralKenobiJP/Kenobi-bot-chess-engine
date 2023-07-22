@@ -53,7 +53,7 @@ int main(){
     ChessClock::SetActivePlayer(1,whiteClock);
 
     MoveTable::GenerateMoves();
-    SpriteHandler::DrawMoveDots(1,MoveTable::GenerateMoves());
+    //SpriteHandler::DrawMoveDots(1,MoveTable::GenerateMoves());
 
     /// DEBUGGING CODE ENDS HERE
 
@@ -92,7 +92,10 @@ int main(){
                             isEmpty = true;
                     }
                     if(!isEmpty)
+                    {
                         Board::isMove = true;
+                        SpriteHandler::DrawMoveDots(Board::selectedSquare,MoveTable::CurrentMoveList);
+                    }
                     //else
                         //Piece::spritePtr = nullptr;
                 }
@@ -110,8 +113,13 @@ int main(){
                 }
                 if(event.key.code == Keyboard::T)
                 {
+                    Piece::LogPiece(Board::squareState[16]);
                     MoveTable::GenerateMoves();
                     SpriteHandler::DrawMoveDots(1,MoveTable::GenerateMoves());
+                }
+                if(event.key.code == Keyboard::L)
+                {
+                    Piece::LogPiece(Board::squareState[12]);
                 }
             }
 
@@ -140,6 +148,7 @@ int main(){
         window.draw(whiteClock.clockText);
         window.draw(blackClock.clockText);
         SpriteHandler::DrawPieces(SpriteHandler::pieceSprite,window);
+        SpriteHandler::DrawDots(window);
         window.display();
     }
     return 0;

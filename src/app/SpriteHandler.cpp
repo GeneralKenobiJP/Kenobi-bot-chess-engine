@@ -1,11 +1,13 @@
 #include "SpriteHandler.h"
 #include "piece.h"
+#include "board.h"
 #include <iostream>
 
 sf::IntRect SpriteHandler::pieceTextureRect[12];
 sf::Sprite SpriteHandler::pieceSprite[32];
 int SpriteHandler::pieceNum=0;
-const sf::Color SpriteHandler::moveDotColor = sf::Color(50,50,50);
+const sf::Color SpriteHandler::moveDotColor = sf::Color(40,40,70,100);
+std::vector<sf::CircleShape> SpriteHandler::dots;
 
 void SpriteHandler::LoadPieceSprites(sf::Sprite Sprite[], sf::Texture &texture)
 {
@@ -105,8 +107,18 @@ void SpriteHandler::DrawPieces(sf::Sprite pieceSprite[], sf::RenderWindow &windo
     }
 }
 
+void SpriteHandler::DrawDot(int square)
+{
+    sf::CircleShape thisDot;
+    thisDot.setFillColor(SpriteHandler::moveDotColor);
+    thisDot.setRadius(SpriteHandler::moveDotRadius);
+    thisDot.setPosition(Board::squarePos[square].centerX-SpriteHandler::moveDotRadius,Board::squarePos[square].centerY-SpriteHandler::moveDotRadius);
+    SpriteHandler::dots.push_back(thisDot);
+}
+
 void SpriteHandler::DrawMoveDots(int square, std::list<Move> moveList)
 {
+    std::cout << "active square: " << square << std::endl;
     //std::list<Move> targetMoves;
     std::list<Move>::iterator it = moveList.begin();
     std::cout << "cello there" << std::endl;
@@ -114,7 +126,26 @@ void SpriteHandler::DrawMoveDots(int square, std::list<Move> moveList)
     for(it=moveList.begin();it!=moveList.end();it++)
     {
         std::cout << "we're workin' on it, lads" << std::endl;
-        std::cout << it->startSquare << std::endl;
+        //std::cout << it->startSquare << std::endl;
+        if(it->startSquare == square)
+        {
+            std::cout << it->startSquare << std::endl;
+            SpriteHandler::DrawDot(it->targetSquare);
+        }
     }
     std::cout << "We're finished, mate" << std::endl;
+}
+
+void SpriteHandler::RemoveMoveDots()
+{
+    SpriteHandler::dots.clear();
+    std::cout << "Removal team outta rescue" << std::endl;
+}
+
+void SpriteHandler::DrawDots(sf::RenderWindow &window)
+{
+    for(int i=0;i<SpriteHandler::dots.size();i++)
+    {
+        window.draw(dots[i]);
+    }
 }

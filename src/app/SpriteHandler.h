@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "MoveTable.h"
+#include <vector>
 
 class SpriteHandler //this class does not handle boardSprite, which is handled by main.cpp instead
 {
@@ -11,11 +12,15 @@ class SpriteHandler //this class does not handle boardSprite, which is handled b
     public:
     static sf::IntRect pieceTextureRect[12];
     static sf::Sprite pieceSprite[32];
+    static std::vector<sf::CircleShape> dots;
     static int pieceNum;
 
     static void LoadPieceSprites(sf::Sprite Sprite[], sf::Texture &texture); //here we set pieceTextureRect and texture file for pieces
     static void SelectPieceTexture(int spriteIndex, int targetPieceType, int targetPieceColor); //selects texture rect according to the piece
     static void SetupBoard(sf::Sprite pieceSprite[],int width, int height); //obsolete
     static void DrawPieces(sf::Sprite pieceSprite[], sf::RenderWindow &window); //draws each piece
+    static void DrawDot(int square);
     static void DrawMoveDots(int square, std::list<Move> moveList); //draws dots at the center of each square, where a move can be made (after piece selection)
+    static void RemoveMoveDots();
+    static void DrawDots(sf::RenderWindow &window);
 };

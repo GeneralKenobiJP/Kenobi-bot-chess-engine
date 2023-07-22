@@ -26,6 +26,7 @@ public:
 
     static void InitializeBoard(int x, int y); //load squarePos and set squareState to 0
     static void PutOnSquare(int num, int piece, int color); //sets squareState to the input piece
+    static void PutOnSquare(int num, int pieceID); //sets squareState to the input piece
     static void RemoveFromSquare(int num); //sets squareState to 0
     static void HandleMouseInput(sf::Vector2i position); //sets selectedSquare
     static void HandleMouseReleased(sf::Vector2i position); //triggers PutPiece() and RemoveFromSquare() on mouse release

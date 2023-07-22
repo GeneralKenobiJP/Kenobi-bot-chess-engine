@@ -24,10 +24,11 @@ class MoveTable
     //DIRECTIONS: N, NE, E, SE, S, SW, W, NW
     static short numSquaresToEdge[64][8]; //Number of squares to the edge from the i-th square in the j-th direction
     static std::vector<std::vector<short>> knightTargetSquares; //Indexes of squares a knight can jump to from the i-th square
-    //std::list<Move> MoveList;
+    static std::list<Move> CurrentMoveList;
 
     //Fill numSquaresToEdge
     static void CalculateStartMoveData();
     static std::list<Move> GenerateMoves();
+    static void GenerateMoves(std::list<Move> &moveList);
     static void GenerateLongRangeMoves(int square, int pieceType, std::list<Move> &moveList);
 };

@@ -1,6 +1,8 @@
 #include "board.h"
 #include "piece.h"
 #include <cmath>
+#include "MoveTable.h"
+#include "SpriteHandler.h"
 
 int Board::squareState[64];
 coordinates Board::squarePos[64];
@@ -34,7 +36,7 @@ void Board::InitializeBoard(int x, int y)
             Board::squarePos[curIt].width = deltaX;
             Board::squarePos[curIt].height = deltaY;
             Board::squarePos[curIt].centerX = curX + deltaX/2;
-            Board::squarePos[curIt].centerY = curY - deltaX/2;
+            Board::squarePos[curIt].centerY = curY + deltaX/2;
             curX += deltaX;
         }
         curX = 0;
@@ -45,6 +47,11 @@ void Board::InitializeBoard(int x, int y)
 void Board::PutOnSquare(int num, int piece, int color)
 {
     Board::squareState[num] = (piece | color);
+    //Piece::pieceList.
+}
+void Board::PutOnSquare(int num, int pieceID)
+{
+    Board::squareState[num] = pieceID;
     //Piece::pieceList.
 }
 
@@ -67,31 +74,37 @@ void Board::HandleMouseInput(sf::Vector2i position)
     {
         i+=8;
     }
-    i-=8;
+    //i-=8;
     Board::selectedSquare = i;
     //add highlighting
 }
 
 void Board::HandleMouseReleased(sf::Vector2i position)
 {
+    SpriteHandler::RemoveMoveDots();
     for(int i=0;i<64;i++)
     {
         if(position.x>=Board::squarePos[i].x && position.x<Board::squarePos[i].x+Board::squarePos[i].width)
             if(position.y>=Board::squarePos[i].y && position.y < Board::squarePos[i].y+Board::squarePos[i].height)
             {
                 Piece::PutPiece(Board::squarePos[i].x,Board::squarePos[i].y);
+                if(i == Board::selectedSquare)
+                    return;
+                Board::PutOnSquare(i,Board::squareState[Board::selectedSquare]);
                 break;
             }
         if(i==63)
             Piece::PutPiece(Board::squarePos[63].x,Board::squarePos[63].y); //foolproof code ensuring piece ejection into a sub-orbital flight is impossible
     }
     Board::RemoveFromSquare(Board::selectedSquare);
+    MoveTable::GenerateMoves(MoveTable::CurrentMoveList);
 }
 
 void Board::DisableSelection()
 {
     //Board::selectedSquare = -1;
     Piece::spritePtr = nullptr;
+    SpriteHandler::RemoveMoveDots();
 }
 
 void Board::ReadSquare(int squareIndex, int &file, int &rank)
