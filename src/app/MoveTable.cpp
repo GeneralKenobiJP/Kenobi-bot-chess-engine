@@ -11,6 +11,7 @@ const short MoveTable::directionShift[8] = {8,9,1,-7,-8,-9,-1,7};
 short MoveTable::numSquaresToEdge[64][8];
 std::vector<std::vector<short>> MoveTable::knightTargetSquares;
 std::list<Move> MoveTable::CurrentMoveList;
+short MoveTable::enPassantSquare = -1;
 
 void MoveTable::CalculateStartMoveData()
 {
@@ -88,6 +89,14 @@ std::list<Move> MoveTable::GenerateMoves()
         {
             MoveTable::GenerateLongRangeMoves(i,pieceType,MoveList);
         }
+        else if(pieceType == Piece::knight)
+        {
+            MoveTable::GenerateKnightMoves(i,MoveList);
+        }
+        else if(pieceType == Piece::pawn)
+        {
+            MoveTable::GeneratePawnMoves(i,MoveList);
+        }
 
         //if(pieceColor != 0)
             //break;
@@ -134,4 +143,81 @@ void MoveTable::GenerateLongRangeMoves(int square, int pieceType, std::list<Move
 
         }
     }
+}
+
+void MoveTable::GenerateKnightMoves(int square, std::list<Move> &moveList)
+{
+    int targetSquareColor;
+
+    for(int i=0;i<MoveTable::knightTargetSquares[square].size();i++)
+    {
+        Piece::ReadPieceColor(Board::squareState[MoveTable::knightTargetSquares[square][i]],targetSquareColor);
+
+        if(targetSquareColor/8 != Board::activePlayer)
+        {
+            moveList.push_front(Move(square,knightTargetSquares[square][i]));
+        }
+    }
+}
+
+void MoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
+{
+    int pawnMoveShift = (Board::activePlayer == 1) ? 8 : -8;
+    int pawnAttackShift[2];
+    int targetSquare;
+    int targetSquareColor;
+    bool initialPos = 0;
+
+    if(Board::activePlayer == 1)
+    {
+        pawnAttackShift[0] = 7;
+        pawnAttackShift[1] = 9;
+    }
+    else
+    {
+        pawnAttackShift[0] = -7;
+        pawnAttackShift[1] = -9;
+    }
+
+    targetSquare = square + pawnMoveShift;
+    if(Board::squareState[targetSquare]==0)
+    {
+        moveList.push_front(Move(square,targetSquare));
+    }
+    
+    for(int i=0;i<2;i++)
+    {
+        targetSquare = square + pawnAttackShift[i];
+        Piece::ReadPieceColor(Board::squareState[targetSquare],targetSquareColor);
+        //EN PASSANT
+        if(enPassantSquare == targetSquare)
+        {
+            moveList.push_front(Move(square,targetSquare));
+            continue;
+            //REMOVE EN PASSANT-ED PAWN
+        }
+        if(targetSquareColor != 0)
+        {
+            if(targetSquareColor/8 != Board::activePlayer)
+                moveList.push_front(Move(square,targetSquare));
+        }
+    }
+
+    // TWO-SQUARE ADVANCE
+
+    if(Board::activePlayer == 1 && square/8 == 1)
+    {
+        initialPos = 1;
+    }
+    if(Board::activePlayer == 2 && square/8 == 6)
+    {
+        initialPos = 1;
+    }
+
+    if(initialPos)
+    {
+        targetSquare = square + 2*pawnMoveShift;
+        moveList.push_front(Move(square,targetSquare));
+    }
+
 }

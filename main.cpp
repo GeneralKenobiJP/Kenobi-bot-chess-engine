@@ -52,7 +52,7 @@ int main(){
     FEN::ReadPosition(FEN::startFEN);
     ChessClock::SetActivePlayer(1,whiteClock);
 
-    MoveTable::GenerateMoves();
+    MoveTable::GenerateMoves(MoveTable::CurrentMoveList);
     //SpriteHandler::DrawMoveDots(1,MoveTable::GenerateMoves());
 
     /// DEBUGGING CODE ENDS HERE
@@ -119,7 +119,7 @@ int main(){
                 }
                 if(event.key.code == Keyboard::L)
                 {
-                    Piece::LogPiece(Board::squareState[12]);
+                    Piece::LogPiece(Board::squareState[19]);
                 }
             }
 
