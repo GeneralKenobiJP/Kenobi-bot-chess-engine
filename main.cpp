@@ -72,7 +72,7 @@ int main(){
             if(event.type == Event::MouseButtonPressed)
             {
                 //std::cout << "down" << std::endl;
-
+                std::cout << "Pressed" << std::endl;
                 if(event.mouseButton.button == Mouse::Left)
                 {
                     bool isEmpty = false;
@@ -131,7 +131,7 @@ int main(){
 
                 Board::HandleMouseReleased(mousePosition);
 
-                //Board::selectedSquare = -1;
+                Board::selectedSquare = -1;
             }
         }
 
@@ -141,13 +141,13 @@ int main(){
         }
 
         //std::thread clockThread(ChessClock::CountDown,whiteClock,blackClock);
-        ChessClock::CountDown(whiteClock,blackClock);
+        //ChessClock::CountDown(whiteClock,blackClock);
 
         window.clear();
         window.draw(boardSprite);
         window.draw(whiteClock.clockText);
         window.draw(blackClock.clockText);
-        SpriteHandler::DrawPieces(SpriteHandler::pieceSprite,window);
+        SpriteHandler::DrawPieces(window);
         SpriteHandler::DrawDots(window);
         window.display();
     }

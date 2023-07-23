@@ -33,4 +33,5 @@ public:
     static void DisableSelection(); //sets selectedSquare=-1
     static void ReadSquare(int squareIndex, int &file, int &rank);
     static int CalculateDistance(int squareA, int squareB);
+    static void SwitchPlayer();
 };

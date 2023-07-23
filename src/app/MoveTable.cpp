@@ -10,6 +10,7 @@ const short MoveTable::knightShift[8] = {15,17,6,10,-15,-17,-6,-10};
 const short MoveTable::directionShift[8] = {8,9,1,-7,-8,-9,-1,7};
 short MoveTable::numSquaresToEdge[64][8];
 std::vector<std::vector<short>> MoveTable::knightTargetSquares;
+std::vector<std::vector<short>> MoveTable::kingTargetSquares;
 std::list<Move> MoveTable::CurrentMoveList;
 short MoveTable::enPassantSquare = -1;
 
@@ -23,10 +24,10 @@ void MoveTable::CalculateStartMoveData()
     int west;
 
     int knightTarget;
-    //int knightTargetX;
-    //int knightTargetY;
+    int kingTarget;
 
     knightTargetSquares.resize(64);
+    kingTargetSquares.resize(64);
 
     for(int i=0;i<64;i++)
     {
@@ -63,9 +64,23 @@ void MoveTable::CalculateStartMoveData()
             {
                 //Board::ReadSquare(knightTarget,knightTargetX,knightTargetY);
                 int distance = Board::CalculateDistance(i,knightTarget);
-                if(distance == 3)
+                if(distance == 3) //preventing jumping across the board boundary to an opposite end
                 {
                     MoveTable::knightTargetSquares[i].push_back(knightTarget);
+                }
+            }
+        }
+
+        //King moves
+        for(int j=0;j<8;j++)
+        {
+            kingTarget = i+MoveTable::directionShift[j];
+            if(kingTarget>=0 && kingTarget<64)
+            {
+                int distance = Board::CalculateDistance(i,kingTarget);
+                if(distance <= 2) //preventing jumping across the board boundary to an opposite end
+                {
+                    MoveTable::kingTargetSquares[i].push_back(kingTarget);
                 }
             }
         }
@@ -96,6 +111,10 @@ std::list<Move> MoveTable::GenerateMoves()
         else if(pieceType == Piece::pawn)
         {
             MoveTable::GeneratePawnMoves(i,MoveList);
+        }
+        else //king
+        {
+            MoveTable::GenerateKingMoves(i,MoveList);
         }
 
         //if(pieceColor != 0)
@@ -180,7 +199,7 @@ void MoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
     }
 
     targetSquare = square + pawnMoveShift;
-    if(Board::squareState[targetSquare]==0)
+    if(Board::squareState[targetSquare]==0 && targetSquare<64 && targetSquare >= 0)
     {
         moveList.push_front(Move(square,targetSquare));
     }
@@ -188,6 +207,8 @@ void MoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
     for(int i=0;i<2;i++)
     {
         targetSquare = square + pawnAttackShift[i];
+        if(targetSquare<0 || targetSquare>63)
+            break;
         Piece::ReadPieceColor(Board::squareState[targetSquare],targetSquareColor);
         //EN PASSANT
         if(enPassantSquare == targetSquare)
@@ -217,7 +238,51 @@ void MoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
     if(initialPos)
     {
         targetSquare = square + 2*pawnMoveShift;
-        moveList.push_front(Move(square,targetSquare));
+        if(Board::squareState[targetSquare]==0)
+            moveList.push_front(Move(square,targetSquare));
     }
 
+}
+
+void MoveTable::GenerateKingMoves(int square, std::list<Move> &moveList)
+{
+    int targetSquareColor;
+
+    for(int i=0;i<MoveTable::kingTargetSquares[square].size();i++)
+    {
+        Piece::ReadPieceColor(Board::squareState[MoveTable::kingTargetSquares[square][i]],targetSquareColor);
+
+        if(targetSquareColor/8 != Board::activePlayer)
+        {
+            moveList.push_front(Move(square,kingTargetSquares[square][i]));
+        }
+    }
+}
+
+bool MoveTable::IsLegal(int startSquare, int targetSquare)
+{
+    std::list<Move>::iterator it;
+
+    for(it=MoveTable::CurrentMoveList.begin();it!=MoveTable::CurrentMoveList.end();it++)
+    {
+        if(it->startSquare == startSquare)
+            if(it->targetSquare == targetSquare)
+                return true;
+    }
+
+    return false;
+}
+
+bool MoveTable::IsEnPassant(int targetSquare) //we're assuming we've already tested for being a pawn
+{
+    if(targetSquare == MoveTable::enPassantSquare)
+        return true;
+    return false;
+}
+bool MoveTable::IsTwoSquareAdvance(int startSquare, int targetSquare) //we're assuming we've already tested for being a pawn
+{
+    int diff = targetSquare-startSquare;
+    if(diff == 16 || diff == -16)
+        return true;
+    return false;
 }

@@ -3,6 +3,7 @@
 #include <cmath>
 #include "MoveTable.h"
 #include "SpriteHandler.h"
+#include <iostream>
 
 int Board::squareState[64];
 coordinates Board::squarePos[64];
@@ -81,23 +82,96 @@ void Board::HandleMouseInput(sf::Vector2i position)
 
 void Board::HandleMouseReleased(sf::Vector2i position)
 {
+    bool hasChanged = 1;
+    int pieceType;
+    int pieceColor;
+    Piece::ReadPiece(Board::squareState[Board::selectedSquare],pieceType,pieceColor);
+
     SpriteHandler::RemoveMoveDots();
+
+    if(pieceColor/8 != Board::activePlayer) //don't move that which is not thine, fool
+    {
+        //hasChanged = 0;
+        std::cout << "don't move that which is not thine, fool" << std::endl;
+        std::cout << Board::activePlayer << std::endl;
+        std::cout << pieceColor << std::endl;
+        Piece::PutPiece(Board::squarePos[Board::selectedSquare].x,Board::squarePos[Board::selectedSquare].y);
+        return;
+    }
+
     for(int i=0;i<64;i++)
     {
         if(position.x>=Board::squarePos[i].x && position.x<Board::squarePos[i].x+Board::squarePos[i].width)
             if(position.y>=Board::squarePos[i].y && position.y < Board::squarePos[i].y+Board::squarePos[i].height)
             {
-                Piece::PutPiece(Board::squarePos[i].x,Board::squarePos[i].y);
-                if(i == Board::selectedSquare)
-                    return;
-                Board::PutOnSquare(i,Board::squareState[Board::selectedSquare]);
-                break;
+                if(!MoveTable::IsLegal(Board::selectedSquare,i))
+                {
+                    i=Board::selectedSquare;
+                }
+                else
+                {
+                    if(pieceType == Piece::pawn)
+                    {
+                        if(MoveTable::IsEnPassant(i))
+                        {
+                            if(Board::activePlayer==1)
+                            {
+                                Piece::RemovePieceSprite(i-8);
+                                Board::RemoveFromSquare(i-8);
+                            }
+                            else //black
+                            {
+                                Piece::RemovePieceSprite(i+8);
+                                Board::RemoveFromSquare(i+8);
+                            }
+                            //break;
+                        }
+                        MoveTable::enPassantSquare = -1;
+                        if(MoveTable::IsTwoSquareAdvance(Board::selectedSquare,i))
+                        {
+                            MoveTable::enPassantSquare = (i+Board::selectedSquare)/2;
+                        }
+                    }
+                    else
+                        MoveTable::enPassantSquare = -1;
+                }
+                if(Board::squareState[i] !=0 )
+                {
+                    if(Piece::ToColor(Board::squareState[i]) == pieceColor) //you can't take your own pieces, dummy
+                    {
+                        i=64;
+                        hasChanged = 0;
+                        //std::cout << "Friendly fire" << std::endl;
+                    }
+                    else //enemy piece
+                    {
+                        Piece::RemovePieceSprite(i);
+                        Board::RemoveFromSquare(i);
+                    }
+                    
+                }
+
+                if(i<=63)
+                {
+                    Piece::PutPiece(Board::squarePos[i].x,Board::squarePos[i].y);
+                    if(i == Board::selectedSquare) //stop proceeding if a piece was put back on the same square
+                        return;
+                    Board::PutOnSquare(i,Board::squareState[Board::selectedSquare]);
+                    Board::SwitchPlayer();
+                    break;
+                }
             }
-        if(i==63)
-            Piece::PutPiece(Board::squarePos[63].x,Board::squarePos[63].y); //foolproof code ensuring piece ejection into a sub-orbital flight is impossible
+        if(i>=63)
+        {
+            Piece::PutPiece(Board::squarePos[Board::selectedSquare].x,Board::squarePos[Board::selectedSquare].y); //foolproof code ensuring piece ejection into a sub-orbital flight is impossible
+            hasChanged = 0;
+        }
     }
-    Board::RemoveFromSquare(Board::selectedSquare);
-    MoveTable::GenerateMoves(MoveTable::CurrentMoveList);
+    if(hasChanged)
+    {
+        Board::RemoveFromSquare(Board::selectedSquare);
+        MoveTable::GenerateMoves(MoveTable::CurrentMoveList);
+    }
 }
 
 void Board::DisableSelection()
@@ -126,4 +200,9 @@ int Board::CalculateDistance(int squareA, int squareB)
     int dist = std::abs(fileA-fileB) + std::abs(rankA-rankB);
 
     return dist;
+}
+
+void Board::SwitchPlayer()
+{
+    Board::activePlayer = (Board::activePlayer % 2) + 1;
 }

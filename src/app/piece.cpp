@@ -32,6 +32,12 @@ void Piece::ReadPieceColor(int thisNum, int &color)
     color = (thisNum >> 3);
     color *= 8;
 }
+int Piece::ToColor(int thisNum)
+{
+    int color = (thisNum >> 3);
+    color *= 8;
+    return color;
+}
 void Piece::MovePiece(sf::Vector2i pos)
 {
     if(Board::selectedSquare==-1 || Piece::spritePtr == nullptr)
@@ -61,4 +67,32 @@ bool Piece::IsLongRange(int pieceType)
         return 1;
     else
         return 0;
+}
+void Piece::RemovePieceSprite(int square)
+{
+    bool IsFound = 0;
+
+    for(int i = 0; i < SpriteHandler::pieceNum; i++)
+    {
+        std::cout << i << ": " << std::flush;
+        if(IsFound)
+        {
+            std::cout << "Undergoing copying" << std::endl;
+            SpriteHandler::pieceSprite[i-1] = SpriteHandler::pieceSprite[i];
+            if(Piece::spritePtr == &SpriteHandler::pieceSprite[i])
+                spritePtr--;
+            //SpriteHandler::pieceSprite[i].setScale(0,0);
+        }
+        else
+            if(SpriteHandler::pieceSprite[i].getPosition().x == Board::squarePos[square].x)
+                if(SpriteHandler::pieceSprite[i].getPosition().y == Board::squarePos[square].y)
+                {
+                    std::cout << "Is Found" << std::endl;
+                    IsFound = 1;
+                }
+    }
+    std::cout << "'Ere we are" << std::endl;
+    SpriteHandler::pieceNum--;
+    SpriteHandler::pieceSprite.pop_back();
+    std::cout << "Finito" << std::endl;
 }

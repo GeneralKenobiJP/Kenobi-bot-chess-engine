@@ -4,12 +4,12 @@
 #include <iostream>
 
 sf::IntRect SpriteHandler::pieceTextureRect[12];
-sf::Sprite SpriteHandler::pieceSprite[32];
+std::vector<sf::Sprite> SpriteHandler::pieceSprite;
 int SpriteHandler::pieceNum=0;
 const sf::Color SpriteHandler::moveDotColor = sf::Color(40,40,70,100);
 std::vector<sf::CircleShape> SpriteHandler::dots;
 
-void SpriteHandler::LoadPieceSprites(sf::Sprite Sprite[], sf::Texture &texture)
+void SpriteHandler::LoadPieceSprites(std::vector<sf::Sprite> &Sprite, sf::Texture &texture)
 {
     int startX = 30;
     int startY = 0;
@@ -21,6 +21,11 @@ void SpriteHandler::LoadPieceSprites(sf::Sprite Sprite[], sf::Texture &texture)
     int curY = startY;
     int deltaX = (width-endXSub-startX)/6;
     int deltaY = (height-endYSub-startY)/2;
+
+    for(int i=0;i<32;i++)
+    {
+        Sprite.push_back(sf::Sprite());
+    }
 
     ///KING - QUEEN - BISHOP - KNIGHT - ROOK - PAWN (white - black)
     ///0    - 1     - 2     - 3     - 4     - 5     (+0 - +6)
@@ -99,7 +104,7 @@ void SpriteHandler::SetupBoard(sf::Sprite pieceSprite[],int width, int height) /
     }
 }
 
-void SpriteHandler::DrawPieces(sf::Sprite pieceSprite[], sf::RenderWindow &window)
+void SpriteHandler::DrawPieces(sf::RenderWindow &window)
 {
     for(int i=0;i<SpriteHandler::pieceNum;i++)
     {
@@ -118,22 +123,22 @@ void SpriteHandler::DrawDot(int square)
 
 void SpriteHandler::DrawMoveDots(int square, std::list<Move> moveList)
 {
-    std::cout << "active square: " << square << std::endl;
+    //std::cout << "active square: " << square << std::endl;
     //std::list<Move> targetMoves;
     std::list<Move>::iterator it = moveList.begin();
-    std::cout << "cello there" << std::endl;
-    std::cout << moveList.size();
+    //std::cout << "cello there" << std::endl;
+    //std::cout << moveList.size();
     for(it=moveList.begin();it!=moveList.end();it++)
     {
-        std::cout << "we're workin' on it, lads" << std::endl;
+        //std::cout << "we're workin' on it, lads" << std::endl;
         //std::cout << it->startSquare << std::endl;
         if(it->startSquare == square)
         {
-            std::cout << it->startSquare << std::endl;
+            //std::cout << it->startSquare << std::endl;
             SpriteHandler::DrawDot(it->targetSquare);
         }
     }
-    std::cout << "We're finished, mate" << std::endl;
+    //std::cout << "We're finished, mate" << std::endl;
 }
 
 void SpriteHandler::RemoveMoveDots()
