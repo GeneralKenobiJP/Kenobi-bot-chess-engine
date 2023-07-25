@@ -7,7 +7,11 @@ sf::IntRect SpriteHandler::pieceTextureRect[12];
 std::vector<sf::Sprite> SpriteHandler::pieceSprite;
 int SpriteHandler::pieceNum=0;
 const sf::Color SpriteHandler::moveDotColor = sf::Color(40,40,70,100);
+const sf::Color SpriteHandler::promotionMenuColor = sf::Color(240,240,240,200);
 std::vector<sf::CircleShape> SpriteHandler::dots;
+sf::RectangleShape SpriteHandler::promotionMenu;
+sf::Sprite SpriteHandler::promotionPieceSprite[8];
+bool SpriteHandler::IsPromotion = false;
 
 void SpriteHandler::LoadPieceSprites(std::vector<sf::Sprite> &Sprite, sf::Texture &texture)
 {
@@ -85,7 +89,7 @@ void SpriteHandler::SelectPieceTexture(int spriteIndex, int targetPieceType, int
     }
 
     SpriteHandler::pieceSprite[spriteIndex].setTextureRect(SpriteHandler::pieceTextureRect[rectIndex]);
-    sf::IntRect checkRect = SpriteHandler::pieceSprite[spriteIndex].getTextureRect();
+    //sf::IntRect checkRect = SpriteHandler::pieceSprite[spriteIndex].getTextureRect();
     SpriteHandler::pieceSprite[spriteIndex].setScale(0.23,0.23);
 }
 
@@ -109,6 +113,17 @@ void SpriteHandler::DrawPieces(sf::RenderWindow &window)
     for(int i=0;i<SpriteHandler::pieceNum;i++)
     {
         window.draw(SpriteHandler::pieceSprite[i]);
+    }
+}
+void SpriteHandler::DrawPromotionMenu(sf::RenderWindow &window)
+{
+    if(SpriteHandler::IsPromotion)
+    {
+        window.draw(SpriteHandler::promotionMenu);
+        for(int i=0;i<4;i++)
+        {
+            window.draw(SpriteHandler::promotionPieceSprite[i+4*(Board::activePlayer-1)]);
+        }
     }
 }
 
@@ -153,4 +168,70 @@ void SpriteHandler::DrawDots(sf::RenderWindow &window)
     {
         window.draw(dots[i]);
     }
+}
+
+void SpriteHandler::ShowPromotionMenu(int square)
+{
+    int thisSquare = (square/8 == 0) ? (square+32) : (square-8);
+    std::cout << "this square: " << thisSquare << std::endl;
+    int posX = Board::squarePos[thisSquare].x;
+    int posY = Board::squarePos[thisSquare].y;
+    int thisWidth = Board::squarePos[thisSquare].width;
+    int thisHeight = Board::squarePos[thisSquare].height*4;
+
+    promotionMenu.setPosition(posX,posY);
+    promotionMenu.setSize(sf::Vector2f(thisWidth,thisHeight));
+    promotionMenu.setFillColor(promotionMenuColor);
+
+    int thisY = (square/8 == 0) ? (Board::squarePos[square+8].y) : posY;
+    int thisX = posX;
+    int deltaY = (square/8 == 0) ? (-1*Board::squarePos[thisSquare].height) : (Board::squarePos[thisSquare].height);
+
+    int i = (square/8==0) ? 4 : 0;
+    int n = i+4;
+    for(i;i<n;i++)
+    {
+        SpriteHandler::promotionPieceSprite[i].setPosition(thisX, thisY);
+        //SpriteHandler::promotionPieceSprite[i].
+
+        thisY += deltaY;
+    }
+}
+
+void SpriteHandler::InitializePromotionMenu()
+{
+    for(int i=0;i<8;i++)
+    {
+        SpriteHandler::promotionPieceSprite[i].setTexture(*SpriteHandler::pieceSprite[0].getTexture());
+    }
+    for(int i=0;i<2;i++)
+    {
+        int curIndex = 4*i;
+        SpriteHandler::promotionPieceSprite[curIndex].setTextureRect(SpriteHandler::pieceTextureRect[1+6*i]);
+        SpriteHandler::promotionPieceSprite[curIndex].setScale(0.23,0.23);
+        curIndex++;
+        SpriteHandler::promotionPieceSprite[curIndex].setTextureRect(SpriteHandler::pieceTextureRect[3+6*i]);
+        SpriteHandler::promotionPieceSprite[curIndex].setScale(0.23,0.23);
+        curIndex++;
+        SpriteHandler::promotionPieceSprite[curIndex].setTextureRect(SpriteHandler::pieceTextureRect[4+6*i]);
+        SpriteHandler::promotionPieceSprite[curIndex].setScale(0.23,0.23);
+        curIndex++;
+        SpriteHandler::promotionPieceSprite[curIndex].setTextureRect(SpriteHandler::pieceTextureRect[2+6*i]);
+        SpriteHandler::promotionPieceSprite[curIndex].setScale(0.23,0.23);
+    }
+}
+
+void SpriteHandler::HidePromotionMenu(int type, int color)
+{
+    std::cout << "So here we are, lads, we got the function that bears the name of HidePromotionMenu()" << std::endl;
+    for(int i = 0; i<SpriteHandler::pieceNum;i++)
+    {
+        if(SpriteHandler::pieceSprite[i].getGlobalBounds().contains(Board::squarePos[Board::promotionSquare].centerX,Board::squarePos[Board::promotionSquare].centerY))
+        {
+            std::cout << "Hide 'em all" << std::endl;
+            SpriteHandler::SelectPieceTexture(i,type,color);
+            break;
+        }
+    }
+    SpriteHandler::IsPromotion = false;
 }

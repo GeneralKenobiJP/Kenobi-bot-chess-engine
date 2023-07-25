@@ -13,6 +13,10 @@ std::vector<std::vector<short>> MoveTable::knightTargetSquares;
 std::vector<std::vector<short>> MoveTable::kingTargetSquares;
 std::list<Move> MoveTable::CurrentMoveList;
 short MoveTable::enPassantSquare = -1;
+bool MoveTable::W_CanCastleKingside;
+bool MoveTable::B_CanCastleKingside;
+bool MoveTable::W_CanCastleQueenside;
+bool MoveTable::B_CanCastleQueenside;
 
 void MoveTable::CalculateStartMoveData()
 {

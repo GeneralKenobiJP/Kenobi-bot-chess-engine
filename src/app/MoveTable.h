@@ -27,6 +27,10 @@ class MoveTable
     static std::vector<std::vector<short>> kingTargetSquares; //Indexes of squares a king can move to from the i-th square
     static std::list<Move> CurrentMoveList;
     static short enPassantSquare; //shows a square, where an en passant capture is possible (-1 if none; initally -1 or set by FEN)
+    static bool W_CanCastleKingside;
+    static bool B_CanCastleKingside;
+    static bool W_CanCastleQueenside;
+    static bool B_CanCastleQueenside;
 
     //Fill numSquaresToEdge
     static void CalculateStartMoveData();

@@ -1,6 +1,8 @@
 #include "fenUtility.h"
 #include <ctype.h>
 #include <iostream>
+#include "board.h"
+#include <MoveTable.h>
 
 const std::string FEN::startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
@@ -70,6 +72,39 @@ void FEN::ReadPosition(std::string fenTxt) //static
         fenTxt = fenTxt.substr(1,fenTxt.length()-1);
         currentFile++;
     }
+
+    if(fenTxt[1] == 'w')
+    {
+        Board::activePlayer = 1;
+    }
+    else //'b'
+    {
+        Board::activePlayer = 2;
+    }
+
+    fenTxt = fenTxt.substr(3);
+
+    while(fenTxt[0]!=' ')
+    {
+        switch(fenTxt[0])
+        {
+            case 'K':
+                MoveTable::W_CanCastleKingside = 1;
+                break;
+            case 'Q':
+                MoveTable::W_CanCastleQueenside = 1;
+                break;
+            case 'k':
+                MoveTable::B_CanCastleKingside = 1;
+                break;
+            case 'q':
+                MoveTable::B_CanCastleQueenside = 1;
+                break;
+        }
+        fenTxt = fenTxt.substr(1);
+    }
+    //
+
     //std::cout << "done" << std::endl;
 }
 

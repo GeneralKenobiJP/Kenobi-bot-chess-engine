@@ -33,6 +33,7 @@ int main(){
     Sprite boardSprite(boardTexture);
 
     SpriteHandler::LoadPieceSprites(SpriteHandler::pieceSprite,pieceTexture); //we are loading textures
+    SpriteHandler::InitializePromotionMenu();
 
     /*
         PUT HERE DEBUGGING CODE
@@ -55,6 +56,8 @@ int main(){
     MoveTable::GenerateMoves(MoveTable::CurrentMoveList);
     //SpriteHandler::DrawMoveDots(1,MoveTable::GenerateMoves());
 
+    //Board::Promote(3,Piece::white);
+
     /// DEBUGGING CODE ENDS HERE
 
     while (window.isOpen())
@@ -75,29 +78,42 @@ int main(){
                 std::cout << "Pressed" << std::endl;
                 if(event.mouseButton.button == Mouse::Left)
                 {
-                    bool isEmpty = false;
-                    Board::HandleMouseInput(mousePosition);
-                    //std::cout << Board::selectedSquare << std::endl;
-                    for(int i=0;i<SpriteHandler::pieceNum;i++)
+                    if(!SpriteHandler::IsPromotion)
                     {
-                        if(SpriteHandler::pieceSprite[i].getGlobalBounds().contains(mousePosition.x,mousePosition.y))
+                        bool isEmpty = false;
+                        Board::HandleMouseInput(mousePosition);
+                        //std::cout << Board::selectedSquare << std::endl;
+                        for(int i=0;i<SpriteHandler::pieceNum;i++)
                         {
-                            //std::cout << "true" << std::endl;
-                            Piece::spritePtr = &SpriteHandler::pieceSprite[i];
-                            break; //
+                            if(SpriteHandler::pieceSprite[i].getGlobalBounds().contains(mousePosition.x,mousePosition.y))
+                            {
+                                //std::cout << "true" << std::endl;
+                                Piece::spritePtr = &SpriteHandler::pieceSprite[i];
+                                break; //
+                            }
+                            Board::isMove=false;
+                            //std::cout << "false" << std::endl;
+                            if(i==SpriteHandler::pieceNum-1)
+                                isEmpty = true;
                         }
-                        Board::isMove=false;
-                        //std::cout << "false" << std::endl;
-                        if(i==SpriteHandler::pieceNum-1)
-                            isEmpty = true;
+                        if(!isEmpty)
+                        {
+                            Board::isMove = true;
+                            SpriteHandler::DrawMoveDots(Board::selectedSquare,MoveTable::CurrentMoveList);
+                        }
+                        //else
+                            //Piece::spritePtr = nullptr;
                     }
-                    if(!isEmpty)
+                    else
                     {
-                        Board::isMove = true;
-                        SpriteHandler::DrawMoveDots(Board::selectedSquare,MoveTable::CurrentMoveList);
+                        for(int i=0;i<8;i++)
+                        {
+                            if(SpriteHandler::promotionPieceSprite[i].getGlobalBounds().contains(mousePosition.x,mousePosition.y))
+                            {
+                                Board::HandlePromotion(i);
+                            }
+                        }
                     }
-                    //else
-                        //Piece::spritePtr = nullptr;
                 }
                 if(event.mouseButton.button == Mouse::Right)
                 {
@@ -149,6 +165,7 @@ int main(){
         window.draw(blackClock.clockText);
         SpriteHandler::DrawPieces(window);
         SpriteHandler::DrawDots(window);
+        SpriteHandler::DrawPromotionMenu(window);
         window.display();
     }
     return 0;

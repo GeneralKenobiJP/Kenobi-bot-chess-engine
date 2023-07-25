@@ -12,6 +12,7 @@ int Board::boardHeight;
 short int Board::selectedSquare=-1;
 bool Board::isMove=0;
 unsigned short Board::activePlayer;
+short Board::promotionSquare=-1;
 
 void Board::InitializeBoard(int x, int y)
 {
@@ -131,9 +132,64 @@ void Board::HandleMouseReleased(sf::Vector2i position)
                         {
                             MoveTable::enPassantSquare = (i+Board::selectedSquare)/2;
                         }
+                        if(i/8==7 || i/8==0) //PROMOTION
+                        {
+                            if(Board::squareState[i] !=0 )
+                            {
+                                if(Piece::ToColor(Board::squareState[i]) == pieceColor) //you can't take your own pieces, dummy
+                                {
+                                    i=64;
+                                    hasChanged = 0;
+                                    //std::cout << "Friendly fire" << std::endl;
+                                }
+                                else //enemy piece
+                                {
+                                    Piece::RemovePieceSprite(i);
+                                    Board::RemoveFromSquare(i);
+                                    Board::Promote(i, pieceColor);
+                                    Piece::PutPiece(Board::squarePos[i].x,Board::squarePos[i].y);
+                                    //Board::SwitchPlayer();
+                                    break;
+                                }
+                                
+                            }
+                            else
+                            {
+                                Board::Promote(i, pieceColor);
+                                Piece::PutPiece(Board::squarePos[i].x,Board::squarePos[i].y);
+                                //Board::SwitchPlayer();
+                                break;
+                            }
+                        }
                     }
                     else
                         MoveTable::enPassantSquare = -1;
+
+                    if(pieceType == Piece::king)
+                    {
+                        if(pieceColor == Piece::white)
+                        {
+                            MoveTable::W_CanCastleKingside = 0;
+                            MoveTable::W_CanCastleQueenside = 0;
+                        }
+                        else
+                        {
+                            MoveTable::B_CanCastleKingside = 0;
+                            MoveTable::B_CanCastleQueenside = 0;
+                        }
+                    }
+                    
+                    if(pieceType == Piece::rook)
+                    {
+                        if(Board::selectedSquare == 0) //a1
+                            MoveTable::W_CanCastleKingside = 0;
+                        else if(Board::selectedSquare == 7) //h1
+                            MoveTable::W_CanCastleQueenside = 0;
+                        else if(Board::selectedSquare == 56) //a8
+                            MoveTable::B_CanCastleKingside = 0;
+                        else if(Board::selectedSquare == 63) //h8
+                            MoveTable::B_CanCastleQueenside = 0;
+                    }
                 }
                 if(Board::squareState[i] !=0 )
                 {
@@ -205,4 +261,41 @@ int Board::CalculateDistance(int squareA, int squareB)
 void Board::SwitchPlayer()
 {
     Board::activePlayer = (Board::activePlayer % 2) + 1;
+    std::cout << "switcheroo, now: " << Board::activePlayer << std::endl;
+}
+
+void Board::Promote(int square, int color)
+{
+    SpriteHandler::IsPromotion = true;
+    Board::promotionSquare = square;
+    SpriteHandler::ShowPromotionMenu(square);
+}
+
+void Board::HandlePromotion(int promotionSpriteIndex)
+{
+    int type = promotionSpriteIndex%4;
+    int color = (type>3) ? Piece::black : Piece::white;
+    
+    switch(type)
+    {
+        case 0:
+            type = Piece::queen;
+            break;
+        case 1:
+            type = Piece::knight;
+            break;
+        case 2:
+            type = Piece::rook;
+            break;
+        case 3:
+            type = Piece::bishop;
+            break;
+    }
+
+    Board::PutOnSquare(Board::promotionSquare, type, color);
+    SpriteHandler::HidePromotionMenu(type, color);
+    Board::promotionSquare = -1;
+    Board::SwitchPlayer();
+    MoveTable::GenerateMoves();
+    Board::selectedSquare = -1;
 }

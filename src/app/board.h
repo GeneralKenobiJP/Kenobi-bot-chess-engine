@@ -22,6 +22,8 @@ public:
     static short int selectedSquare;
     static unsigned short activePlayer; //0 = none, 1 = white, 2 = black
 
+    static short promotionSquare; //-1 = none
+
     static bool isMove;
 
     static void InitializeBoard(int x, int y); //load squarePos and set squareState to 0
@@ -34,4 +36,6 @@ public:
     static void ReadSquare(int squareIndex, int &file, int &rank);
     static int CalculateDistance(int squareA, int squareB);
     static void SwitchPlayer();
+    static void Promote(int square, int color);
+    static void HandlePromotion(int promotionSpriteIndex);
 };
