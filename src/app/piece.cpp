@@ -96,3 +96,20 @@ void Piece::RemovePieceSprite(int square)
     SpriteHandler::pieceSprite.pop_back();
     std::cout << "Finito" << std::endl;
 }
+
+bool Piece::IsEnemyKing(int pieceNum)
+{
+    int pieceType;
+    int pieceColor;
+
+    Piece::ReadPiece(pieceNum, pieceType, pieceColor);
+
+    if(pieceType != Piece::king)
+        return false;
+
+    if(pieceColor/8 != Board::activePlayer)
+        return true;
+
+    return false;
+
+}

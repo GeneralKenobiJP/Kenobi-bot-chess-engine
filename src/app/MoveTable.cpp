@@ -12,6 +12,8 @@ short MoveTable::numSquaresToEdge[64][8];
 std::vector<std::vector<short>> MoveTable::knightTargetSquares;
 std::vector<std::vector<short>> MoveTable::kingTargetSquares;
 std::list<Move> MoveTable::CurrentMoveList;
+std::list<int> MoveTable::AttackList;
+std::list<int> MoveTable::PinList;
 short MoveTable::enPassantSquare = -1;
 bool MoveTable::W_CanCastleKingside;
 bool MoveTable::B_CanCastleKingside;
@@ -151,7 +153,7 @@ void MoveTable::GenerateLongRangeMoves(int square, int pieceType, std::list<Move
             targetSquareState = Board::squareState[targetSquare];
             Piece::ReadPieceColor(targetSquareState,targetSquarePieceColor);
             
-            if(targetSquarePieceColor/8 == Board::activePlayer)
+            if(targetSquarePieceColor/8 == Board::activePlayer) //our piece is blocking the way
             {
                 break;
             }
@@ -159,8 +161,20 @@ void MoveTable::GenerateLongRangeMoves(int square, int pieceType, std::list<Move
             moveList.push_front(Move(square,targetSquare));
             std::cout << square << ' ' << targetSquare << std::endl;
 
-            if(targetSquarePieceColor != 0)
+            if(targetSquarePieceColor != 0) //opponent's piece is blocking the way
             {
+
+                /*for(int pinSq = sq; pinSq <= MoveTable::numSquaresToEdge[square][dir];pinSq++) //we're checking if the blocking piece is pinned
+                {
+                    targetSquare = square + MoveTable::directionShift[dir] * pinSq;
+                    targetSquareState = Board::squareState[targetSquare];
+                    
+                    if(targetSquareState != 0)
+                    {
+                        if()
+                    }
+                }*/
+
                 break;
             }
 
@@ -288,5 +302,116 @@ bool MoveTable::IsTwoSquareAdvance(int startSquare, int targetSquare) //we're as
     int diff = targetSquare-startSquare;
     if(diff == 16 || diff == -16)
         return true;
+    return false;
+}
+
+void MoveTable::GenerateAttacks()
+{
+    MoveTable::AttackList.clear();
+    MoveTable::PinList.clear();
+
+    std::list<Move>::iterator it;
+    int startSquarePiece;
+    int startSquareType;
+
+    for(it=MoveTable::CurrentMoveList.begin();it!=MoveTable::CurrentMoveList.end();it++)
+    {
+        MoveTable::AttackList.push_front(it->targetSquare);
+
+        startSquarePiece = Board::squareState[it->startSquare];
+
+        Piece::ReadPieceType(startSquarePiece,startSquareType);
+
+        if(Piece::IsLongRange(startSquareType))
+            CheckForPins(it->startSquare,it->targetSquare);
+    }
+}
+
+void MoveTable::CheckForPins(int startSquare, int targetSquare)
+{
+    int diff = (targetSquare - startSquare);
+
+    int startFile, startRank;
+    int targetFile, targetRank;
+
+    int dir;
+
+    int pinTargetSquare;
+
+    Board::ReadSquare(startSquare, startFile, startRank);
+    Board::ReadSquare(targetSquare, targetFile, targetRank);
+
+    if(startFile == targetFile)
+    {
+        if(diff>0)
+            dir = 8;
+        else
+            dir = -8;
+    }
+    else if(startRank == targetRank)
+    {
+        if(diff>0)
+            dir = 1;
+        else
+            dir = -1;
+    }
+    else
+    {
+        if(diff%9==0) //if it's 63=7*9, it must be 7 times +9 moves, because the maximum move is 8 squares
+        {
+            if(diff>0)
+                dir = 9;
+            else
+                dir = -9;
+        }
+        else
+        {
+            if(diff>0)
+                dir = 7;
+            else
+                dir = -7;
+        }
+
+    }
+    //THE FUNCTION IS CALLED JUST BEFORE SWITCHING PLAYERS
+    for(int i=1;i<=MoveTable::numSquaresToEdge[targetSquare][dir];i++)
+    {
+        pinTargetSquare = targetSquare + dir*i;
+        
+        if(Board::squareState[pinTargetSquare] != 0)
+        {
+            if(Piece::IsEnemyKing(Board::squareState[pinTargetSquare]))
+            {
+                PinList.push_front(targetSquare);
+                break;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+    }
+}
+
+bool MoveTable::IsPinned(int square)
+{
+    std::list<int>::iterator it;
+
+    for(it=MoveTable::PinList.begin();it!=MoveTable::PinList.end();it++)
+        if(*it == square)
+            return true;
+    
+    return false;
+}
+
+bool MoveTable::IsAttacked(int square)
+{
+    std::list<int>::iterator it;
+
+    for(it=MoveTable::AttackList.begin();it!=MoveTable::AttackList.end();it++)
+        if(*it == square)
+            return true;
+    
     return false;
 }

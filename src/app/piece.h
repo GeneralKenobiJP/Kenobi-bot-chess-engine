@@ -33,4 +33,5 @@ class Piece
     static void SetPiece(int pieceType, int pieceColor, int squareIndex); //initializes a piece, with its texture rect
     static bool IsLongRange(int pieceType); //checks if a bishop or a rook or a queen
     static void RemovePieceSprite(int square); // receives a square from which to remove a piece sprite and deletes it
+    static bool IsEnemyKing(int pieceNum);
 };

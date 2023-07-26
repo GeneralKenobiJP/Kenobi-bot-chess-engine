@@ -260,6 +260,7 @@ int Board::CalculateDistance(int squareA, int squareB)
 
 void Board::SwitchPlayer()
 {
+    MoveTable::GenerateAttacks();
     Board::activePlayer = (Board::activePlayer % 2) + 1;
     std::cout << "switcheroo, now: " << Board::activePlayer << std::endl;
 }
@@ -274,7 +275,7 @@ void Board::Promote(int square, int color)
 void Board::HandlePromotion(int promotionSpriteIndex)
 {
     int type = promotionSpriteIndex%4;
-    int color = (type>3) ? Piece::black : Piece::white;
+    int color = (promotionSpriteIndex>3) ? Piece::black : Piece::white;
     
     switch(type)
     {
@@ -296,6 +297,6 @@ void Board::HandlePromotion(int promotionSpriteIndex)
     SpriteHandler::HidePromotionMenu(type, color);
     Board::promotionSquare = -1;
     Board::SwitchPlayer();
-    MoveTable::GenerateMoves();
     Board::selectedSquare = -1;
+    MoveTable::GenerateMoves(MoveTable::CurrentMoveList);
 }
