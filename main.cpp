@@ -166,6 +166,7 @@ int main(){
         SpriteHandler::DrawPieces(window);
         SpriteHandler::DrawDots(window);
         SpriteHandler::DrawPromotionMenu(window);
+        SpriteHandler::DrawDebugShapes(window);
         window.display();
     }
     return 0;

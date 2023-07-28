@@ -9,6 +9,7 @@ class SpriteHandler //this class does not handle boardSprite, which is handled b
     static const int moveDotRadius = 15;
     static const sf::Color moveDotColor;
     static const sf::Color promotionMenuColor;
+    static std::vector<sf::CircleShape> debugShapes;
 
     public:
     static sf::IntRect pieceTextureRect[12];
@@ -31,4 +32,7 @@ class SpriteHandler //this class does not handle boardSprite, which is handled b
     static void ShowPromotionMenu(int square);
     static void InitializePromotionMenu();
     static void HidePromotionMenu(int type, int color);
+    static void DrawDebug(std::list<int> feature, sf::Color color, int offset);
+    static void DrawDebugShapes(sf::RenderWindow &window);
+    static void ClearDebug();
 };

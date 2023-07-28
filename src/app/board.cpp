@@ -213,6 +213,8 @@ void Board::HandleMouseReleased(sf::Vector2i position)
                     if(i == Board::selectedSquare) //stop proceeding if a piece was put back on the same square
                         return;
                     Board::PutOnSquare(i,Board::squareState[Board::selectedSquare]);
+                    if(hasChanged)
+                        Board::RemoveFromSquare(Board::selectedSquare);
                     Board::SwitchPlayer();
                     break;
                 }
@@ -262,6 +264,11 @@ void Board::SwitchPlayer()
 {
     MoveTable::GenerateAttacks();
     Board::activePlayer = (Board::activePlayer % 2) + 1;
+
+    SpriteHandler::ClearDebug();
+    //SpriteHandler::DrawDebug(MoveTable::AttackList, sf::Color::Magenta,0);
+    SpriteHandler::DrawDebug(MoveTable::PinList, sf::Color::Cyan,45);
+
     std::cout << "switcheroo, now: " << Board::activePlayer << std::endl;
 }
 
@@ -296,7 +303,7 @@ void Board::HandlePromotion(int promotionSpriteIndex)
     Board::PutOnSquare(Board::promotionSquare, type, color);
     SpriteHandler::HidePromotionMenu(type, color);
     Board::promotionSquare = -1;
-    Board::SwitchPlayer();
     Board::selectedSquare = -1;
+    Board::SwitchPlayer();
     MoveTable::GenerateMoves(MoveTable::CurrentMoveList);
 }

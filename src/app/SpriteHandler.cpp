@@ -12,6 +12,7 @@ std::vector<sf::CircleShape> SpriteHandler::dots;
 sf::RectangleShape SpriteHandler::promotionMenu;
 sf::Sprite SpriteHandler::promotionPieceSprite[8];
 bool SpriteHandler::IsPromotion = false;
+std::vector<sf::CircleShape> SpriteHandler::debugShapes;
 
 void SpriteHandler::LoadPieceSprites(std::vector<sf::Sprite> &Sprite, sf::Texture &texture)
 {
@@ -234,4 +235,33 @@ void SpriteHandler::HidePromotionMenu(int type, int color)
         }
     }
     SpriteHandler::IsPromotion = false;
+}
+
+void SpriteHandler::DrawDebug(std::list<int> feature, sf::Color color, int offset)
+{
+    std::list<int>::iterator it;
+
+    std::cout << "Le feature size: " << feature.size() << std::endl;
+
+    for(it = feature.begin(); it != feature.end();it++)
+    {
+        std::cout << *it << std::endl;
+        SpriteHandler::debugShapes.push_back(sf::CircleShape(10));
+        SpriteHandler::debugShapes.back().setFillColor(color);
+        SpriteHandler::debugShapes.back().setPosition(Board::squarePos[*it].x+offset,Board::squarePos[*it].y);
+    }
+}
+
+void SpriteHandler::DrawDebugShapes(sf::RenderWindow &window)
+{
+    //std::cout << SpriteHandler::debugShapes.size() << std::endl;
+    for(int i=0;i<SpriteHandler::debugShapes.size();i++)
+    {
+        window.draw(SpriteHandler::debugShapes[i]);
+    }
+}
+
+void SpriteHandler::ClearDebug()
+{
+    SpriteHandler::debugShapes.clear();
 }

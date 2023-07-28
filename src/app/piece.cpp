@@ -38,6 +38,14 @@ int Piece::ToColor(int thisNum)
     color *= 8;
     return color;
 }
+int Piece::ToType(int thisNum)
+{
+    int type = (thisNum << 2);
+    type = type & Piece::pieceMask;
+    type /= 4;
+
+    return type;
+}
 void Piece::MovePiece(sf::Vector2i pos)
 {
     if(Board::selectedSquare==-1 || Piece::spritePtr == nullptr)
@@ -101,6 +109,9 @@ bool Piece::IsEnemyKing(int pieceNum)
 {
     int pieceType;
     int pieceColor;
+
+    if(pieceNum == 0)
+        return false;
 
     Piece::ReadPiece(pieceNum, pieceType, pieceColor);
 
