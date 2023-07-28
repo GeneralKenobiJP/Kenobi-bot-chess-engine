@@ -21,6 +21,10 @@ bool MoveTable::W_CanCastleQueenside;
 bool MoveTable::B_CanCastleQueenside;
 std::list<int> MoveTable::pawnAttackList;
 std::list<int> MoveTable::PinDirectionList;
+std::list<int> MoveTable::VirtualAttackList;
+bool MoveTable::IsChecked = false;
+bool MoveTable::IsKnightCheck = false;
+std::vector<std::list<int>> MoveTable::CheckSquares;
 
 void MoveTable::CalculateStartMoveData()
 {
@@ -292,9 +296,9 @@ void MoveTable::GenerateKingMoves(int square, std::list<Move> &moveList)
 
     for(int i=0;i<MoveTable::kingTargetSquares[square].size();i++)
     {
-        if(MoveTable::IsAttacked(i))
+        if(MoveTable::IsAttacked(MoveTable::kingTargetSquares[square][i]))
             continue;
-            
+
         Piece::ReadPieceColor(Board::squareState[MoveTable::kingTargetSquares[square][i]],targetSquareColor);
 
         if(targetSquareColor/8 != Board::activePlayer)
@@ -337,9 +341,13 @@ void MoveTable::GenerateAttacks()
 
     MoveTable::GenerateMoves(MoveTable::CurrentMoveList);
 
+    MoveTable::IsChecked = false;
+
     MoveTable::AttackList.clear();
     MoveTable::PinList.clear();
     MoveTable::PinDirectionList.clear();
+    MoveTable::CheckSquares.clear();
+    MoveTable::VirtualAttackList.clear();
 
     std::list<Move>::iterator it;
     int startSquarePiece;
@@ -393,6 +401,8 @@ void MoveTable::CheckForPins(int startSquare, int targetSquare)
     int dir, dirIndex;
 
     int pinTargetSquare;
+
+    bool IsVirtual = false;
 
     Board::ReadSquare(startSquare, startFile, startRank);
     Board::ReadSquare(targetSquare, targetFile, targetRank);
@@ -458,6 +468,11 @@ void MoveTable::CheckForPins(int startSquare, int targetSquare)
     for(int i=1;i<=MoveTable::numSquaresToEdge[targetSquare][dirIndex];i++)
     {
         pinTargetSquare = targetSquare + dir*i;
+
+        if(IsVirtual)
+        {
+            MoveTable::VirtualAttackList.push_back(pinTargetSquare);
+        }
         
         if(Board::squareState[pinTargetSquare] != 0)
         {
@@ -471,7 +486,7 @@ void MoveTable::CheckForPins(int startSquare, int targetSquare)
                 PinList.push_front(targetSquare);
                 PinDirectionList.push_front(dir);
                 std::cout << "Pinned dir: " << dir << std::endl;
-                break;
+                IsVirtual = true;
             }
             else
             {
@@ -480,6 +495,21 @@ void MoveTable::CheckForPins(int startSquare, int targetSquare)
         }
 
     }
+
+    ///CHECKING FOR CHECKS
+    if(Piece::ToType(Board::squareState[targetSquare]) == Piece::king)
+    {
+        MoveTable::IsChecked = true;
+
+        std::list<int> thisList;
+        for(int i=targetSquare-dir;i!=startSquare;i-=dir)
+        {
+            thisList.push_back(i);
+        }
+        thisList.push_back(startSquare);
+        MoveTable::CheckSquares.push_back(thisList);
+    }
+
 }
 
 bool MoveTable::IsPinned(int square)
@@ -516,6 +546,17 @@ bool MoveTable::IsAttacked(int square)
     std::list<int>::iterator it;
 
     for(it=MoveTable::AttackList.begin();it!=MoveTable::AttackList.end();it++)
+        if(*it == square)
+            return true;
+    
+    return false;
+}
+
+bool MoveTable::IsVirtuallyAttacked(int square)
+{
+    std::list<int>::iterator it;
+
+    for(it=MoveTable::VirtualAttackList.begin();it!=MoveTable::VirtualAttackList.end();it++)
         if(*it == square)
             return true;
     

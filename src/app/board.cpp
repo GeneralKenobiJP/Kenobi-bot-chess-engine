@@ -267,7 +267,10 @@ void Board::SwitchPlayer()
 
     SpriteHandler::ClearDebug();
     //SpriteHandler::DrawDebug(MoveTable::AttackList, sf::Color::Magenta,0);
-    SpriteHandler::DrawDebug(MoveTable::PinList, sf::Color::Cyan,45);
+    SpriteHandler::DrawDebug(MoveTable::PinList, sf::Color::Cyan,31);
+    SpriteHandler::DrawDebug(MoveTable::VirtualAttackList, sf::Color::Green,62);
+    for(int i=0;i<MoveTable::CheckSquares.size();i++)
+        SpriteHandler::DrawDebug(MoveTable::CheckSquares[i], sf::Color::Black, 0);
 
     std::cout << "switcheroo, now: " << Board::activePlayer << std::endl;
 }
