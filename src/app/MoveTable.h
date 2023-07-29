@@ -31,8 +31,10 @@ class MoveTable
     static std::list<int> PinList; //list of squares with pieces pinned to their king 
     static std::list<int> PinDirectionList; //list of pin directions (pinned piece can move along the direction)
     static std::list<int> VirtualAttackList; //list of squares behind the king (if checked) which would be attacked but for the king
+    static std::list<int> DefenseList; //list of squares occupied by pieces that are defended (an enemy king cannot take them)
     static bool IsChecked;
-    static bool IsKnightCheck;
+    static short KnightCheckNum;
+    static int CheckingKnightSquare;
     static std::vector<std::list<int>> CheckSquares; //array of lists of squares along which the check is carried out (checking piece + squares where a check can be blocked)
     static short enPassantSquare; //shows a square, where an en passant capture is possible (-1 if none; initally -1 or set by FEN)
     static bool W_CanCastleKingside;
@@ -50,6 +52,8 @@ class MoveTable
     static void GenerateKingMoves(int square, std::list<Move> &moveList);
     static void GenerateAttacks();
     static void CheckForPins(int startSquare, int targetSquare);
+    static void CheckForKnightChecks(int targetSquare, int knightSquare);
+    static void CheckForPawnChecks(int targetSquare);
     static bool IsLegal(int startSquare, int targetSquare);
     static bool IsEnPassant(int targetSquare);
     static bool IsTwoSquareAdvance(int startSquare, int targetSquare);
@@ -57,4 +61,6 @@ class MoveTable
     static bool IsPinned(int square, int &pinDir);
     static bool IsAttacked(int square);
     static bool IsVirtuallyAttacked(int square);
+    static bool IsCoveringCheck(int square);
+    static bool IsDefended(int targetSquare);
 };

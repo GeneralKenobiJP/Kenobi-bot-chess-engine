@@ -23,8 +23,10 @@ std::list<int> MoveTable::pawnAttackList;
 std::list<int> MoveTable::PinDirectionList;
 std::list<int> MoveTable::VirtualAttackList;
 bool MoveTable::IsChecked = false;
-bool MoveTable::IsKnightCheck = false;
+short MoveTable::KnightCheckNum = 0;
 std::vector<std::list<int>> MoveTable::CheckSquares;
+int MoveTable::CheckingKnightSquare = -1;
+std::list<int> MoveTable::DefenseList;
 
 void MoveTable::CalculateStartMoveData()
 {
@@ -106,6 +108,7 @@ std::list<Move> MoveTable::GenerateMoves()
     int pieceColor;
 
     MoveTable::pawnAttackList.clear();
+    //MoveTable::DefenseList.clear();
 
     for(int i=0;i<64;i++)
     {
@@ -166,11 +169,16 @@ void MoveTable::GenerateLongRangeMoves(int square, int pieceType, std::list<Move
         for(int sq=1;sq<=MoveTable::numSquaresToEdge[square][dir];sq++)
         {
             targetSquare = square + MoveTable::directionShift[dir] * sq;
+
+            if(MoveTable::IsChecked && !MoveTable::IsCoveringCheck(targetSquare))
+                continue;
+
             targetSquareState = Board::squareState[targetSquare];
             Piece::ReadPieceColor(targetSquareState,targetSquarePieceColor);
             
             if(targetSquarePieceColor/8 == Board::activePlayer) //our piece is blocking the way
             {
+                MoveTable::DefenseList.push_back(targetSquare);
                 break;
             }
 
@@ -195,12 +203,17 @@ void MoveTable::GenerateKnightMoves(int square, std::list<Move> &moveList)
 
     for(int i=0;i<MoveTable::knightTargetSquares[square].size();i++)
     {
+        if(MoveTable::IsChecked && !MoveTable::IsCoveringCheck(MoveTable::knightTargetSquares[square][i]))
+            continue;
+
         Piece::ReadPieceColor(Board::squareState[MoveTable::knightTargetSquares[square][i]],targetSquareColor);
 
         if(targetSquareColor/8 != Board::activePlayer)
         {
             moveList.push_front(Move(square,knightTargetSquares[square][i]));
         }
+        else
+            MoveTable::DefenseList.push_back(knightTargetSquares[square][i]);
     }
 }
 
@@ -230,9 +243,12 @@ void MoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
     if((IsPinned && std::abs(pinDir) == std::abs(pawnMoveShift)) || !IsPinned)
     {
         targetSquare = square + pawnMoveShift;
-        if(Board::squareState[targetSquare]==0 && targetSquare<64 && targetSquare >= 0)
+        if(!MoveTable::IsChecked || MoveTable::IsCoveringCheck(targetSquare))
         {
-            moveList.push_front(Move(square,targetSquare));
+            if(Board::squareState[targetSquare]==0 && targetSquare<64 && targetSquare >= 0)
+            {
+                moveList.push_front(Move(square,targetSquare));
+            }
         }
     }
     
@@ -242,6 +258,10 @@ void MoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
             continue;
 
         targetSquare = square + pawnAttackShift[i];
+
+        if(MoveTable::IsChecked && !MoveTable::IsCoveringCheck(targetSquare))
+            continue;
+
         if(targetSquare<0 || targetSquare>63)
             break;
         if((targetSquare % 8 != square % 8 - 1) && (targetSquare % 8 != square % 8 + 1)) //preventing from going around the board
@@ -259,6 +279,8 @@ void MoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
         {
             if(targetSquareColor/8 != Board::activePlayer)
                 moveList.push_front(Move(square,targetSquare));
+            else
+                MoveTable::DefenseList.push_back(targetSquare);
             
             continue;
         }
@@ -282,6 +304,8 @@ void MoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
         if(!IsPinned || (IsPinned && std::abs(pinDir) == std::abs(pawnMoveShift)))
         {
             targetSquare = square + 2*pawnMoveShift;
+            if(MoveTable::IsChecked && !MoveTable::IsCoveringCheck(targetSquare))
+                return;
             int passingSquare = square + pawnMoveShift;
             if(Board::squareState[targetSquare]==0 && Board::squareState[passingSquare] == 0)
                 moveList.push_front(Move(square,targetSquare));
@@ -299,12 +323,20 @@ void MoveTable::GenerateKingMoves(int square, std::list<Move> &moveList)
         if(MoveTable::IsAttacked(MoveTable::kingTargetSquares[square][i]))
             continue;
 
+        if(MoveTable::IsVirtuallyAttacked(MoveTable::kingTargetSquares[square][i]))
+            continue;
+
+        if(MoveTable::IsDefended(MoveTable::kingTargetSquares[square][i]))
+            continue;
+
         Piece::ReadPieceColor(Board::squareState[MoveTable::kingTargetSquares[square][i]],targetSquareColor);
 
         if(targetSquareColor/8 != Board::activePlayer)
         {
             moveList.push_front(Move(square,kingTargetSquares[square][i]));
         }
+        else if(targetSquareColor != 0)
+            MoveTable::DefenseList.push_back(kingTargetSquares[square][i]);
     }
 }
 
@@ -339,9 +371,13 @@ bool MoveTable::IsTwoSquareAdvance(int startSquare, int targetSquare) //we're as
 void MoveTable::GenerateAttacks()
 {
 
+    MoveTable::DefenseList.clear();
+
     MoveTable::GenerateMoves(MoveTable::CurrentMoveList);
 
     MoveTable::IsChecked = false;
+    MoveTable::KnightCheckNum = 0;
+    MoveTable::CheckingKnightSquare = -1;
 
     MoveTable::AttackList.clear();
     MoveTable::PinList.clear();
@@ -373,6 +409,12 @@ void MoveTable::GenerateAttacks()
         if(Piece::IsLongRange(startSquareType))
             if(Board::squareState[it->targetSquare] != 0)
                 CheckForPins(it->startSquare,it->targetSquare);
+
+        if(startSquareType == Piece::knight)
+            CheckForKnightChecks(it->targetSquare, it->startSquare);
+
+        if(startSquareType == Piece::pawn)
+            CheckForPawnChecks(it->targetSquare);
     }
 
     std::cout << "And for pawns" << std::endl;
@@ -387,8 +429,11 @@ void MoveTable::GenerateAttacks()
 
     MoveTable::AttackList.unique();
     MoveTable::PinList.unique();
+    MoveTable::DefenseList.unique();
 
     std::cout << "Well: " << MoveTable::AttackList.size() << std::endl;
+    std::cout << "Hath our monarch been checked? " << MoveTable::IsChecked << std::endl;
+    std::cout << "The knight pale hath attacked in the count of " << MoveTable::KnightCheckNum << std::endl;
 }
 
 void MoveTable::CheckForPins(int startSquare, int targetSquare)
@@ -497,7 +542,7 @@ void MoveTable::CheckForPins(int startSquare, int targetSquare)
     }
 
     ///CHECKING FOR CHECKS
-    if(Piece::ToType(Board::squareState[targetSquare]) == Piece::king)
+    if(Piece::IsEnemyKing(Board::squareState[targetSquare]))
     {
         MoveTable::IsChecked = true;
 
@@ -558,6 +603,66 @@ bool MoveTable::IsVirtuallyAttacked(int square)
 
     for(it=MoveTable::VirtualAttackList.begin();it!=MoveTable::VirtualAttackList.end();it++)
         if(*it == square)
+            return true;
+    
+    return false;
+}
+
+bool MoveTable::IsCoveringCheck(int square)
+{
+    if(MoveTable::KnightCheckNum == 1)
+    {
+        if(square != MoveTable::CheckingKnightSquare)
+            return false;
+    }
+    else if(MoveTable::KnightCheckNum > 1)
+        return false;
+
+    std::list<int>::iterator it;
+    bool IsThisPathCovered = false;
+
+    for(int i=0;i<MoveTable::CheckSquares.size();i++)
+    {
+        for(it = MoveTable::CheckSquares[i].begin();it!=MoveTable::CheckSquares[i].end();it++)
+        {
+            if(*it == square)
+            {
+                IsThisPathCovered = true;
+                break;
+            }
+        }
+        if(!IsThisPathCovered)
+            return false;
+
+        IsThisPathCovered = false;
+    }
+
+    return true;
+}
+
+void MoveTable::CheckForKnightChecks(int targetSquare, int knightSquare)
+{
+    if(Piece::IsEnemyKing(Board::squareState[targetSquare]))
+    {
+        //std::cout << "We have verified this potential knight adversary to be the king" << std::endl;
+        MoveTable::IsChecked = true;
+        MoveTable::KnightCheckNum++;
+        MoveTable::CheckingKnightSquare = knightSquare;
+    }
+}
+void MoveTable::CheckForPawnChecks(int targetSquare)
+{
+    if(Piece::IsEnemyKing(Board::squareState[targetSquare]))
+    {
+        MoveTable::IsChecked = true;
+    }
+}
+bool MoveTable::IsDefended(int targetSquare)
+{
+    std::list<int>::iterator it;
+
+    for(it=MoveTable::DefenseList.begin();it!=MoveTable::DefenseList.end();it++)
+        if(*it == targetSquare)
             return true;
     
     return false;
