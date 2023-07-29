@@ -27,6 +27,7 @@ short MoveTable::KnightCheckNum = 0;
 std::vector<std::list<int>> MoveTable::CheckSquares;
 int MoveTable::CheckingKnightSquare = -1;
 std::list<int> MoveTable::DefenseList;
+std::list<int> MoveTable::kingVirtualAttackList;
 
 void MoveTable::CalculateStartMoveData()
 {
@@ -108,7 +109,7 @@ std::list<Move> MoveTable::GenerateMoves()
     int pieceColor;
 
     MoveTable::pawnAttackList.clear();
-    //MoveTable::DefenseList.clear();
+    MoveTable::kingVirtualAttackList.clear();
 
     for(int i=0;i<64;i++)
     {
@@ -321,10 +322,16 @@ void MoveTable::GenerateKingMoves(int square, std::list<Move> &moveList)
     for(int i=0;i<MoveTable::kingTargetSquares[square].size();i++)
     {
         if(MoveTable::IsAttacked(MoveTable::kingTargetSquares[square][i]))
+        {
+            MoveTable::kingVirtualAttackList.push_back(kingTargetSquares[square][i]);
             continue;
+        }
 
         if(MoveTable::IsVirtuallyAttacked(MoveTable::kingTargetSquares[square][i]))
+        {
+            MoveTable::kingVirtualAttackList.push_back(kingTargetSquares[square][i]);
             continue;
+        }
 
         if(MoveTable::IsDefended(MoveTable::kingTargetSquares[square][i]))
             continue;
@@ -337,6 +344,38 @@ void MoveTable::GenerateKingMoves(int square, std::list<Move> &moveList)
         }
         else if(targetSquareColor != 0)
             MoveTable::DefenseList.push_back(kingTargetSquares[square][i]);
+    }
+
+    if(MoveTable::IsChecked)
+        return;
+
+    if(Board::activePlayer == 1) //white
+    {
+        if(MoveTable::W_CanCastleKingside)
+            if(Board::squareState[7]==13) //white rook
+                if(Board::squareState[5]==0 && Board::squareState[6] == 0)
+                    if(!MoveTable::IsAttacked(5) && !MoveTable::IsAttacked(6))
+                        moveList.push_front(Move(square,6));
+
+        if(MoveTable::W_CanCastleQueenside)
+            if(Board::squareState[0]==13) //white rook
+                if(Board::squareState[2]==0 && Board::squareState[3] == 0)
+                    if(!MoveTable::IsAttacked(2) && !MoveTable::IsAttacked(3))
+                        moveList.push_front(Move(square,2));
+    }
+    if(Board::activePlayer == 2) //black
+    {
+        if(MoveTable::B_CanCastleKingside)
+            if(Board::squareState[63]==21) //black rook
+                if(Board::squareState[61]==0 && Board::squareState[62] == 0)
+                    if(!MoveTable::IsAttacked(61) && !MoveTable::IsAttacked(62))
+                        moveList.push_front(Move(square,62));
+
+        if(MoveTable::B_CanCastleQueenside)
+            if(Board::squareState[56]==21) //black rook
+                if(Board::squareState[58]==0 && Board::squareState[59] == 0)
+                    if(!MoveTable::IsAttacked(58) && !MoveTable::IsAttacked(59))
+                        moveList.push_front(Move(square,58));
     }
 }
 
@@ -425,6 +464,11 @@ void MoveTable::GenerateAttacks()
     {
         MoveTable::AttackList.push_front(*iter);
         std::cout << "Pushed pawn for attack:  "<< *iter << std::endl;
+    }
+    for(iter = MoveTable::kingVirtualAttackList.begin(); iter!= MoveTable::kingVirtualAttackList.end();iter++)
+    {
+        MoveTable::AttackList.push_front(*iter);
+        //std::cout << "Pushed king for attack:  "<< *iter << std::endl;
     }
 
     MoveTable::AttackList.unique();
@@ -665,5 +709,44 @@ bool MoveTable::IsDefended(int targetSquare)
         if(*it == targetSquare)
             return true;
     
+    return false;
+}
+bool MoveTable::IsCastling(int startSquare, int targetSquare, bool &IsKingside)
+{
+    //we are assuming we've checked for a king on the startSquare and checked for castling booleans in the move generation
+    if(Board::activePlayer == 1)
+    {
+        if(startSquare != 4)
+            return false;
+
+        if(targetSquare == 6)
+        {
+            IsKingside = 1;
+            return true;
+        }
+        else if(targetSquare == 2)
+        {
+            IsKingside = 0;
+            return true;
+        }
+        return false;
+    }
+    else if(Board::activePlayer == 2)
+    {
+        if(startSquare != 60)
+            return false;
+
+        if(targetSquare == 62)
+        {
+            IsKingside = 1;
+            return true;
+        }
+        else if(targetSquare == 58)
+        {
+            IsKingside = 0;
+            return true;
+        }
+        return false;
+    }
     return false;
 }

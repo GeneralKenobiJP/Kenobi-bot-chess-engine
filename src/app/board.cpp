@@ -167,6 +167,8 @@ void Board::HandleMouseReleased(sf::Vector2i position)
 
                     if(pieceType == Piece::king)
                     {
+                        bool IsKingside;
+
                         if(pieceColor == Piece::white)
                         {
                             MoveTable::W_CanCastleKingside = 0;
@@ -176,6 +178,22 @@ void Board::HandleMouseReleased(sf::Vector2i position)
                         {
                             MoveTable::B_CanCastleKingside = 0;
                             MoveTable::B_CanCastleQueenside = 0;
+                        }
+                    
+                        if(MoveTable::IsCastling(Board::selectedSquare,i,IsKingside))
+                        {
+                            if(IsKingside)
+                            {
+                                Piece::RemovePieceSprite(i+1);
+                                Board::RemoveFromSquare(i+1);
+                                Piece::SetPiece(Piece::rook,Piece::ToColor(Board::squareState[Board::selectedSquare]),i-1);
+                            }
+                            else
+                            {
+                                Piece::RemovePieceSprite(i-2);
+                                Board::RemoveFromSquare(i-2);
+                                Piece::SetPiece(Piece::rook,Piece::ToColor(Board::squareState[Board::selectedSquare]),i+1);
+                            }
                         }
                     }
                     
