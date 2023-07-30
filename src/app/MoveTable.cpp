@@ -760,7 +760,7 @@ bool MoveTable::IsCastling(int startSquare, int targetSquare, bool &IsKingside)
 
 void MoveTable::CheckState()
 {
-    if(MoveTable::AttackList.size() == 0)
+    if(MoveTable::CurrentMoveList.size() == 0)
     {
         if(MoveTable::IsChecked)
         {

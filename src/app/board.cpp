@@ -284,11 +284,11 @@ void Board::SwitchPlayer()
     MoveTable::GenerateAttacks();
     Board::activePlayer = (Board::activePlayer % 2) + 1;
 
-    SpriteHandler::ClearDebug();
+    //SpriteHandler::ClearDebug();
     //SpriteHandler::DrawDebug(MoveTable::AttackList, sf::Color::Magenta,0);
     //SpriteHandler::DrawDebug(MoveTable::PinList, sf::Color::Cyan,31);
-    std::cout << MoveTable::VirtualAttackList.size() << std::endl;
-    SpriteHandler::DrawDebug(MoveTable::VirtualAttackList, sf::Color::Green,0);
+    //std::cout << MoveTable::VirtualAttackList.size() << std::endl;
+    //SpriteHandler::DrawDebug(MoveTable::VirtualAttackList, sf::Color::Green,0);
     //SpriteHandler::DrawDebug(MoveTable::DefenseList, sf::Color::Yellow,31);
     //for(int i=0;i<MoveTable::CheckSquares.size();i++)
         //SpriteHandler::DrawDebug(MoveTable::CheckSquares[i], sf::Color::Black, 0);
