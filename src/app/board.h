@@ -38,4 +38,6 @@ public:
     static void SwitchPlayer();
     static void Promote(int square, int color);
     static void HandlePromotion(int promotionSpriteIndex);
+    static void DeclareWin(int victoriousPlayer);
+    static void DeclareDraw();
 };

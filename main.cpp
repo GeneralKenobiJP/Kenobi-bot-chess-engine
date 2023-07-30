@@ -85,7 +85,7 @@ int main(){
                         //std::cout << Board::selectedSquare << std::endl;
                         for(int i=0;i<SpriteHandler::pieceNum;i++)
                         {
-                            if(SpriteHandler::pieceSprite[i].getGlobalBounds().contains(mousePosition.x,mousePosition.y))
+                            if(SpriteHandler::pieceSprite[i].getGlobalBounds().contains(Board::squarePos[Board::selectedSquare].centerX,Board::squarePos[Board::selectedSquare].centerY))
                             {
                                 //std::cout << "true" << std::endl;
                                 Piece::spritePtr = &SpriteHandler::pieceSprite[i];

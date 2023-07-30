@@ -171,9 +171,6 @@ void MoveTable::GenerateLongRangeMoves(int square, int pieceType, std::list<Move
         {
             targetSquare = square + MoveTable::directionShift[dir] * sq;
 
-            if(MoveTable::IsChecked && !MoveTable::IsCoveringCheck(targetSquare))
-                continue;
-
             targetSquareState = Board::squareState[targetSquare];
             Piece::ReadPieceColor(targetSquareState,targetSquarePieceColor);
             
@@ -183,7 +180,11 @@ void MoveTable::GenerateLongRangeMoves(int square, int pieceType, std::list<Move
                 break;
             }
 
-            moveList.push_front(Move(square,targetSquare));
+            if(!MoveTable::IsChecked || MoveTable::IsCoveringCheck(targetSquare))
+            {
+                moveList.push_front(Move(square,targetSquare));
+            }
+
             std::cout << square << ' ' << targetSquare << std::endl;
 
             if(targetSquarePieceColor != 0) //opponent's piece is blocking the way
@@ -431,7 +432,7 @@ void MoveTable::GenerateAttacks()
 
     for(it=MoveTable::CurrentMoveList.begin();it!=MoveTable::CurrentMoveList.end();it++)
     {
-        std::cout << "Here, sir" << std::endl;
+        //std::cout << "Here, sir" << std::endl;
 
         if(Piece::ToType(Board::squareState[it->startSquare]) == Piece::pawn)
             if(it->startSquare % 8 == it->targetSquare % 8) //this is not an attack for pawn (detection of the push foward move)
@@ -491,7 +492,7 @@ void MoveTable::CheckForPins(int startSquare, int targetSquare)
 
     int pinTargetSquare;
 
-    bool IsVirtual = false;
+    //bool IsVirtual = false;
 
     Board::ReadSquare(startSquare, startFile, startRank);
     Board::ReadSquare(targetSquare, targetFile, targetRank);
@@ -557,11 +558,6 @@ void MoveTable::CheckForPins(int startSquare, int targetSquare)
     for(int i=1;i<=MoveTable::numSquaresToEdge[targetSquare][dirIndex];i++)
     {
         pinTargetSquare = targetSquare + dir*i;
-
-        if(IsVirtual)
-        {
-            MoveTable::VirtualAttackList.push_back(pinTargetSquare);
-        }
         
         if(Board::squareState[pinTargetSquare] != 0)
         {
@@ -575,7 +571,7 @@ void MoveTable::CheckForPins(int startSquare, int targetSquare)
                 PinList.push_front(targetSquare);
                 PinDirectionList.push_front(dir);
                 std::cout << "Pinned dir: " << dir << std::endl;
-                IsVirtual = true;
+                break;
             }
             else
             {
@@ -585,15 +581,24 @@ void MoveTable::CheckForPins(int startSquare, int targetSquare)
 
     }
 
-    ///CHECKING FOR CHECKS
+    ///CHECKING FOR CHECKS AND VIRTUAL ATTACKS
     if(Piece::IsEnemyKing(Board::squareState[targetSquare]))
     {
         MoveTable::IsChecked = true;
 
+        int thisSquare;
         std::list<int> thisList;
         for(int i=targetSquare-dir;i!=startSquare;i-=dir)
         {
             thisList.push_back(i);
+        }
+        for(int i=1;i <= MoveTable::numSquaresToEdge[targetSquare][dirIndex];i++)
+        {
+            thisSquare = targetSquare + i*dir;
+            if(Board::squareState[thisSquare] != 0)
+                break;
+            std::cout << "Virtual square: " << thisSquare << std::endl;
+            MoveTable::VirtualAttackList.push_back(thisSquare);
         }
         thisList.push_back(startSquare);
         MoveTable::CheckSquares.push_back(thisList);
@@ -654,6 +659,8 @@ bool MoveTable::IsVirtuallyAttacked(int square)
 
 bool MoveTable::IsCoveringCheck(int square)
 {
+    if(!MoveTable::IsChecked)
+        return true; //whatever
     if(MoveTable::KnightCheckNum == 1)
     {
         if(square != MoveTable::CheckingKnightSquare)
@@ -749,4 +756,17 @@ bool MoveTable::IsCastling(int startSquare, int targetSquare, bool &IsKingside)
         return false;
     }
     return false;
+}
+
+void MoveTable::CheckState()
+{
+    if(MoveTable::AttackList.size() == 0)
+    {
+        if(MoveTable::IsChecked)
+        {
+            Board::DeclareWin((Board::activePlayer % 2) + 1);
+        }
+        else
+            Board::DeclareDraw();
+    }
 }

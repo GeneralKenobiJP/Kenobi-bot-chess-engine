@@ -247,6 +247,7 @@ void Board::HandleMouseReleased(sf::Vector2i position)
     {
         Board::RemoveFromSquare(Board::selectedSquare);
         MoveTable::GenerateMoves(MoveTable::CurrentMoveList);
+        MoveTable::CheckState();
     }
 }
 
@@ -286,10 +287,11 @@ void Board::SwitchPlayer()
     SpriteHandler::ClearDebug();
     //SpriteHandler::DrawDebug(MoveTable::AttackList, sf::Color::Magenta,0);
     //SpriteHandler::DrawDebug(MoveTable::PinList, sf::Color::Cyan,31);
-    SpriteHandler::DrawDebug(MoveTable::VirtualAttackList, sf::Color::Green,62);
-    SpriteHandler::DrawDebug(MoveTable::DefenseList, sf::Color::Yellow,31);
-    for(int i=0;i<MoveTable::CheckSquares.size();i++)
-        SpriteHandler::DrawDebug(MoveTable::CheckSquares[i], sf::Color::Black, 0);
+    std::cout << MoveTable::VirtualAttackList.size() << std::endl;
+    SpriteHandler::DrawDebug(MoveTable::VirtualAttackList, sf::Color::Green,0);
+    //SpriteHandler::DrawDebug(MoveTable::DefenseList, sf::Color::Yellow,31);
+    //for(int i=0;i<MoveTable::CheckSquares.size();i++)
+        //SpriteHandler::DrawDebug(MoveTable::CheckSquares[i], sf::Color::Black, 0);
 
     std::cout << "switcheroo, now: " << Board::activePlayer << std::endl;
 }
@@ -328,4 +330,15 @@ void Board::HandlePromotion(int promotionSpriteIndex)
     Board::selectedSquare = -1;
     Board::SwitchPlayer();
     MoveTable::GenerateMoves(MoveTable::CurrentMoveList);
+    MoveTable::CheckState();
+}
+
+void Board::DeclareWin(int victoriousPlayer)
+{
+    std::cout << "Win" << std::endl;
+    std::cout << "Won player " << victoriousPlayer << std::endl;
+}
+void Board::DeclareDraw()
+{
+    std::cout << "Draw" << std::endl;
 }
