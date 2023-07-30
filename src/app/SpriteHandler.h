@@ -10,6 +10,9 @@ class SpriteHandler //this class does not handle boardSprite, which is handled b
     static const sf::Color moveDotColor;
     static const sf::Color promotionMenuColor;
     static std::vector<sf::CircleShape> debugShapes;
+    static const int FONT_SIZE_A=26;
+    static sf::Font FontA;
+    static sf::Text CurrentEvaluationText;
 
     public:
     static sf::IntRect pieceTextureRect[12];
@@ -35,4 +38,7 @@ class SpriteHandler //this class does not handle boardSprite, which is handled b
     static void DrawDebug(std::list<int> feature, sf::Color color, int offset);
     static void DrawDebugShapes(sf::RenderWindow &window);
     static void ClearDebug();
+    static void DisplayCurrentEvaluation();
+    static void DrawTexts(sf::RenderWindow &window);
+    static void LoadFonts(int posX, int posY, std::string dir);
 };

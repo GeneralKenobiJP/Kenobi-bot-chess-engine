@@ -48,8 +48,8 @@ void Evaluation::CountMaterial(int square, int &whiteVal, int &blackVal)
 
 int Evaluation::Evaluate()
 {
-    int whiteValue;
-    int blackValue;
+    int whiteValue=0;
+    int blackValue=0;
     int value;
 
     for(int i=0;i<64;i++)

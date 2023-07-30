@@ -13,6 +13,10 @@ sf::RectangleShape SpriteHandler::promotionMenu;
 sf::Sprite SpriteHandler::promotionPieceSprite[8];
 bool SpriteHandler::IsPromotion = false;
 std::vector<sf::CircleShape> SpriteHandler::debugShapes;
+sf::Font SpriteHandler::FontA;
+sf::Text SpriteHandler::CurrentEvaluationText;
+
+const std::string FONT_A_DIR = "img/fonts/Roboto-Light.ttf";
 
 void SpriteHandler::LoadPieceSprites(std::vector<sf::Sprite> &Sprite, sf::Texture &texture)
 {
@@ -264,4 +268,22 @@ void SpriteHandler::DrawDebugShapes(sf::RenderWindow &window)
 void SpriteHandler::ClearDebug()
 {
     SpriteHandler::debugShapes.clear();
+}
+
+void SpriteHandler::DisplayCurrentEvaluation()
+{
+    SpriteHandler::CurrentEvaluationText.setString(std::to_string(Board::CurrentEvalution/10));
+}
+
+void SpriteHandler::LoadFonts(int posX, int posY, std::string dir)
+{
+    FontA.loadFromFile(dir+FONT_A_DIR);
+    SpriteHandler::CurrentEvaluationText.setFont(FontA);
+    SpriteHandler::CurrentEvaluationText.setPosition(posX,posY);
+    SpriteHandler::CurrentEvaluationText.setCharacterSize(SpriteHandler::FONT_SIZE_A);
+}
+
+void SpriteHandler::DrawTexts(sf::RenderWindow &window)
+{
+    window.draw(SpriteHandler::CurrentEvaluationText);
 }

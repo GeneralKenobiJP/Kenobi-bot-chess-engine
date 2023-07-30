@@ -4,6 +4,7 @@
 #include "MoveTable.h"
 #include "SpriteHandler.h"
 #include <iostream>
+#include "Evaluation.h"
 
 int Board::squareState[64];
 coordinates Board::squarePos[64];
@@ -13,6 +14,7 @@ short int Board::selectedSquare=-1;
 bool Board::isMove=0;
 unsigned short Board::activePlayer;
 short Board::promotionSquare=-1;
+int Board::CurrentEvalution=0;
 
 void Board::InitializeBoard(int x, int y)
 {
@@ -283,6 +285,8 @@ void Board::SwitchPlayer()
 {
     MoveTable::GenerateAttacks();
     Board::activePlayer = (Board::activePlayer % 2) + 1;
+    Board::CurrentEvalution = Evaluation::Evaluate();
+    SpriteHandler::DisplayCurrentEvaluation();
 
     //SpriteHandler::ClearDebug();
     //SpriteHandler::DrawDebug(MoveTable::AttackList, sf::Color::Magenta,0);

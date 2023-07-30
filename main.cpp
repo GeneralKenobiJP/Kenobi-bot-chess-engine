@@ -45,6 +45,9 @@ int main(){
     Board::InitializeBoard(windowX,windowY);
     MoveTable::CalculateStartMoveData();
 
+    SpriteHandler::LoadFonts(650,300,thisDir);
+    SpriteHandler::DisplayCurrentEvaluation();
+
     whiteClock.InitializeClock(650,400,thisDir);
     blackClock.InitializeClock(650,200,thisDir);
     whiteClock.SetTime(600);
@@ -167,6 +170,7 @@ int main(){
         SpriteHandler::DrawDots(window);
         SpriteHandler::DrawPromotionMenu(window);
         SpriteHandler::DrawDebugShapes(window);
+        SpriteHandler::DrawTexts(window);
         window.display();
     }
     return 0;

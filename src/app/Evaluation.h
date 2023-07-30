@@ -9,5 +9,7 @@ class Evaluation
     static const int queenValue = 90;
 
     static void CountMaterial(int square, int &whiteVal, int &blackVal);
+    
+    public:
     static int Evaluate();
 };
