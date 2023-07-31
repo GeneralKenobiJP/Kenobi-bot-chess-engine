@@ -43,6 +43,9 @@ class MoveTable
     static bool W_CanCastleQueenside;
     static bool B_CanCastleQueenside;
 
+    //Draw
+    static int consecutiveMoves; //if =100, any player can declare a draw; if =150, there is an automatic draw
+
     //Fill numSquaresToEdge
     static void CalculateStartMoveData();
     static std::list<Move> GenerateMoves();

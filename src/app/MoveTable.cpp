@@ -28,6 +28,7 @@ std::vector<std::list<int>> MoveTable::CheckSquares;
 int MoveTable::CheckingKnightSquare = -1;
 std::list<int> MoveTable::DefenseList;
 std::list<int> MoveTable::kingVirtualAttackList;
+int MoveTable::consecutiveMoves=0;
 
 void MoveTable::CalculateStartMoveData()
 {
@@ -110,6 +111,11 @@ std::list<Move> MoveTable::GenerateMoves()
 
     MoveTable::pawnAttackList.clear();
     MoveTable::kingVirtualAttackList.clear();
+
+    if(MoveTable::consecutiveMoves >= 150)
+        Board::DeclareDraw();
+    else if(MoveTable::consecutiveMoves == 100)
+        Board::CanDeclareDraw = true;
 
     for(int i=0;i<64;i++)
     {

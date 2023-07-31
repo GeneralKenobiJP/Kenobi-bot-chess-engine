@@ -16,6 +16,7 @@ bool Board::isMove=0;
 unsigned short Board::activePlayer;
 short Board::promotionSquare=-1;
 int Board::CurrentEvalution=0;
+bool Board::CanDeclareDraw=0;
 
 void Board::InitializeBoard(int x, int y)
 {
@@ -87,6 +88,7 @@ void Board::HandleMouseInput(sf::Vector2i position)
 void Board::HandleMouseReleased(sf::Vector2i position)
 {
     bool hasChanged = 1;
+    bool hasCaptured = 0;
     int pieceType;
     int pieceColor;
     Piece::ReadPiece(Board::squareState[Board::selectedSquare],pieceType,pieceColor);
@@ -118,6 +120,7 @@ void Board::HandleMouseReleased(sf::Vector2i position)
                     {
                         if(MoveTable::IsEnPassant(i))
                         {
+                            hasCaptured = true;
                             if(Board::activePlayer==1)
                             {
                                 Piece::RemovePieceSprite(i-8);
@@ -147,6 +150,7 @@ void Board::HandleMouseReleased(sf::Vector2i position)
                                 }
                                 else //enemy piece
                                 {
+                                    hasCaptured = true;
                                     Piece::RemovePieceSprite(i);
                                     Board::RemoveFromSquare(i);
                                     Board::Promote(i, pieceColor);
@@ -224,6 +228,7 @@ void Board::HandleMouseReleased(sf::Vector2i position)
                     {
                         Piece::RemovePieceSprite(i);
                         Board::RemoveFromSquare(i);
+                        hasCaptured = true;
                     }
                     
                 }
@@ -248,6 +253,11 @@ void Board::HandleMouseReleased(sf::Vector2i position)
     }
     if(hasChanged)
     {
+        if(pieceType != Piece::pawn && !hasCaptured)
+            MoveTable::consecutiveMoves++;
+        else
+            MoveTable::consecutiveMoves=0;
+
         Board::RemoveFromSquare(Board::selectedSquare);
         MoveTable::GenerateMoves(MoveTable::CurrentMoveList);
         MoveTable::CheckState();

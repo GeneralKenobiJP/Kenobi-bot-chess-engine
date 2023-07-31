@@ -27,6 +27,7 @@ public:
     static bool isMove;
 
     static int CurrentEvalution;
+    static bool CanDeclareDraw;
 
     static void InitializeBoard(int x, int y); //load squarePos and set squareState to 0
     static void PutOnSquare(int num, int piece, int color); //sets squareState to the input piece

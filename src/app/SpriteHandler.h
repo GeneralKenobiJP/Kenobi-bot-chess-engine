@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "MoveTable.h"
 #include <vector>
+#include "button.h"
 
 class SpriteHandler //this class does not handle boardSprite, which is handled by main.cpp instead
 {
