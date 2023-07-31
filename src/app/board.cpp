@@ -5,6 +5,7 @@
 #include "SpriteHandler.h"
 #include <iostream>
 #include "Evaluation.h"
+#include "clock.h"
 
 int Board::squareState[64];
 coordinates Board::squarePos[64];
@@ -287,6 +288,7 @@ void Board::SwitchPlayer()
     Board::activePlayer = (Board::activePlayer % 2) + 1;
     Board::CurrentEvalution = Evaluation::Evaluate();
     SpriteHandler::DisplayCurrentEvaluation();
+    ChessClock::SetActivePlayer(Board::activePlayer);
 
     //SpriteHandler::ClearDebug();
     //SpriteHandler::DrawDebug(MoveTable::AttackList, sf::Color::Magenta,0);
@@ -341,8 +343,10 @@ void Board::DeclareWin(int victoriousPlayer)
 {
     std::cout << "Win" << std::endl;
     std::cout << "Won player " << victoriousPlayer << std::endl;
+    Board::activePlayer = 0;
 }
 void Board::DeclareDraw()
 {
     std::cout << "Draw" << std::endl;
+    Board::activePlayer = 0;
 }

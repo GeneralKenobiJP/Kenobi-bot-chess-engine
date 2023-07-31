@@ -8,7 +8,7 @@
 #include "src/app/fenUtility.h"
 #include "src/app/clock.h"
 #include "src/app/MoveTable.h"
-#include <thread>
+//#include <thread>
 
 using namespace sf;
 
@@ -49,12 +49,14 @@ int main(){
     SpriteHandler::DisplayCurrentEvaluation();
 
     whiteClock.InitializeClock(650,400,thisDir);
-    blackClock.InitializeClock(650,200,thisDir);
+    blackClock.InitializeClock(650,200,thisDir,whiteClock,blackClock);
     whiteClock.SetTime(600);
     blackClock.SetTime(600);
 
     FEN::ReadPosition(FEN::startFEN);
     ChessClock::SetActivePlayer(1,whiteClock);
+    Thread clockThread(std::bind(&ChessClock::CountDown,whiteClock,blackClock));
+    clockThread.launch();
 
     MoveTable::GenerateMoves(MoveTable::CurrentMoveList);
     //SpriteHandler::DrawMoveDots(1,MoveTable::GenerateMoves());
@@ -158,9 +160,6 @@ int main(){
         {
             Piece::MovePiece(mousePosition);
         }
-
-        //std::thread clockThread(ChessClock::CountDown,whiteClock,blackClock);
-        //ChessClock::CountDown(whiteClock,blackClock);
 
         window.clear();
         window.draw(boardSprite);

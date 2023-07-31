@@ -4,6 +4,8 @@
 
 const std::string FONT_DIR = "img/fonts/Roboto-Light.ttf";
 ChessClock* ChessClock::chessClockPtr = nullptr;
+ChessClock* ChessClock::whiteClockPtr;
+ChessClock* ChessClock::blackClockPtr;
 
 void ChessClock::InitializeClock(int posX, int posY, std::string dir)
 {
@@ -16,6 +18,21 @@ void ChessClock::InitializeClock(int posX, int posY, std::string dir)
     clockText.setPosition(posX, posY);
     clockText.setCharacterSize(ChessClock::FONT_SIZE);
     clockText.setString("Test");
+}
+void ChessClock::InitializeClock(int posX, int posY, std::string dir, ChessClock &whiteClock, ChessClock &blackClock)
+{
+    //clockFont.loadFromFile("../../img/fonts/Roboto-Light.ttf");
+    if (!clockFont.loadFromFile(dir+FONT_DIR))
+    {
+        std::cout << "clockFont not loaded properly" << std::endl;
+    }
+    clockText.setFont(clockFont);
+    clockText.setPosition(posX, posY);
+    clockText.setCharacterSize(ChessClock::FONT_SIZE);
+    clockText.setString("Test");
+
+    ChessClock::whiteClockPtr = &whiteClock;
+    ChessClock::blackClockPtr = &blackClock;
 }
 void ChessClock::SetTime(int startingTime)
 {
@@ -71,21 +88,34 @@ void ChessClock::CountDown(ChessClock &whiteClock, ChessClock &blackClock)
     sf::Time startTime;
     sf::Time endTime;
     
-
-    if(Board::activePlayer!=0)
+    while(true)
     {
-        
-        startTime = timer.getElapsedTime();
-        endTime = startTime + sf::seconds(0.1f);
-        while(timer.getElapsedTime()<endTime);
-        chessClockPtr->timeLeft-=1;
-        chessClockPtr->SetTimeDisplayFormat();
+
+        if(Board::activePlayer!=0)
+        {
+            
+            startTime = timer.getElapsedTime();
+            endTime = startTime + sf::seconds(0.1f);
+            while(timer.getElapsedTime()<endTime);
+            chessClockPtr->timeLeft-=1;
+            chessClockPtr->SetTimeDisplayFormat();
+
+            if(chessClockPtr->timeLeft<=0)
+                Board::DeclareWin((Board::activePlayer % 2) + 1);
+        }
     }
 }
 void ChessClock::SetActivePlayer(unsigned short playerID, ChessClock &thisClock)
 {
-    Board::activePlayer = playerID;
+    //Board::activePlayer = playerID;
     ChessClock::chessClockPtr = &thisClock;
+}
+void ChessClock::SetActivePlayer(unsigned short playerID)
+{
+    if(playerID==1)
+        ChessClock::chessClockPtr = ChessClock::whiteClockPtr;
+    else if(playerID==2)
+        ChessClock::chessClockPtr = ChessClock::blackClockPtr;
 }
 /*void ChessClock::ThreadClock(ChessClock &whiteClock, ChessClock &blackClock)
 {

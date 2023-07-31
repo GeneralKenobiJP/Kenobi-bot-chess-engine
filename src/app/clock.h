@@ -16,6 +16,9 @@ class ChessClock
     int seconds;
     int minutes;
 
+    static ChessClock* whiteClockPtr;
+    static ChessClock* blackClockPtr;
+
     void SetTimeDisplayFormat();
 
     public:
@@ -23,9 +26,11 @@ class ChessClock
     static ChessClock* chessClockPtr;
 
     void InitializeClock(int posX, int posY, std::string dir); //initializes clock and sets positions to the input, it takes root directory for font search
+    void InitializeClock(int posX, int posY, std::string dir, ChessClock &whiteClock, ChessClock &blackClock); //initializes clock and sets positions to the input, it takes root directory for font search
     void SetTime(int startingTime);
     static void CountDown(ChessClock &whiteClock, ChessClock &blackClock); //decreases the timer
     static void SetActivePlayer(unsigned short playerID, ChessClock &thisClock);
+    static void SetActivePlayer(unsigned short playerID);
     //static void ThreadClock(ChessClock &whiteClock, ChessClock &blackClock); //function used for multi-threading the clock
     //maybe void Flag
 };
