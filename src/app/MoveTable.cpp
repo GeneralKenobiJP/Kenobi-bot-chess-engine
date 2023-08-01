@@ -29,6 +29,7 @@ int MoveTable::CheckingKnightSquare = -1;
 std::list<int> MoveTable::DefenseList;
 std::list<int> MoveTable::kingVirtualAttackList;
 int MoveTable::consecutiveMoves=0;
+std::list<Position> MoveTable::occurredPositions;
 
 void MoveTable::CalculateStartMoveData()
 {
@@ -775,4 +776,30 @@ void MoveTable::CheckState()
         else
             Board::DeclareDraw();
     }
+}
+
+void MoveTable::AddCurrentPosition()
+{
+    FEN currentFEN;
+    currentFEN.GetPosition();
+
+    //std::cout << "currentFEN: " << currentFEN.FENtext << std::endl;
+
+    std::list<Position>::iterator it;
+    for(it=MoveTable::occurredPositions.begin();it!=MoveTable::occurredPositions.end();it++)
+    {
+        std::cout << "here" << std::endl;
+        if(it->fen == currentFEN)
+        {
+            it->occurrenceNum++;
+            //std::cout << "num: " << it->occurrenceNum << std::endl;
+            if(it->occurrenceNum==5)
+                Board::DeclareDraw();
+            else if(it->occurrenceNum>=3)
+                Board::CanDeclareDraw = true; //change this shitty booleans
+            return;
+        }
+    }
+
+    MoveTable::occurredPositions.push_back(Position(currentFEN,0));
 }

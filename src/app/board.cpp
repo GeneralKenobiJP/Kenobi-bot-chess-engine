@@ -299,6 +299,7 @@ void Board::SwitchPlayer()
     Board::CurrentEvalution = Evaluation::Evaluate();
     SpriteHandler::DisplayCurrentEvaluation();
     ChessClock::SetActivePlayer(Board::activePlayer);
+    MoveTable::AddCurrentPosition();
 
     //SpriteHandler::ClearDebug();
     //SpriteHandler::DrawDebug(MoveTable::AttackList, sf::Color::Magenta,0);

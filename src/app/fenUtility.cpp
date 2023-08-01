@@ -216,7 +216,7 @@ void FEN::GetPosition()
     if (thisFen[thisFen.length() - 1] != ' ')
         thisFen += ' ';
 
-    if(MoveTable::enPassantSquare == -1)
+    if (MoveTable::enPassantSquare == -1)
         thisFen += "- ";
     else
     {
@@ -228,5 +228,23 @@ void FEN::GetPosition()
 
     FENtext = thisFen;
 
-    //fullmove counter is useless, so did not implement
+    // fullmove counter is useless, so did not implement
+}
+
+const std::string FEN::CutHalfmoves() const
+{
+    return FENtext.substr(0,FENtext.length()-3);
+}
+
+bool FEN::operator==(const FEN &f)
+{
+    //std::cout << CutHalfmoves() << std::endl;
+    //std::cout << f.CutHalfmoves() << std::endl;
+    if(CutHalfmoves() == f.CutHalfmoves())
+    {
+        //std::cout << "true" << std::endl;
+        return true;
+    }
+    else
+        return false;
 }

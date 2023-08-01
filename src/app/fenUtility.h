@@ -13,4 +13,8 @@ class FEN
     void ReadPosition(); //Read FENtext of an object of the FEN class
     static void ReadPosition(std::string fenTxt); //set the board according to the fenTxt
     void GetPosition();
+
+    const std::string CutHalfmoves() const;
+
+    bool operator == (const FEN &f);
 };

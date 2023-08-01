@@ -19,6 +19,12 @@ struct Position
 {
     FEN fen;
     int occurrenceNum;
+
+    Position(FEN thisFen, int num)
+    {
+        fen = thisFen;
+        occurrenceNum = num;
+    }
 };
 
 class MoveTable
@@ -52,7 +58,7 @@ class MoveTable
 
     //Draw
     static int consecutiveMoves; //if =100, any player can declare a draw; if =150, there is an automatic draw
-    static std::list<std::string> occurredPositions;
+    static std::list<Position> occurredPositions;
 
     //Fill numSquaresToEdge
     static void CalculateStartMoveData();
@@ -67,6 +73,7 @@ class MoveTable
     static void CheckForKnightChecks(int targetSquare, int knightSquare);
     static void CheckForPawnChecks(int targetSquare);
     static void CheckState();
+    static void AddCurrentPosition();
     static bool IsLegal(int startSquare, int targetSquare);
     static bool IsEnPassant(int targetSquare);
     static bool IsTwoSquareAdvance(int startSquare, int targetSquare);
