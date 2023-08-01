@@ -140,7 +140,9 @@ int main(){
                 }
                 if(event.key.code == Keyboard::L)
                 {
-                    Piece::LogPiece(Board::squareState[19]);
+                    FEN testFen;
+                    testFen.GetPosition();
+                    std::cout << testFen.FENtext << std::endl;
                 }
             }
 

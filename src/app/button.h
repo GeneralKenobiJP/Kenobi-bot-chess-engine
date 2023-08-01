@@ -31,4 +31,6 @@ class Button
     void SetFunctionArgument(A &argument);
 
     void PressButton();
+
+    void Draw(sf::RenderWindow &window);
 };

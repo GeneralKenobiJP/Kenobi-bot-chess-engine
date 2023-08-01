@@ -207,13 +207,13 @@ void Board::HandleMouseReleased(sf::Vector2i position)
                     if(pieceType == Piece::rook)
                     {
                         if(Board::selectedSquare == 0) //a1
-                            MoveTable::W_CanCastleKingside = 0;
-                        else if(Board::selectedSquare == 7) //h1
                             MoveTable::W_CanCastleQueenside = 0;
+                        else if(Board::selectedSquare == 7) //h1
+                            MoveTable::W_CanCastleKingside = 0;
                         else if(Board::selectedSquare == 56) //a8
-                            MoveTable::B_CanCastleKingside = 0;
-                        else if(Board::selectedSquare == 63) //h8
                             MoveTable::B_CanCastleQueenside = 0;
+                        else if(Board::selectedSquare == 63) //h8
+                            MoveTable::B_CanCastleKingside = 0;
                     }
                 }
                 if(Board::squareState[i] !=0 )

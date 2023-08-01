@@ -52,3 +52,9 @@ void Button::PressButton()
     //functionPtr(argumentPtr);
     functionPtr();
 }
+
+void Button::Draw(sf::RenderWindow &window)
+{
+    window.draw(shape);
+    window.draw(text);
+}

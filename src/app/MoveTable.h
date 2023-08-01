@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <list>
+#include "fenUtility.h"
 
 struct Move
 {
@@ -12,6 +13,12 @@ struct Move
         startSquare = start;
         targetSquare = end;
     }
+};
+
+struct Position
+{
+    FEN fen;
+    int occurrenceNum;
 };
 
 class MoveTable
@@ -45,6 +52,7 @@ class MoveTable
 
     //Draw
     static int consecutiveMoves; //if =100, any player can declare a draw; if =150, there is an automatic draw
+    static std::list<std::string> occurredPositions;
 
     //Fill numSquaresToEdge
     static void CalculateStartMoveData();
