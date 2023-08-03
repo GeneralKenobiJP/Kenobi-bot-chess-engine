@@ -3,6 +3,7 @@
 #include "board.h"
 #include "piece.h"
 #include <iostream>
+#include "Evaluation.h"
 
 //We start at N and go clockwise
 
@@ -30,6 +31,8 @@ std::list<int> MoveTable::DefenseList;
 std::list<int> MoveTable::kingVirtualAttackList;
 int MoveTable::consecutiveMoves=0;
 std::list<Position> MoveTable::occurredPositions;
+bool MoveTable::IsThreefoldRepetition = false;
+bool MoveTable::IsFiftymove = false;
 
 void MoveTable::CalculateStartMoveData()
 {
@@ -115,8 +118,16 @@ std::list<Move> MoveTable::GenerateMoves()
 
     if(MoveTable::consecutiveMoves >= 150)
         Board::DeclareDraw();
-    else if(MoveTable::consecutiveMoves == 100)
+    else if(MoveTable::consecutiveMoves >= 100)
+        MoveTable::IsFiftymove = true;
+
+    if(!MoveTable::IsSufficientMaterial())
+        Board::DeclareDraw();
+
+    if(MoveTable::IsFiftymove || MoveTable::IsThreefoldRepetition)
+    {
         Board::CanDeclareDraw = true;
+    }
 
     for(int i=0;i<64;i++)
     {
@@ -796,10 +807,50 @@ void MoveTable::AddCurrentPosition()
             if(it->occurrenceNum==5)
                 Board::DeclareDraw();
             else if(it->occurrenceNum>=3)
-                Board::CanDeclareDraw = true; //change this shitty booleans
+                MoveTable::IsThreefoldRepetition = true;
             return;
         }
     }
 
     MoveTable::occurredPositions.push_back(Position(currentFEN,0));
+}
+bool MoveTable::IsSufficientMaterial()
+{
+    int whiteVal, blackVal;
+    bool IsTherePawn;
+
+    Evaluation::EvaluateSides(whiteVal, blackVal, IsTherePawn);
+
+    std::cout << "IsTherePawn? " << IsTherePawn << std::endl;
+
+    if(!IsTherePawn)
+    {
+
+        if(whiteVal == 0 && blackVal == 0)
+            return false;
+
+        if(whiteVal == 0 && blackVal == Piece::knight) //or bishop
+            return false;
+
+        if(whiteVal == Piece::knight && blackVal == 0) //or bishop
+            return false;
+
+        return true;
+    }
+
+    //there is pawn
+
+    /*for(int file=0;file<=7;file++) FOR NOW IT DOESN'T WORK AS INTENDED, BUT FUCK THIS SHIT
+    {
+        std::cout << "hey" << std::endl;
+        std::cout << "IsFileBlocked? " << file <<": " << Board::IsFileBlocked(file) << std::endl; 
+        if(!Board::IsFileBlocked(file)) //excluding king from the calculation
+            return true; //this is probably only somewhat true, as this still might be a drawing position, but I guess it would soon enough resolve to a more clear situation, anyway
+    }
+    if(!Board::IsKingBlocked(Piece::white))
+        return true;
+    if(!Board::IsKingBlocked(Piece::black))
+        return true;*/
+    
+    return false;
 }

@@ -361,3 +361,145 @@ void Board::DeclareDraw()
     std::cout << "Draw" << std::endl;
     Board::activePlayer = 0;
 }
+
+bool Board::IsFileEmpty(int file)
+{
+    int square;
+    for(square = file; square<64; square+=8)
+    {
+        if(Piece::ToType(Board::squareState[square]) > Piece::king)
+            return false;
+    }
+    return true;
+}
+
+bool Board::IsFileBlocked(int file)
+{
+    int square;
+    bool IsBlack = false;
+    bool WasBlack = false;
+    int type, color;
+
+    if(Board::IsFileEmpty(file))
+        return true;
+    
+    /*if(file>0)
+        if(!Board::IsFileEmpty(file-1))
+            return false;
+
+    if(file<7)
+        if(!Board::IsFileEmpty(file+1))
+            return false;*/
+        
+    for(square = file; square<64; square+=8)
+    {
+        std::cout << square << std::endl;
+        Piece::ReadPiece(Board::squareState[square],type,color);
+        if(type>Piece::pawn)
+            return false;
+        if(type<Piece::pawn)
+            continue;
+        
+        if(IsBlack == false && color == Piece::black)
+            return false;
+        if(IsBlack == true && color == Piece::white)
+            return false;
+
+        if(color == Piece::white)
+        {
+            if(!WasBlack)
+            {
+                IsBlack = true;
+                if(!Board::IsPawnBlockedAndNotNeighbour(square, Piece::white))
+                    return false;
+            }
+            else
+                return false;
+        }
+        if(IsBlack == true && color == Piece::black)
+        {
+            WasBlack = true;
+            IsBlack = false;
+            if(!Board::IsPawnBlockedAndNotNeighbour(square, Piece::black))
+                return false;
+        }
+    }
+
+    if(IsBlack == true)
+        return false;
+
+    return true;
+}
+
+bool Board::IsPawnBlockedAndNotNeighbour(int square, int color)
+{
+    if(Board::IsFileEmpty(square%8))
+        return true;
+    if(Piece::ToColor(Board::squareState[square])==color)
+        return false;
+
+    for(square = square%8; square<64; square+=8)
+    {
+        if(Piece::ToColor(Board::squareState[square])==Piece::white)
+            if(Piece::ToColor(Board::squareState[square]!=Piece::black))
+                return false;
+    }
+    return true;
+}
+
+bool Board::IsKingBlocked(int color)
+{
+    int file,rank;
+    int startRank = (color == 8) ? 0 : 7;
+    int endRank = (color == 8) ? 8 : -1;
+    int incr = (color == 8) ? 1 : -1;
+    int square;
+    bool IsRightConnected = false;
+    bool IsLeftConnected = false;
+
+    for(file=0;file<=7;file++)
+    {
+        if(rank==endRank)
+            return false;
+        for(rank=startRank;rank!=endRank;rank+=incr)
+        {
+            square = 8*rank + file;
+            if(Board::squareState[square] != 0 || MoveTable::IsAttacked(square))
+            {
+                if(file>0)
+                {
+                    if(Board::squareState[square+7] != 0 || MoveTable::IsAttacked(square+7))
+                        IsLeftConnected = true;
+                    else if(Board::squareState[square-1] != 0 || MoveTable::IsAttacked(square-1))
+                        IsLeftConnected = true;
+                    else if(Board::squareState[square-9] != 0 || MoveTable::IsAttacked(square-9))
+                        IsLeftConnected = true;
+                    else
+                        continue;
+                }
+                else
+                    IsLeftConnected = true;
+
+                if(file<7)
+                {
+                    if(Board::squareState[square+9] != 0 || MoveTable::IsAttacked(square+9))
+                        IsRightConnected = true;
+                    else if(Board::squareState[square+1] != 0 || MoveTable::IsAttacked(square+1))
+                        IsRightConnected = true;
+                    else if(Board::squareState[square-7] != 0 || MoveTable::IsAttacked(square-7))
+                        IsRightConnected = true;
+                    else
+                        continue;
+                    
+                }
+                else
+                    IsRightConnected = true;
+
+                if(IsRightConnected && IsLeftConnected)
+                    break;
+            }
+        }
+    }
+
+    return true;
+}

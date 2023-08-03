@@ -43,4 +43,9 @@ public:
     static void HandlePromotion(int promotionSpriteIndex);
     static void DeclareWin(int victoriousPlayer);
     static void DeclareDraw();
+
+    static bool IsFileEmpty(int file);
+    static bool IsFileBlocked(int file);
+    static bool IsPawnBlockedAndNotNeighbour(int square, int color);
+    static bool IsKingBlocked(int color);
 };

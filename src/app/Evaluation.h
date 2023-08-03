@@ -12,4 +12,5 @@ class Evaluation
     
     public:
     static int Evaluate();
+    static void EvaluateSides(int &whiteValue, int &blackValue, bool &IsTherePawn);
 };

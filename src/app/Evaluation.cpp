@@ -61,3 +61,17 @@ int Evaluation::Evaluate()
     
     return value;
 }
+
+void Evaluation::EvaluateSides(int &whiteValue, int &blackValue, bool &IsTherePawn)
+{
+    whiteValue=0;
+    blackValue=0;
+    int value;
+
+    for(int i=0;i<64;i++)
+    {
+        Evaluation::CountMaterial(i, whiteValue, blackValue);
+        if(Board::squareState[i]==Piece::pawn)
+            IsTherePawn = true;
+    }
+}
