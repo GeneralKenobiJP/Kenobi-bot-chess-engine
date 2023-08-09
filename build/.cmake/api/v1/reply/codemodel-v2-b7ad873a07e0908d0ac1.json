@@ -8,7 +8,8 @@
 					"build" : ".",
 					"childIndexes" : 
 					[
-						1
+						1,
+						2
 					],
 					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
 					"minimumCMakeVersion" : 
@@ -64,6 +65,21 @@
 					[
 						29
 					]
+				},
+				{
+					"build" : "src/engine",
+					"jsonFile" : "directory-src.engine-Debug-f18d3e3eac6b44c09f1e.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0.0"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "src/engine",
+					"targetIndexes" : 
+					[
+						30
+					]
 				}
 			],
 			"name" : "Debug",
@@ -73,7 +89,8 @@
 					"directoryIndexes" : 
 					[
 						0,
-						1
+						1,
+						2
 					],
 					"name" : "Kenobi-bot-chess-engine",
 					"targetIndexes" : 
@@ -107,7 +124,8 @@
 						26,
 						27,
 						28,
-						29
+						29,
+						30
 					]
 				}
 			],
@@ -242,7 +260,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "Kenobi-bot-chess-engine::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-Kenobi-bot-chess-engine-Debug-4cefa0207811ffeb0f7d.json",
+					"jsonFile" : "target-Kenobi-bot-chess-engine-Debug-d52d2791abd55463db53.json",
 					"name" : "Kenobi-bot-chess-engine",
 					"projectIndex" : 0
 				},
@@ -319,8 +337,15 @@
 				{
 					"directoryIndex" : 1,
 					"id" : "app-lib::@ff93792cf40911dae1b8",
-					"jsonFile" : "target-app-lib-Debug-9918115a66c2fe7ae122.json",
+					"jsonFile" : "target-app-lib-Debug-2e0d011783731bbaee59.json",
 					"name" : "app-lib",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "engine-lib::@d30147da1c6e0503853c",
+					"jsonFile" : "target-engine-lib-Debug-8b918341e968decb8bb5.json",
+					"name" : "engine-lib",
 					"projectIndex" : 0
 				}
 			]

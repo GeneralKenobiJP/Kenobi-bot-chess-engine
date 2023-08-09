@@ -32,13 +32,19 @@
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 36,
+				"line" : 38,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
 				"line" : 34,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 35,
 				"parent" : 0
 			}
 		]
@@ -57,6 +63,10 @@
 				{
 					"backtrace" : 3,
 					"path" : "/Users/jakubpietrzak/Desktop/Github-projects/Kenobi-bot-chess-engine/src/app"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/jakubpietrzak/Desktop/Github-projects/Kenobi-bot-chess-engine/src/engine"
 				},
 				{
 					"backtrace" : 2,
@@ -84,6 +94,10 @@
 		{
 			"backtrace" : 2,
 			"id" : "app-lib::@ff93792cf40911dae1b8"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "engine-lib::@d30147da1c6e0503853c"
 		}
 	],
 	"id" : "Kenobi-bot-chess-engine::@6890427a1f51a3e7e1df",
@@ -106,6 +120,11 @@
 			{
 				"backtrace" : 2,
 				"fragment" : "src/app/libapp-lib.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "src/engine/libengine-lib.a",
 				"role" : "libraries"
 			},
 			{

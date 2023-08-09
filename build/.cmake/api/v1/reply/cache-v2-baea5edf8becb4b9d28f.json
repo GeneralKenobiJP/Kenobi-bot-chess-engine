@@ -751,7 +751,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "2"
+			"value" : "3"
 		},
 		{
 			"name" : "CMAKE_OBJCOPY",
@@ -1844,6 +1844,18 @@
 			],
 			"type" : "STATIC",
 			"value" : "/Users/jakubpietrzak/Desktop/Github-projects/Kenobi-bot-chess-engine/src/app"
+		},
+		{
+			"name" : "engine-lib_LIB_DEPENDS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Dependencies for the target"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "general;sfml-network;general;sfml-audio;general;sfml-graphics;general;sfml-window;general;sfml-system;"
 		}
 	],
 	"kind" : "cache",

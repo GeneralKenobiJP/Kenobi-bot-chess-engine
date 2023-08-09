@@ -4,9 +4,9 @@
 #include "board.h"
 #include <MoveTable.h>
 
-//const std::string FEN::startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+const std::string FEN::startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 //const std::string FEN::startFEN = "rnbqkbnr/pppp1ppp/4p3/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-const std::string FEN::startFEN = "8/1k6/3p4/p1p1p2p/P1PPP1pP/6P1/5K2/8 w - 0 1";
+//const std::string FEN::startFEN = "8/1k6/3p4/p1p1p2p/P1PPP1pP/6P1/5K2/8 w - 0 1";
 //const std::string FEN::startFEN = "1k7/8/8/8/8/8/8/8 w - 0 1";
 
 int FEN::ReadLetter(char letter) // lowercase
@@ -44,7 +44,7 @@ void FEN::ReadPosition(std::string fenTxt) // static
 
     while (fenTxt[0] != ' ')
     {
-         std::cout << fenTxt << std::endl;
+        //std::cout << fenTxt << std::endl;
         // debugNum++;
 
         // std::cout << "Debug: " << debugNum << std::endl;
@@ -62,7 +62,7 @@ void FEN::ReadPosition(std::string fenTxt) // static
             fenTxt = fenTxt.substr(1, fenTxt.length() - 1);
             if(fenTxt[0] == ' ')
             {
-                std::cout << "finito" << std::endl;
+                //std::cout << "finito" << std::endl;
                 //fenTxt = fenTxt.substr(1);
                 break;
             }
@@ -71,7 +71,7 @@ void FEN::ReadPosition(std::string fenTxt) // static
         if(fenTxt[0]=='/')
             continue;
         currentSquare = currentRank * 8 + currentFile;
-        std::cout << currentSquare << std::endl;
+        //std::cout << currentSquare << std::endl;
         if (fenTxt[0] > 90) // checks if lowercase
         {
             Piece::SetPiece(ReadLetter(fenTxt[0]), Piece::black, currentSquare);

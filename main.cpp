@@ -8,6 +8,7 @@
 #include "src/app/fenUtility.h"
 #include "src/app/clock.h"
 #include "src/app/MoveTable.h"
+#include "src/engine/Search.h"
 //#include <thread>
 
 using namespace sf;
@@ -38,6 +39,8 @@ int main(){
     /*
         PUT HERE DEBUGGING CODE
     */
+
+    Search::DebugSearch();
 
     ChessClock whiteClock;
     ChessClock blackClock;
