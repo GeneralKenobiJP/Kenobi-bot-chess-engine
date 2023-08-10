@@ -8,8 +8,13 @@ class VirtualBoard
     int squareState[64];
 
     short promotionSquare;
+    unsigned short activePlayer; //0 = none, 1 = white, 2 = black
+
+    int CurrentEvalution;
 
     VirtualMoveTable thisMoveTable;
+
+    bool IsDraw;
     
     void PutOnSquare(int num, int piece, int color); //sets squareState to the input piece
     void PutOnSquare(int num, int pieceID); //sets squareState to the input piece
@@ -18,9 +23,12 @@ class VirtualBoard
     int CalculateDistance(int squareA, int squareB);
     void Promote(int square, int color);
     void HandlePromotion(int promotionSpriteIndex);
+    void SwitchPlayer();
 
     void MakeMove(int startSquare, int targetSquare);
-    //void MakeMove(int moveIndex);
+    void MakeMove(std::list<Move>::iterator moveIterator);
+    void InitializeEvaluation();
+    void InitializeBoard();
 
     bool IsFileEmpty(int file);
     bool IsFileBlocked(int file);

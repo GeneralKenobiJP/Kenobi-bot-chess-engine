@@ -1,20 +1,21 @@
 #include "VirtualBoard.h"
 #include "piece.h"
 #include <iostream>
-//#include "MoveTable.h"
-//#include "VirtualMoveTable.h"
+#include "VirtualEvaluation.h"
+// #include "MoveTable.h"
+// #include "VirtualMoveTable.h"
 
 ////// UPDATE MOVE TABLE FUNCTIONS
 
 void VirtualBoard::PutOnSquare(int num, int piece, int color)
 {
     squareState[num] = (piece | color);
-    //Piece::pieceList.
+    // Piece::pieceList.
 }
 void VirtualBoard::PutOnSquare(int num, int pieceID)
 {
     squareState[num] = pieceID;
-    //Piece::pieceList.
+    // Piece::pieceList.
 }
 
 void VirtualBoard::RemoveFromSquare(int num)
@@ -24,8 +25,8 @@ void VirtualBoard::RemoveFromSquare(int num)
 
 void VirtualBoard::ReadSquare(int squareIndex, int &file, int &rank)
 {
-    file = squareIndex%8;
-    rank = squareIndex/8;
+    file = squareIndex % 8;
+    rank = squareIndex / 8;
 }
 
 int VirtualBoard::CalculateDistance(int squareA, int squareB)
@@ -35,57 +36,57 @@ int VirtualBoard::CalculateDistance(int squareA, int squareB)
     int rankA;
     int rankB;
 
-    this->ReadSquare(squareA,fileA,rankA);
-    this->ReadSquare(squareB,fileB,rankB);
+    this->ReadSquare(squareA, fileA, rankA);
+    this->ReadSquare(squareB, fileB, rankB);
 
-    int dist = std::abs(fileA-fileB) + std::abs(rankA-rankB);
+    int dist = std::abs(fileA - fileB) + std::abs(rankA - rankB);
 
     return dist;
 }
 
-void VirtualBoard::Promote(int square, int color) //to develop
+void VirtualBoard::Promote(int square, int color) // to develop
 {
-    //SpriteHandler::IsPromotion = true;
-    //Board::promotionSquare = square;
-    //SpriteHandler::ShowPromotionMenu(square);
+    // SpriteHandler::IsPromotion = true;
+    // Board::promotionSquare = square;
+    // SpriteHandler::ShowPromotionMenu(square);
 }
 
 void VirtualBoard::HandlePromotion(int promotionSpriteIndex)
 {
-    int type = promotionSpriteIndex%4;
-    int color = (promotionSpriteIndex>3) ? Piece::black : Piece::white;
-    
-    switch(type)
+    int type = promotionSpriteIndex % 4;
+    int color = (promotionSpriteIndex > 3) ? Piece::black : Piece::white;
+
+    switch (type)
     {
-        case 0:
-            type = Piece::queen;
-            break;
-        case 1:
-            type = Piece::knight;
-            break;
-        case 2:
-            type = Piece::rook;
-            break;
-        case 3:
-            type = Piece::bishop;
-            break;
+    case 0:
+        type = Piece::queen;
+        break;
+    case 1:
+        type = Piece::knight;
+        break;
+    case 2:
+        type = Piece::rook;
+        break;
+    case 3:
+        type = Piece::bishop;
+        break;
     }
 
     this->PutOnSquare(promotionSquare, type, color);
-    //SpriteHandler::HidePromotionMenu(type, color);
+    // SpriteHandler::HidePromotionMenu(type, color);
     promotionSquare = -1;
-    //Board::selectedSquare = -1;
-    //Board::SwitchPlayer();
-    //MoveTable::GenerateMoves(MoveTable::CurrentMoveList); //DEVELOP
-    //MoveTable::CheckState(); //DEVELOP
+    // Board::selectedSquare = -1;
+    // Board::SwitchPlayer();
+    // MoveTable::GenerateMoves(MoveTable::CurrentMoveList); //DEVELOP
+    // MoveTable::CheckState(); //DEVELOP
 }
 
 bool VirtualBoard::IsFileEmpty(int file)
 {
     int square;
-    for(square = file; square<64; square+=8)
+    for (square = file; square < 64; square += 8)
     {
-        if(Piece::ToType(squareState[square]) > Piece::king)
+        if (Piece::ToType(squareState[square]) > Piece::king)
             return false;
     }
     return true;
@@ -98,9 +99,9 @@ bool VirtualBoard::IsFileBlocked(int file)
     bool WasBlack = false;
     int type, color;
 
-    if(this->IsFileEmpty(file))
+    if (this->IsFileEmpty(file))
         return true;
-    
+
     /*if(file>0)
         if(!Board::IsFileEmpty(file-1))
             return false;
@@ -108,42 +109,42 @@ bool VirtualBoard::IsFileBlocked(int file)
     if(file<7)
         if(!Board::IsFileEmpty(file+1))
             return false;*/
-        
-    for(square = file; square<64; square+=8)
+
+    for (square = file; square < 64; square += 8)
     {
-        std::cout << square << std::endl;
-        Piece::ReadPiece(squareState[square],type,color);
-        if(type>Piece::pawn)
+        //std::cout << square << std::endl;
+        Piece::ReadPiece(squareState[square], type, color);
+        if (type > Piece::pawn)
             return false;
-        if(type<Piece::pawn)
+        if (type < Piece::pawn)
             continue;
-        
-        if(IsBlack == false && color == Piece::black)
+
+        if (IsBlack == false && color == Piece::black)
             return false;
-        if(IsBlack == true && color == Piece::white)
+        if (IsBlack == true && color == Piece::white)
             return false;
 
-        if(color == Piece::white)
+        if (color == Piece::white)
         {
-            if(!WasBlack)
+            if (!WasBlack)
             {
                 IsBlack = true;
-                if(!this->IsPawnBlockedAndNotNeighbour(square, Piece::white))
+                if (!this->IsPawnBlockedAndNotNeighbour(square, Piece::white))
                     return false;
             }
             else
                 return false;
         }
-        if(IsBlack == true && color == Piece::black)
+        if (IsBlack == true && color == Piece::black)
         {
             WasBlack = true;
             IsBlack = false;
-            if(!this->IsPawnBlockedAndNotNeighbour(square, Piece::black))
+            if (!this->IsPawnBlockedAndNotNeighbour(square, Piece::black))
                 return false;
         }
     }
 
-    if(IsBlack == true)
+    if (IsBlack == true)
         return false;
 
     return true;
@@ -151,15 +152,15 @@ bool VirtualBoard::IsFileBlocked(int file)
 
 bool VirtualBoard::IsPawnBlockedAndNotNeighbour(int square, int color)
 {
-    if(this->IsFileEmpty(square%8))
+    if (this->IsFileEmpty(square % 8))
         return true;
-    if(Piece::ToColor(squareState[square])==color)
+    if (Piece::ToColor(squareState[square]) == color)
         return false;
 
-    for(square = square%8; square<64; square+=8)
+    for (square = square % 8; square < 64; square += 8)
     {
-        if(Piece::ToColor(squareState[square])==Piece::white)
-            if(Piece::ToColor(squareState[square]!=Piece::black))
+        if (Piece::ToColor(squareState[square]) == Piece::white)
+            if (Piece::ToColor(squareState[square] != Piece::black))
                 return false;
     }
     return true;
@@ -167,7 +168,7 @@ bool VirtualBoard::IsPawnBlockedAndNotNeighbour(int square, int color)
 
 bool VirtualBoard::IsKingBlocked(int color)
 {
-    int file,rank;
+    int file, rank;
     int startRank = (color == 8) ? 0 : 7;
     int endRank = (color == 8) ? 8 : -1;
     int incr = (color == 8) ? 1 : -1;
@@ -175,22 +176,22 @@ bool VirtualBoard::IsKingBlocked(int color)
     bool IsRightConnected = false;
     bool IsLeftConnected = false;
 
-    for(file=0;file<=7;file++)
+    for (file = 0; file <= 7; file++)
     {
-        if(rank==endRank)
+        if (rank == endRank)
             return false;
-        for(rank=startRank;rank!=endRank;rank+=incr)
+        for (rank = startRank; rank != endRank; rank += incr)
         {
-            square = 8*rank + file;
-            if(squareState[square] != 0 || thisMoveTable.IsAttacked(square))
+            square = 8 * rank + file;
+            if (squareState[square] != 0 || thisMoveTable.IsAttacked(square))
             {
-                if(file>0)
+                if (file > 0)
                 {
-                    if(squareState[square+7] != 0 || thisMoveTable.IsAttacked(square+7))
+                    if (squareState[square + 7] != 0 || thisMoveTable.IsAttacked(square + 7))
                         IsLeftConnected = true;
-                    else if(squareState[square-1] != 0 || thisMoveTable.IsAttacked(square-1))
+                    else if (squareState[square - 1] != 0 || thisMoveTable.IsAttacked(square - 1))
                         IsLeftConnected = true;
-                    else if(squareState[square-9] != 0 || thisMoveTable.IsAttacked(square-9))
+                    else if (squareState[square - 9] != 0 || thisMoveTable.IsAttacked(square - 9))
                         IsLeftConnected = true;
                     else
                         continue;
@@ -198,22 +199,21 @@ bool VirtualBoard::IsKingBlocked(int color)
                 else
                     IsLeftConnected = true;
 
-                if(file<7)
+                if (file < 7)
                 {
-                    if(squareState[square+9] != 0 || thisMoveTable.IsAttacked(square+9))
+                    if (squareState[square + 9] != 0 || thisMoveTable.IsAttacked(square + 9))
                         IsRightConnected = true;
-                    else if(squareState[square+1] != 0 || thisMoveTable.IsAttacked(square+1))
+                    else if (squareState[square + 1] != 0 || thisMoveTable.IsAttacked(square + 1))
                         IsRightConnected = true;
-                    else if(squareState[square-7] != 0 || thisMoveTable.IsAttacked(square-7))
+                    else if (squareState[square - 7] != 0 || thisMoveTable.IsAttacked(square - 7))
                         IsRightConnected = true;
                     else
                         continue;
-                    
                 }
                 else
                     IsRightConnected = true;
 
-                if(IsRightConnected && IsLeftConnected)
+                if (IsRightConnected && IsLeftConnected)
                     break;
             }
         }
@@ -222,7 +222,137 @@ bool VirtualBoard::IsKingBlocked(int color)
     return true;
 }
 
-void VirtualBoard::MakeMove(int startSquare, int targetSquare)
+void VirtualBoard::MakeMove(int startSquare, int targetSquare) // WE ARE ASSUMING IT IS A LEGAL MOVE
 {
-    
+    bool hasCaptured = 0;
+    int pieceType;
+    int pieceColor;
+    Piece::ReadPiece(squareState[startSquare], pieceType, pieceColor);
+
+    if (pieceType == Piece::pawn)
+    {
+        if (thisMoveTable.IsEnPassant(targetSquare))
+        {
+            hasCaptured = true;
+            if (activePlayer == 1)
+            {
+                this->RemoveFromSquare(targetSquare - 8);
+            }
+            else // black
+            {
+                this->RemoveFromSquare(targetSquare + 8);
+            }
+            // break;
+        }
+        thisMoveTable.enPassantSquare = -1;
+        if (thisMoveTable.IsTwoSquareAdvance(startSquare, targetSquare))
+        {
+            thisMoveTable.enPassantSquare = (targetSquare + startSquare) / 2;
+        }
+        if (targetSquare / 8 == 7 || targetSquare / 8 == 0) // PROMOTION
+        {
+            if (squareState[targetSquare] != 0) // enemy piece
+            {
+                hasCaptured = true;
+                this->RemoveFromSquare(targetSquare);
+                this->Promote(targetSquare, pieceColor);
+                // Board::SwitchPlayer();
+                // break;
+            }
+            else
+            {
+                this->Promote(targetSquare, pieceColor);
+                // Board::SwitchPlayer();
+                // break;
+            }
+        }
+    }
+    else
+        thisMoveTable.enPassantSquare = -1;
+
+    if (pieceType == Piece::king)
+    {
+        bool IsKingside;
+
+        if (pieceColor == Piece::white)
+        {
+            thisMoveTable.W_CanCastleKingside = 0;
+            thisMoveTable.W_CanCastleQueenside = 0;
+        }
+        else
+        {
+            thisMoveTable.B_CanCastleKingside = 0;
+            thisMoveTable.B_CanCastleQueenside = 0;
+        }
+
+        if (thisMoveTable.IsCastling(startSquare, targetSquare, IsKingside))
+        {
+            if (IsKingside)
+            {
+                this->RemoveFromSquare(targetSquare + 1);
+                this->PutOnSquare(Piece::rook, Piece::ToColor(squareState[startSquare]), targetSquare - 1);
+            }
+            else
+            {
+                this->RemoveFromSquare(targetSquare - 2);
+                this->PutOnSquare(Piece::rook, Piece::ToColor(squareState[startSquare]), targetSquare + 1);
+            }
+        }
+    }
+
+    if (pieceType == Piece::rook)
+    {
+        if (startSquare == 0) // a1
+            thisMoveTable.W_CanCastleQueenside = 0;
+        else if (startSquare == 7) // h1
+            thisMoveTable.W_CanCastleKingside = 0;
+        else if (startSquare == 56) // a8
+            thisMoveTable.B_CanCastleQueenside = 0;
+        else if (startSquare == 63) // h8
+            thisMoveTable.B_CanCastleKingside = 0;
+    }
+
+    if (squareState[targetSquare] != 0)
+    {
+        // Piece::RemovePieceSprite(i);
+        this->RemoveFromSquare(targetSquare);
+        hasCaptured = true;
+    }
+
+    this->PutOnSquare(targetSquare, squareState[startSquare]);
+    this->RemoveFromSquare(startSquare);
+    this->SwitchPlayer();
+    // break;
+
+    if (pieceType != Piece::pawn && !hasCaptured)
+        thisMoveTable.consecutiveMoves++;
+    else
+        thisMoveTable.consecutiveMoves = 0;
+
+    thisMoveTable.GenerateMoves(thisMoveTable.CurrentMoveList);
+    thisMoveTable.CheckState();
+}
+
+void VirtualBoard::MakeMove(std::list<Move>::iterator moveIterator)
+{
+    this->MakeMove(moveIterator->startSquare, moveIterator->targetSquare);
+}
+
+void VirtualBoard::SwitchPlayer()
+{
+    thisMoveTable.GenerateAttacks();
+    activePlayer = (activePlayer % 2) + 1;
+    CurrentEvalution = VirtualEvaluation::Evaluate();
+    thisMoveTable.AddCurrentPosition();
+}
+
+void VirtualBoard::InitializeEvaluation()
+{
+    VirtualEvaluation::board = this;
+}
+
+void VirtualBoard::InitializeBoard()
+{
+    InitializeEvaluation();
+    //////////////////////////
 }

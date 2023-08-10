@@ -3,10 +3,11 @@
 #include "board.h"
 #include "piece.h"
 #include <iostream>
-#include "Evaluation.h"
+#include "VirtualEvaluation.h"
+
+/////FIX DRAWS
 
 //We start at N and go clockwise
-
 const short VirtualMoveTable::knightShift[8] = {15,17,6,10,-15,-17,-6,-10};
 const short VirtualMoveTable::directionShift[8] = {8,9,1,-7,-8,-9,-1,7};
 short VirtualMoveTable::numSquaresToEdge[64][8];
@@ -107,7 +108,7 @@ void VirtualMoveTable::CalculateStartMoveData()
     }
 }
 
-std::list<Move> VirtualMoveTable::GenerateMoves()
+std::list<Move> VirtualMoveTable::GenerateMoves() ///DRAWS DEBUGGING
 {
     std::list<Move> MoveList;
     int pieceType;
@@ -116,7 +117,7 @@ std::list<Move> VirtualMoveTable::GenerateMoves()
     VirtualMoveTable::pawnAttackList.clear();
     VirtualMoveTable::kingVirtualAttackList.clear();
 
-    if(consecutiveMoves >= 150)
+    if(consecutiveMoves >= 150) //leaving space for nuances here
         Board::DeclareDraw();
     else if(consecutiveMoves >= 100)
         IsFiftymove = true;
@@ -819,7 +820,7 @@ bool MoveTable::IsSufficientMaterial()
     int whiteVal, blackVal;
     bool IsTherePawn;
 
-    Evaluation::EvaluateSides(whiteVal, blackVal, IsTherePawn);
+    VirtualEvaluation::EvaluateSides(whiteVal, blackVal, IsTherePawn);
 
     //std::cout << "IsTherePawn? " << IsTherePawn << std::endl;
 

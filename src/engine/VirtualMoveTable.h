@@ -2,6 +2,8 @@
 #include <vector>
 #include <list>
 #include "MoveTable.h"
+//#include "VirtualEvaluation.h"
+//#include "VirtualBoard.h"
 //#include "fenUtility.h"
 
 class VirtualMoveTable
