@@ -229,6 +229,8 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare) // WE ARE ASSUMIN
     int pieceColor;
     Piece::ReadPiece(squareState[startSquare], pieceType, pieceColor);
 
+    int capturedPiece;
+
     if (pieceType == Piece::pawn)
     {
         if (thisMoveTable.IsEnPassant(targetSquare))
@@ -242,7 +244,12 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare) // WE ARE ASSUMIN
             {
                 this->RemoveFromSquare(targetSquare + 8);
             }
+            EnPassantHistory.push_back(true);
             // break;
+        }
+        else
+        {
+            EnPassantHistory.push_back(false);
         }
         thisMoveTable.enPassantSquare = -1;
         if (thisMoveTable.IsTwoSquareAdvance(startSquare, targetSquare))
@@ -254,6 +261,7 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare) // WE ARE ASSUMIN
             if (squareState[targetSquare] != 0) // enemy piece
             {
                 hasCaptured = true;
+                capturedPiece = squareState[targetSquare];
                 this->RemoveFromSquare(targetSquare);
                 this->Promote(targetSquare, pieceColor);
                 // Board::SwitchPlayer();
@@ -315,9 +323,15 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare) // WE ARE ASSUMIN
     if (squareState[targetSquare] != 0)
     {
         // Piece::RemovePieceSprite(i);
+        capturedPiece = squareState[targetSquare];
         this->RemoveFromSquare(targetSquare);
         hasCaptured = true;
     }
+
+    if(hasCaptured)
+        CaptureHistory.push_back(capturedPiece);
+    else
+        CaptureHistory.push_back(Piece::none);
 
     this->PutOnSquare(targetSquare, squareState[startSquare]);
     this->RemoveFromSquare(startSquare);
@@ -354,5 +368,27 @@ void VirtualBoard::InitializeEvaluation()
 void VirtualBoard::InitializeBoard()
 {
     InitializeEvaluation();
+    thisMoveTable.occurredPositions = MoveTable::occurredPositions;
+    thisMoveTable.consecutiveMoves = MoveTable::consecutiveMoves;
+    thisMoveTable.IsThreefoldRepetition = MoveTable::IsThreefoldRepetition;
+    thisMoveTable.IsFiftymove = MoveTable::IsFiftymove;
+
+    thisMoveTable.CurrentMoveList = MoveTable::CurrentMoveList;
+    thisMoveTable.AttackList = MoveTable::AttackList;
+    thisMoveTable.PinList = MoveTable::PinList;
+    thisMoveTable.PinDirectionList = MoveTable::PinDirectionList;
+    thisMoveTable.VirtualAttackList = MoveTable::VirtualAttackList;
+    thisMoveTable.DefenseList = MoveTable::DefenseList;
+    thisMoveTable.IsChecked = MoveTable::IsChecked;
+    thisMoveTable.KnightCheckNum = MoveTable::KnightCheckNum;
+    thisMoveTable.CheckingKnightSquare = MoveTable::CheckingKnightSquare;
+    thisMoveTable.CheckSquares = MoveTable::CheckSquares;
+    thisMoveTable.enPassantSquare = MoveTable::enPassantSquare;
+    thisMoveTable.W_CanCastleKingside = MoveTable::W_CanCastleKingside;
+    thisMoveTable.W_CanCastleQueenside = MoveTable::W_CanCastleQueenside;
+    thisMoveTable.B_CanCastleKingside = MoveTable::B_CanCastleKingside;
+    thisMoveTable.B_CanCastleQueenside = MoveTable::B_CanCastleQueenside;
+
     //////////////////////////
 }
+

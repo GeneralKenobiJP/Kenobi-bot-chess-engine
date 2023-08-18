@@ -3,6 +3,10 @@
 
 class VirtualBoard
 {
+    std::list<bool> EnPassantHistory;
+    std::list<bool> PromotionHistory;
+    std::list<int> CaptureHistory;
+
     public:
     
     int squareState[64];
@@ -27,6 +31,7 @@ class VirtualBoard
 
     void MakeMove(int startSquare, int targetSquare);
     void MakeMove(std::list<Move>::iterator moveIterator);
+    void UnmakeMove(); //unmake latest move
     void InitializeEvaluation();
     void InitializeBoard();
 
