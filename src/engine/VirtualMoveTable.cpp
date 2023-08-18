@@ -779,18 +779,18 @@ bool VirtualMoveTable::IsCastling(int startSquare, int targetSquare, bool &IsKin
     return false;
 }
 
-void VirtualMoveTable::CheckState()
+/*void VirtualMoveTable::CheckState()
 {
     if(CurrentMoveList.size() == 0)
     {
         if(IsChecked)
         {
-            Board::DeclareWin((Board::activePlayer % 2) + 1);
+            //Board::DeclareWin((Board::activePlayer % 2) + 1);
         }
         else
-            Board::DeclareDraw();
+            //Board::DeclareDraw();
     }
-}
+}*/
 
 void VirtualMoveTable::AddCurrentPosition()
 {

@@ -342,7 +342,7 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
         thisMoveTable.consecutiveMoves = 0;
 
     thisMoveTable.GenerateMoves(thisMoveTable.CurrentMoveList);
-    thisMoveTable.CheckState();
+    //thisMoveTable.CheckState();
 }
 
 void VirtualBoard::MakeMove(std::list<Move>::iterator moveIterator)
