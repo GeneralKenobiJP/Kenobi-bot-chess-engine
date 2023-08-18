@@ -4,7 +4,7 @@
 class VirtualBoard
 {
     std::list<bool> EnPassantHistory;
-    std::list<bool> PromotionHistory;
+    //std::list<bool> PromotionHistory;
     std::list<int> CaptureHistory;
     std::list<std::list<Position>::iterator> PositionIndexHistory; //if 1 eliminate, otherwise decrease occurrenceNum by 1;
 
@@ -29,11 +29,12 @@ class VirtualBoard
     void Promote(int square, int color);
     void HandlePromotion(int promotionSpriteIndex);
     void SwitchPlayer();
+    void RevertPlayer();
 
     void MakeMove(int startSquare, int targetSquare, int promotionNum);
     void MakeMove(std::list<Move>::iterator moveIterator);
     void MakeMove(Move move);
-    void UnmakeMove(); //unmake latest move
+    void UnmakeMove(Move move);
     void InitializeEvaluation();
     void InitializeBoard();
 

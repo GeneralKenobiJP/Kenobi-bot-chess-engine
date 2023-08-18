@@ -354,12 +354,49 @@ void VirtualBoard::MakeMove(Move move)
     this->MakeMove(move.startSquare, move.targetSquare, move.promotionPiece);
 }
 
+void VirtualBoard::UnmakeMove(Move move)
+{
+    if(move.promotionPiece == 0)
+    {
+        PutOnSquare(move.startSquare, squareState[move.targetSquare]);
+    }
+    else
+        PutOnSquare(move.startSquare, Piece::pawn ,Piece::ToColor(move.promotionPiece));
+
+    if(EnPassantHistory.back() == true)
+    {
+        if(move.targetSquare/8 == 5)
+            PutOnSquare(move.targetSquare-8, Piece::pawn, Piece::black);
+        else
+            PutOnSquare(move.targetSquare+8, Piece::pawn, Piece::white);
+    }
+    EnPassantHistory.pop_back();
+
+    if(CaptureHistory.back() != 0)
+    {
+        PutOnSquare(move.targetSquare, CaptureHistory.back());
+    }
+    CaptureHistory.pop_back();
+
+    thisMoveTable.RemovePosition(PositionIndexHistory.back());
+    PositionIndexHistory.pop_back();
+
+    RevertPlayer();
+}
+
 void VirtualBoard::SwitchPlayer()
 {
     thisMoveTable.GenerateAttacks();
     activePlayer = (activePlayer % 2) + 1;
     CurrentEvalution = VirtualEvaluation::Evaluate();
     thisMoveTable.AddCurrentPosition();
+}
+void VirtualBoard::RevertPlayer()
+{
+    thisMoveTable.GenerateAttacks();
+    activePlayer = (activePlayer % 2) + 1;
+    CurrentEvalution = VirtualEvaluation::Evaluate();
+    //thisMoveTable.AddCurrentPosition();
 }
 
 void VirtualBoard::InitializeEvaluation()
