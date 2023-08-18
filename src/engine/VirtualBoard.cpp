@@ -44,11 +44,9 @@ int VirtualBoard::CalculateDistance(int squareA, int squareB)
     return dist;
 }
 
-void VirtualBoard::Promote(int square, int color) // to develop
+void VirtualBoard::Promote(int square, int pieceID) // to develop
 {
-    // SpriteHandler::IsPromotion = true;
-    // Board::promotionSquare = square;
-    // SpriteHandler::ShowPromotionMenu(square);
+    PutOnSquare(square, pieceID);
 }
 
 void VirtualBoard::HandlePromotion(int promotionSpriteIndex)
@@ -222,7 +220,7 @@ bool VirtualBoard::IsKingBlocked(int color)
     return true;
 }
 
-void VirtualBoard::MakeMove(int startSquare, int targetSquare) // WE ARE ASSUMING IT IS A LEGAL MOVE
+void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum) // WE ARE ASSUMING IT IS A LEGAL MOVE
 {
     bool hasCaptured = 0;
     int pieceType;
@@ -269,7 +267,7 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare) // WE ARE ASSUMIN
             }
             else
             {
-                this->Promote(targetSquare, pieceColor);
+                this->Promote(targetSquare, promotionNum);
                 // Board::SwitchPlayer();
                 // break;
             }
@@ -331,7 +329,7 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare) // WE ARE ASSUMIN
     if(hasCaptured)
         CaptureHistory.push_back(capturedPiece);
     else
-        CaptureHistory.push_back(Piece::none);
+        CaptureHistory.push_back(0); //Piece::none
 
     this->PutOnSquare(targetSquare, squareState[startSquare]);
     this->RemoveFromSquare(startSquare);
@@ -349,7 +347,11 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare) // WE ARE ASSUMIN
 
 void VirtualBoard::MakeMove(std::list<Move>::iterator moveIterator)
 {
-    this->MakeMove(moveIterator->startSquare, moveIterator->targetSquare);
+    this->MakeMove(moveIterator->startSquare, moveIterator->targetSquare, moveIterator->promotionPiece);
+}
+void VirtualBoard::MakeMove(Move move)
+{
+    this->MakeMove(move.startSquare, move.targetSquare, move.promotionPiece);
 }
 
 void VirtualBoard::SwitchPlayer()

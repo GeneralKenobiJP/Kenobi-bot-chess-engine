@@ -8,10 +8,19 @@ struct Move
     int startSquare;
     int targetSquare;
 
+    int promotionPiece;
+
     Move(int start, int end)
     {
         startSquare = start;
         targetSquare = end;
+        promotionPiece = 0;
+    }
+    Move(int start, int end, int promotion)
+    {
+        startSquare = start;
+        targetSquare = end;
+        promotionPiece = promotion;
     }
 };
 

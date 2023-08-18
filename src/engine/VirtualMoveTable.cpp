@@ -13,6 +13,8 @@ const short VirtualMoveTable::directionShift[8] = {8,9,1,-7,-8,-9,-1,7};
 short VirtualMoveTable::numSquaresToEdge[64][8];
 std::vector<std::vector<short>> VirtualMoveTable::knightTargetSquares;
 std::vector<std::vector<short>> VirtualMoveTable::kingTargetSquares;
+std::list<int> VirtualMoveTable::pawnAttackList;
+std::list<int> VirtualMoveTable::kingVirtualAttackList;
 /*std::list<Move> MoveTable::CurrentMoveList;
 std::list<int> MoveTable::AttackList;
 std::list<int> MoveTable::PinList;
@@ -815,7 +817,42 @@ void VirtualMoveTable::AddCurrentPosition()
 
     occurredPositions.push_back(Position(currentFEN,0));
 }
-bool MoveTable::IsSufficientMaterial()
+void VirtualMoveTable::AddCurrentPosition(std::list<std::list<Position>::iterator> &iterList)
+{
+    FEN currentFEN;
+    currentFEN.GetPosition();
+
+    //std::cout << "currentFEN: " << currentFEN.FENtext << std::endl;
+
+    std::list<Position>::iterator it;
+    for(it=occurredPositions.begin();it!=occurredPositions.end();it++)
+    {
+        //std::cout << "here" << std::endl;
+        if(it->fen == currentFEN)
+        {
+            iterList.push_back(it);
+            it->occurrenceNum++;
+            //std::cout << "num: " << it->occurrenceNum << std::endl;
+            if(it->occurrenceNum==5)
+                Board::DeclareDraw();
+            else if(it->occurrenceNum>=3)
+                IsThreefoldRepetition = true;
+            return;
+        }
+    }
+
+    occurredPositions.push_back(Position(currentFEN,0));
+    iterList.push_back(std::prev(occurredPositions.end()));
+}
+void VirtualMoveTable::RemovePosition(std::list<Position>::iterator it)
+{
+    if(it->occurrenceNum>1)
+        it->occurrenceNum--;
+    else
+        occurredPositions.erase(it);
+}
+
+bool VirtualMoveTable::IsSufficientMaterial()
 {
     int whiteVal, blackVal;
     bool IsTherePawn;

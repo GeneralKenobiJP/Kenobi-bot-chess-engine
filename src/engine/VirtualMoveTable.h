@@ -55,6 +55,8 @@ class VirtualMoveTable
     void CheckForPawnChecks(int targetSquare);
     void CheckState();
     void AddCurrentPosition();
+    void AddCurrentPosition(std::list<std::list<Position>::iterator> &iterList);
+    void RemovePosition(std::list<Position>::iterator it);
     bool IsLegal(int startSquare, int targetSquare);
     bool IsEnPassant(int targetSquare);
     bool IsTwoSquareAdvance(int startSquare, int targetSquare);
