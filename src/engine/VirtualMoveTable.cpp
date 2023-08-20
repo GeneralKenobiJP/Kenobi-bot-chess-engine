@@ -85,7 +85,7 @@ void VirtualMoveTable::CalculateStartMoveData()
             knightTarget = i+VirtualMoveTable::knightShift[j];
             if(knightTarget>=0 && knightTarget<64)
             {
-                //Board::ReadSquare(knightTarget,knightTargetX,knightTargetY);
+                //VirtualMoveTable::ReadSquare(knightTarget,knightTargetX,knightTargetY);
                 int distance = Board::CalculateDistance(i,knightTarget);
                 if(distance == 3) //preventing jumping across the board boundary to an opposite end
                 {
@@ -134,9 +134,9 @@ std::list<Move> VirtualMoveTable::GenerateMoves() ///DRAWS DEBUGGING
 
     for(int i=0;i<64;i++)
     {
-        Piece::ReadPiece(Board::squareState[i],pieceType,pieceColor);
+        Piece::ReadPiece(*squareState[i],pieceType,pieceColor);
 
-        if(pieceColor/8 != Board::activePlayer)
+        if(pieceColor/8 != *activePlayer)
             continue;
 
         if(Piece::IsLongRange(pieceType))
@@ -192,10 +192,10 @@ void VirtualMoveTable::GenerateLongRangeMoves(int square, int pieceType, std::li
         {
             targetSquare = square + VirtualMoveTable::directionShift[dir] * sq;
 
-            targetSquareState = Board::squareState[targetSquare];
+            targetSquareState = *squareState[targetSquare];
             Piece::ReadPieceColor(targetSquareState,targetSquarePieceColor);
             
-            if(targetSquarePieceColor/8 == Board::activePlayer) //our piece is blocking the way
+            if(targetSquarePieceColor/8 == *activePlayer) //our piece is blocking the way
             {
                 DefenseList.push_back(targetSquare);
                 break;
@@ -229,9 +229,9 @@ void VirtualMoveTable::GenerateKnightMoves(int square, std::list<Move> &moveList
         if(IsChecked && !this->IsCoveringCheck(VirtualMoveTable::knightTargetSquares[square][i]))
             continue;
 
-        Piece::ReadPieceColor(Board::squareState[VirtualMoveTable::knightTargetSquares[square][i]],targetSquareColor);
+        Piece::ReadPieceColor(*squareState[VirtualMoveTable::knightTargetSquares[square][i]],targetSquareColor);
 
-        if(targetSquareColor/8 != Board::activePlayer)
+        if(targetSquareColor/8 != *activePlayer)
         {
             moveList.push_front(Move(square,knightTargetSquares[square][i]));
         }
@@ -242,7 +242,7 @@ void VirtualMoveTable::GenerateKnightMoves(int square, std::list<Move> &moveList
 
 void VirtualMoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
 {
-    int pawnMoveShift = (Board::activePlayer == 1) ? 8 : -8;
+    int pawnMoveShift = (*activePlayer == 1) ? 8 : -8;
     int pawnAttackShift[2];
     int targetSquare;
     int targetSquareColor;
@@ -252,7 +252,7 @@ void VirtualMoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
 
     IsPinned = this->IsPinned(square, pinDir);
 
-    if(Board::activePlayer == 1)
+    if(*activePlayer == 1)
     {
         pawnAttackShift[0] = 7;
         pawnAttackShift[1] = 9;
@@ -268,9 +268,17 @@ void VirtualMoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
         targetSquare = square + pawnMoveShift;
         if(!IsChecked || this->IsCoveringCheck(targetSquare))
         {
-            if(Board::squareState[targetSquare]==0 && targetSquare<64 && targetSquare >= 0)
+            if(*squareState[targetSquare]==0 && targetSquare<64 && targetSquare >= 0)
             {
-                moveList.push_front(Move(square,targetSquare));
+                if(targetSquare/8 != 0 && targetSquare/8 !=7)
+                {
+                    moveList.push_front(Move(square,targetSquare));
+                }
+                else //PROMOTION (without capture)
+                {
+                    for(int i=0; i<4; i++)
+                        moveList.push_front(Move(square,targetSquare,VirtualMoveTable::ReadPromotionPieceFromIndex(i,*activePlayer)));
+                }
             }
         }
     }
@@ -290,7 +298,7 @@ void VirtualMoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
         if((targetSquare % 8 != square % 8 - 1) && (targetSquare % 8 != square % 8 + 1)) //preventing from going around the board
             break;
 
-        Piece::ReadPieceColor(Board::squareState[targetSquare],targetSquareColor);
+        Piece::ReadPieceColor(*squareState[targetSquare],targetSquareColor);
         //EN PASSANT
         if(enPassantSquare == targetSquare)
         {
@@ -300,8 +308,18 @@ void VirtualMoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
         }
         if(targetSquareColor != 0)
         {
-            if(targetSquareColor/8 != Board::activePlayer)
-                moveList.push_front(Move(square,targetSquare));
+            if(targetSquareColor/8 != *activePlayer)
+                {
+                    if(targetSquare != 0 && targetSquare != 7)
+                    {
+                        moveList.push_front(Move(square,targetSquare));
+                    }
+                    else //PROMOTION (with capture)
+                    {
+                        for(int num = 0; num<4;num++)
+                            moveList.push_back(Move(square,targetSquare,num));
+                    }
+                }
             else
                 DefenseList.push_back(targetSquare);
             
@@ -313,11 +331,11 @@ void VirtualMoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
 
     // TWO-SQUARE ADVANCE
 
-    if(Board::activePlayer == 1 && square/8 == 1)
+    if(*activePlayer == 1 && square/8 == 1)
     {
         initialPos = 1;
     }
-    if(Board::activePlayer == 2 && square/8 == 6)
+    if(*activePlayer == 2 && square/8 == 6)
     {
         initialPos = 1;
     }
@@ -330,7 +348,7 @@ void VirtualMoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
             if(IsChecked && !this->IsCoveringCheck(targetSquare))
                 return;
             int passingSquare = square + pawnMoveShift;
-            if(Board::squareState[targetSquare]==0 && Board::squareState[passingSquare] == 0)
+            if(*squareState[targetSquare]==0 && *squareState[passingSquare] == 0)
                 moveList.push_front(Move(square,targetSquare));
         }
     }
@@ -358,9 +376,9 @@ void VirtualMoveTable::GenerateKingMoves(int square, std::list<Move> &moveList)
         if(this->IsDefended(VirtualMoveTable::kingTargetSquares[square][i]))
             continue;
 
-        Piece::ReadPieceColor(Board::squareState[VirtualMoveTable::kingTargetSquares[square][i]],targetSquareColor);
+        Piece::ReadPieceColor(*squareState[VirtualMoveTable::kingTargetSquares[square][i]],targetSquareColor);
 
-        if(targetSquareColor/8 != Board::activePlayer)
+        if(targetSquareColor/8 != *activePlayer)
         {
             moveList.push_front(Move(square,kingTargetSquares[square][i]));
         }
@@ -371,33 +389,50 @@ void VirtualMoveTable::GenerateKingMoves(int square, std::list<Move> &moveList)
     if(IsChecked)
         return;
 
-    if(Board::activePlayer == 1) //white
+    if(*activePlayer == 1) //white
     {
         if(W_CanCastleKingside)
-            if(Board::squareState[7]==13) //white rook
-                if(Board::squareState[5]==0 && Board::squareState[6] == 0)
+            if(*squareState[7]==13) //white rook
+                if(*squareState[5]==0 && *squareState[6] == 0)
                     if(!this->IsAttacked(5) && !this->IsAttacked(6))
                         moveList.push_front(Move(square,6));
 
         if(W_CanCastleQueenside)
-            if(Board::squareState[0]==13) //white rook
-                if(Board::squareState[2]==0 && Board::squareState[3] == 0)
+            if(*squareState[0]==13) //white rook
+                if(*squareState[2]==0 && *squareState[3] == 0)
                     if(!this->IsAttacked(2) && !this->IsAttacked(3))
                         moveList.push_front(Move(square,2));
     }
-    if(Board::activePlayer == 2) //black
+    if(*activePlayer == 2) //black
     {
         if(B_CanCastleKingside)
-            if(Board::squareState[63]==21) //black rook
-                if(Board::squareState[61]==0 && Board::squareState[62] == 0)
+            if(*squareState[63]==21) //black rook
+                if(*squareState[61]==0 && *squareState[62] == 0)
                     if(!this->IsAttacked(61) && !this->IsAttacked(62))
                         moveList.push_front(Move(square,62));
 
         if(B_CanCastleQueenside)
-            if(Board::squareState[56]==21) //black rook
-                if(Board::squareState[58]==0 && Board::squareState[59] == 0)
+            if(*squareState[56]==21) //black rook
+                if(*squareState[58]==0 && *squareState[59] == 0)
                     if(!this->IsAttacked(58) && !this->IsAttacked(59))
                         moveList.push_front(Move(square,58));
+    }
+}
+
+int VirtualMoveTable::ReadPromotionPieceFromIndex(int index, int color)
+{
+    switch(index)
+    {
+        case 0:
+            return Piece::ComputePiece(Piece::queen, color);
+        case 1:
+            return Piece::ComputePiece(Piece::knight, color);
+        case 2:
+            return Piece::ComputePiece(Piece::rook, color);
+        case 3:
+            return Piece::ComputePiece(Piece::bishop, color);
+        default:
+            return Piece::ComputePiece(Piece::queen, color);
     }
 }
 
@@ -455,7 +490,7 @@ void VirtualMoveTable::GenerateAttacks()
     {
         //std::cout << "Here, sir" << std::endl;
 
-        if(Piece::ToType(Board::squareState[it->startSquare]) == Piece::pawn)
+        if(Piece::ToType(*squareState[it->startSquare]) == Piece::pawn)
             if(it->startSquare % 8 == it->targetSquare % 8) //this is not an attack for pawn (detection of the push foward move)
                 continue;
         
@@ -463,12 +498,12 @@ void VirtualMoveTable::GenerateAttacks()
 
         //std::cout << "Pushed for attack. From: " << it->startSquare << " to: " << it->targetSquare << std::endl;
 
-        startSquarePiece = Board::squareState[it->startSquare];
+        startSquarePiece = *squareState[it->startSquare];
 
         Piece::ReadPieceType(startSquarePiece,startSquareType);
 
         if(Piece::IsLongRange(startSquareType))
-            if(Board::squareState[it->targetSquare] != 0)
+            if(*squareState[it->targetSquare] != 0)
                 this->CheckForPins(it->startSquare,it->targetSquare);
 
         if(startSquareType == Piece::knight)
@@ -515,8 +550,8 @@ void VirtualMoveTable::CheckForPins(int startSquare, int targetSquare)
 
     //bool IsVirtual = false;
 
-    Board::ReadSquare(startSquare, startFile, startRank);
-    Board::ReadSquare(targetSquare, targetFile, targetRank);
+    VirtualMoveTable::ReadSquare(startSquare, startFile, startRank);
+    VirtualMoveTable::ReadSquare(targetSquare, targetFile, targetRank);
 
     if(startFile == targetFile) //vertical move
     {
@@ -580,9 +615,9 @@ void VirtualMoveTable::CheckForPins(int startSquare, int targetSquare)
     {
         pinTargetSquare = targetSquare + dir*i;
         
-        if(Board::squareState[pinTargetSquare] != 0)
+        if(*squareState[pinTargetSquare] != 0)
         {
-            if(Piece::IsEnemyKing(Board::squareState[pinTargetSquare]))
+            if(Piece::IsEnemyKing(*squareState[pinTargetSquare]))
             {
                 /*std::cout << "Hereby, there stands a king: " << pinTargetSquare << std::endl;
                 std::cout << "And the direction of the pin is: " << dir << std::endl;
@@ -603,7 +638,7 @@ void VirtualMoveTable::CheckForPins(int startSquare, int targetSquare)
     }
 
     ///CHECKING FOR CHECKS AND VIRTUAL ATTACKS
-    if(Piece::IsEnemyKing(Board::squareState[targetSquare]))
+    if(Piece::IsEnemyKing(*squareState[targetSquare]))
     {
         IsChecked = true;
 
@@ -616,7 +651,7 @@ void VirtualMoveTable::CheckForPins(int startSquare, int targetSquare)
         for(int i=1;i <= VirtualMoveTable::numSquaresToEdge[targetSquare][dirIndex];i++)
         {
             thisSquare = targetSquare + i*dir;
-            if(Board::squareState[thisSquare] != 0)
+            if(*squareState[thisSquare] != 0)
                 break;
             //std::cout << "Virtual square: " << thisSquare << std::endl;
             VirtualAttackList.push_back(thisSquare);
@@ -714,7 +749,7 @@ bool VirtualMoveTable::IsCoveringCheck(int square)
 
 void VirtualMoveTable::CheckForKnightChecks(int targetSquare, int knightSquare)
 {
-    if(Piece::IsEnemyKing(Board::squareState[targetSquare]))
+    if(Piece::IsEnemyKing(*squareState[targetSquare]))
     {
         //std::cout << "We have verified this potential knight adversary to be the king" << std::endl;
         IsChecked = true;
@@ -724,7 +759,7 @@ void VirtualMoveTable::CheckForKnightChecks(int targetSquare, int knightSquare)
 }
 void VirtualMoveTable::CheckForPawnChecks(int targetSquare)
 {
-    if(Piece::IsEnemyKing(Board::squareState[targetSquare]))
+    if(Piece::IsEnemyKing(*squareState[targetSquare]))
     {
         IsChecked = true;
     }
@@ -742,7 +777,7 @@ bool VirtualMoveTable::IsDefended(int targetSquare)
 bool VirtualMoveTable::IsCastling(int startSquare, int targetSquare, bool &IsKingside)
 {
     //we are assuming we've checked for a king on the startSquare and checked for castling booleans in the move generation
-    if(Board::activePlayer == 1)
+    if(*activePlayer == 1)
     {
         if(startSquare != 4)
             return false;
@@ -759,7 +794,7 @@ bool VirtualMoveTable::IsCastling(int startSquare, int targetSquare, bool &IsKin
         }
         return false;
     }
-    else if(Board::activePlayer == 2)
+    else if(*activePlayer == 2)
     {
         if(startSquare != 60)
             return false;
@@ -785,7 +820,7 @@ bool VirtualMoveTable::IsCastling(int startSquare, int targetSquare, bool &IsKin
     {
         if(IsChecked)
         {
-            //Board::DeclareWin((Board::activePlayer % 2) + 1);
+            //Board::DeclareWin((*activePlayer % 2) + 1);
         }
         else
             //Board::DeclareDraw();
@@ -891,4 +926,10 @@ bool VirtualMoveTable::IsSufficientMaterial()
         return true;*/
     
     return false;
+}
+
+void VirtualMoveTable::ReadSquare(int squareIndex, int &file, int &rank)
+{
+    file = squareIndex % 8;
+    rank = squareIndex / 8;
 }

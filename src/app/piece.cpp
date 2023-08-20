@@ -46,6 +46,10 @@ int Piece::ToType(int thisNum)
 
     return type;
 }
+int Piece::ComputePiece(int type, int color)
+{
+    return (type | color);
+}
 void Piece::MovePiece(sf::Vector2i pos)
 {
     if(Board::selectedSquare==-1 || Piece::spritePtr == nullptr)

@@ -14,6 +14,8 @@ class VirtualMoveTable
     static std::list<int> pawnAttackList;
     static std::list<int> kingVirtualAttackList;
 
+    static void ReadSquare(int squareIndex, int &file, int &rank);
+
     public:
     //DIRECTIONS: N, NE, E, SE, S, SW, W, NW
     static short numSquaresToEdge[64][8]; //Number of squares to the edge from the i-th square in the j-th direction
@@ -41,6 +43,10 @@ class VirtualMoveTable
     bool IsThreefoldRepetition;
     bool IsFiftymove;
 
+    //pointers to the board
+    unsigned short *activePlayer;
+    int *squareState[64];
+
     //Fill numSquaresToEdge
     static void CalculateStartMoveData();
     std::list<Move> GenerateMoves();
@@ -57,6 +63,7 @@ class VirtualMoveTable
     void AddCurrentPosition();
     void AddCurrentPosition(std::list<std::list<Position>::iterator> &iterList);
     void RemovePosition(std::list<Position>::iterator it);
+    static int ReadPromotionPieceFromIndex(int index, int color);
     bool IsLegal(int startSquare, int targetSquare);
     bool IsEnPassant(int targetSquare);
     bool IsTwoSquareAdvance(int startSquare, int targetSquare);

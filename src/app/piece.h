@@ -28,6 +28,7 @@ class Piece
     static void ReadPieceColor(int thisNum, int &color); //read piece color from thisNum int, save into input variables
     static int ToColor(int thisNum);
     static int ToType(int thisNum);
+    static int ComputePiece(int type, int color);
     static void MovePiece(sf::Vector2i pos); //moves piece sprite, with such position adjustments that looks correctly when following the mouse
     static void PutPiece(int posX, int posY); //moves piece sprite to the input position (piecePtr selects the sprite)
     static void PutPieceSprite(int posX, int posY, int spriteIndex); //moves target piece sprite to the input position

@@ -40,7 +40,7 @@ int main(){
         PUT HERE DEBUGGING CODE
     */
 
-    Search::DebugSearch();
+    //Search::DebugSearch();
 
     ChessClock whiteClock;
     ChessClock blackClock;

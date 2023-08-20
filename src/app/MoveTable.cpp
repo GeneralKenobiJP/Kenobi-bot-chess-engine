@@ -852,5 +852,7 @@ bool MoveTable::IsSufficientMaterial()
     if(!Board::IsKingBlocked(Piece::black))
         return true;*/
     
-    return false;
+    //return false;
+
+    return true;
 }

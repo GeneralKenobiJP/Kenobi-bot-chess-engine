@@ -428,6 +428,13 @@ void VirtualBoard::InitializeBoard()
     thisMoveTable.B_CanCastleKingside = MoveTable::B_CanCastleKingside;
     thisMoveTable.B_CanCastleQueenside = MoveTable::B_CanCastleQueenside;
 
+    thisMoveTable.activePlayer = &activePlayer;
+    
+    for(int i=0;i<64;i++)
+    {
+        thisMoveTable.squareState[i] = &squareState[i];
+    }
+
     //////////////////////////
 }
 
