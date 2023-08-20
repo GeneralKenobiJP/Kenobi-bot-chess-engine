@@ -11,10 +11,10 @@ void Search::DebugSearch()
     std::cout << VirtualEvaluation::Evaluate() << std::endl;
 }
 
-int Search::SearchMoves(int depth, int alpha, int beta)
+int Search::SearchMoves(int depth, int alpha, int beta) //
 {
     if(depth == 0)
-        return VirtualEvaluation::Evaluate();//thingy; //later on: return Search::SearchCaptures(alpha, beta)
+        return VirtualEvaluation::EvaluateFromPerspective(SearchBoard.activePlayer);//thingy; //later on: return Search::SearchCaptures(alpha, beta)
         
     if(SearchBoard.thisMoveTable.CurrentMoveList.size() == 0)
     {
@@ -26,7 +26,7 @@ int Search::SearchMoves(int depth, int alpha, int beta)
     if(SearchBoard.IsDraw) //implement draws
         return 0;
 
-    int bestEval;
+    //int bestEval;
     int eval;
     std::list<Move> moveList = SearchBoard.thisMoveTable.CurrentMoveList;
     std::list<Move>::iterator it;
@@ -34,11 +34,14 @@ int Search::SearchMoves(int depth, int alpha, int beta)
     for(it = moveList.begin(); it!=moveList.end();it++)
     {
         SearchBoard.MakeMove(it);
-        eval = -SearchMoves(depth-1,alpha,beta); //Note the "-"
-        bestEval = std::max(bestEval, eval);
+        eval = -SearchMoves(depth-1,-beta,-alpha); //Note the "-"
+        //bestEval = std::max(bestEval, eval);
         SearchBoard.UnmakeMove(*it);
+        if(eval >= beta)
+            return beta;
+        alpha = std::max(alpha, eval);
     }
 
-    return bestEval;
+    return alpha;
     
 }

@@ -15,5 +15,6 @@ class VirtualEvaluation
     static VirtualBoard *board;
 
     static int Evaluate();
+    static int EvaluateFromPerspective(short player);
     static void EvaluateSides(int &whiteValue, int &blackValue, bool &IsTherePawn);
 };

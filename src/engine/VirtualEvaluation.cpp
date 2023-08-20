@@ -62,6 +62,15 @@ int VirtualEvaluation::Evaluate()
     
     return value;
 }
+int VirtualEvaluation::EvaluateFromPerspective(short player)
+{
+    int eval = VirtualEvaluation::Evaluate();
+
+    if(player == 2)
+        return -eval;
+    
+    return eval;
+}
 
 void VirtualEvaluation::EvaluateSides(int &whiteValue, int &blackValue, bool &IsTherePawn)
 {
