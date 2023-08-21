@@ -4,6 +4,8 @@
 
 class Search
 {
+    std::vector<long long> depthMoveNum;
+
     public:
 
     //SearchMoveList
@@ -19,5 +21,6 @@ class Search
 
     Search();
 
-    static void DebugSearch();
+    void DebugSearch(int depth);
+    void LogDebugSearch(int depth);
 };

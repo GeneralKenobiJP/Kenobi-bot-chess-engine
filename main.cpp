@@ -66,6 +66,10 @@ int main(){
 
     //Board::Promote(3,Piece::white);
 
+    Search thisSearch;
+    Thread searchThread(std::bind(&Search::LogDebugSearch,&thisSearch,3));
+    searchThread.launch();
+
     /// DEBUGGING CODE ENDS HERE
 
     while (window.isOpen())

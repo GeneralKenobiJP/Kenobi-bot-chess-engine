@@ -363,23 +363,37 @@ void VirtualBoard::UnmakeMove(Move move)
     else
         PutOnSquare(move.startSquare, Piece::pawn ,Piece::ToColor(move.promotionPiece));
 
-    if(EnPassantHistory.back() == true)
-    {
-        if(move.targetSquare/8 == 5)
-            PutOnSquare(move.targetSquare-8, Piece::pawn, Piece::black);
-        else
-            PutOnSquare(move.targetSquare+8, Piece::pawn, Piece::white);
-    }
-    EnPassantHistory.pop_back();
+    std::cout << "Thy piece has been cast upon the mortal soil of your choice" << std::endl;
 
-    if(CaptureHistory.back() != 0)
+    std::cout << EnPassantHistory.back() << std::endl;
+    if(!EnPassantHistory.empty())
     {
-        PutOnSquare(move.targetSquare, CaptureHistory.back());
+        if(EnPassantHistory.back() == true)
+        {
+            if(move.targetSquare/8 == 5)
+                PutOnSquare(move.targetSquare-8, Piece::pawn, Piece::black);
+            else
+                PutOnSquare(move.targetSquare+8, Piece::pawn, Piece::white);
+        }
+        EnPassantHistory.pop_back();
     }
-    CaptureHistory.pop_back();
 
-    thisMoveTable.RemovePosition(PositionIndexHistory.back());
-    PositionIndexHistory.pop_back();
+    std::cout << "Step back, a peasant" << std::endl;
+
+    if(!CaptureHistory.empty())
+    {
+        if(CaptureHistory.back() != 0)
+        {
+            PutOnSquare(move.targetSquare, CaptureHistory.back());
+        }
+        CaptureHistory.pop_back();
+    }
+
+    if(!PositionIndexHistory.empty())
+    {
+        thisMoveTable.RemovePosition(PositionIndexHistory.back());
+        PositionIndexHistory.pop_back();
+    }
 
     RevertPlayer();
 }
@@ -396,6 +410,7 @@ void VirtualBoard::RevertPlayer()
     thisMoveTable.GenerateAttacks();
     activePlayer = (activePlayer % 2) + 1;
     CurrentEvalution = VirtualEvaluation::Evaluate();
+    thisMoveTable.GenerateMoves(thisMoveTable.CurrentMoveList);
     //thisMoveTable.AddCurrentPosition();
 }
 

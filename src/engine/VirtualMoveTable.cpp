@@ -119,18 +119,18 @@ std::list<Move> VirtualMoveTable::GenerateMoves() ///DRAWS DEBUGGING
     VirtualMoveTable::pawnAttackList.clear();
     VirtualMoveTable::kingVirtualAttackList.clear();
 
-    if(consecutiveMoves >= 150) //leaving space for nuances here
+    /*if(consecutiveMoves >= 150) //leaving space for nuances here
         Board::DeclareDraw();
-    else if(consecutiveMoves >= 100)
-        IsFiftymove = true;
+    else if(consecutiveMoves >= 100) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        IsFiftymove = true;*/
 
-    if(!this->IsSufficientMaterial())
-        Board::DeclareDraw();
+    //if(!this->IsSufficientMaterial())
+    //    Board::DeclareDraw(); !!!!!!!!!!!!!!!!!!!!!
 
-    if(IsFiftymove || IsThreefoldRepetition)
+    /*if(IsFiftymove || IsThreefoldRepetition)
     {
-        Board::CanDeclareDraw = true;
-    }
+        Board::CanDeclareDraw = true; !!!!!!!!!!!!!!!!!!!
+    }*/
 
     for(int i=0;i<64;i++)
     {
@@ -203,7 +203,7 @@ void VirtualMoveTable::GenerateLongRangeMoves(int square, int pieceType, std::li
 
             if(!IsChecked || this->IsCoveringCheck(targetSquare))
             {
-                moveList.push_front(Move(square,targetSquare));
+                moveList.push_back(Move(square,targetSquare));
             }
 
             std::cout << square << ' ' << targetSquare << std::endl;
@@ -233,7 +233,7 @@ void VirtualMoveTable::GenerateKnightMoves(int square, std::list<Move> &moveList
 
         if(targetSquareColor/8 != *activePlayer)
         {
-            moveList.push_front(Move(square,knightTargetSquares[square][i]));
+            moveList.push_back(Move(square,knightTargetSquares[square][i]));
         }
         else
             DefenseList.push_back(knightTargetSquares[square][i]);
@@ -272,12 +272,12 @@ void VirtualMoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
             {
                 if(targetSquare/8 != 0 && targetSquare/8 !=7)
                 {
-                    moveList.push_front(Move(square,targetSquare));
+                    moveList.push_back(Move(square,targetSquare));
                 }
                 else //PROMOTION (without capture)
                 {
                     for(int i=0; i<4; i++)
-                        moveList.push_front(Move(square,targetSquare,VirtualMoveTable::ReadPromotionPieceFromIndex(i,*activePlayer)));
+                        moveList.push_back(Move(square,targetSquare,VirtualMoveTable::ReadPromotionPieceFromIndex(i,*activePlayer)));
                 }
             }
         }
@@ -302,7 +302,7 @@ void VirtualMoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
         //EN PASSANT
         if(enPassantSquare == targetSquare)
         {
-            moveList.push_front(Move(square,targetSquare));
+            moveList.push_back(Move(square,targetSquare));
             continue;
             //REMOVE EN PASSANT-ED PAWN
         }
@@ -312,7 +312,7 @@ void VirtualMoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
                 {
                     if(targetSquare != 0 && targetSquare != 7)
                     {
-                        moveList.push_front(Move(square,targetSquare));
+                        moveList.push_back(Move(square,targetSquare));
                     }
                     else //PROMOTION (with capture)
                     {
@@ -326,7 +326,7 @@ void VirtualMoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
             continue;
         }
 
-        pawnAttackList.push_front(targetSquare);
+        pawnAttackList.push_back(targetSquare);
     }
 
     // TWO-SQUARE ADVANCE
@@ -349,7 +349,7 @@ void VirtualMoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
                 return;
             int passingSquare = square + pawnMoveShift;
             if(*squareState[targetSquare]==0 && *squareState[passingSquare] == 0)
-                moveList.push_front(Move(square,targetSquare));
+                moveList.push_back(Move(square,targetSquare));
         }
     }
 
@@ -380,7 +380,7 @@ void VirtualMoveTable::GenerateKingMoves(int square, std::list<Move> &moveList)
 
         if(targetSquareColor/8 != *activePlayer)
         {
-            moveList.push_front(Move(square,kingTargetSquares[square][i]));
+            moveList.push_back(Move(square,kingTargetSquares[square][i]));
         }
         else if(targetSquareColor != 0)
             DefenseList.push_back(kingTargetSquares[square][i]);
@@ -395,13 +395,13 @@ void VirtualMoveTable::GenerateKingMoves(int square, std::list<Move> &moveList)
             if(*squareState[7]==13) //white rook
                 if(*squareState[5]==0 && *squareState[6] == 0)
                     if(!this->IsAttacked(5) && !this->IsAttacked(6))
-                        moveList.push_front(Move(square,6));
+                        moveList.push_back(Move(square,6));
 
         if(W_CanCastleQueenside)
             if(*squareState[0]==13) //white rook
                 if(*squareState[2]==0 && *squareState[3] == 0)
                     if(!this->IsAttacked(2) && !this->IsAttacked(3))
-                        moveList.push_front(Move(square,2));
+                        moveList.push_back(Move(square,2));
     }
     if(*activePlayer == 2) //black
     {
@@ -409,13 +409,13 @@ void VirtualMoveTable::GenerateKingMoves(int square, std::list<Move> &moveList)
             if(*squareState[63]==21) //black rook
                 if(*squareState[61]==0 && *squareState[62] == 0)
                     if(!this->IsAttacked(61) && !this->IsAttacked(62))
-                        moveList.push_front(Move(square,62));
+                        moveList.push_back(Move(square,62));
 
         if(B_CanCastleQueenside)
             if(*squareState[56]==21) //black rook
                 if(*squareState[58]==0 && *squareState[59] == 0)
                     if(!this->IsAttacked(58) && !this->IsAttacked(59))
-                        moveList.push_front(Move(square,58));
+                        moveList.push_back(Move(square,58));
     }
 }
 
@@ -494,7 +494,7 @@ void VirtualMoveTable::GenerateAttacks()
             if(it->startSquare % 8 == it->targetSquare % 8) //this is not an attack for pawn (detection of the push foward move)
                 continue;
         
-        MoveTable::AttackList.push_front(it->targetSquare);
+        MoveTable::AttackList.push_back(it->targetSquare);
 
         //std::cout << "Pushed for attack. From: " << it->startSquare << " to: " << it->targetSquare << std::endl;
 
@@ -519,12 +519,12 @@ void VirtualMoveTable::GenerateAttacks()
 
     for(iter = pawnAttackList.begin(); iter!= pawnAttackList.end();iter++)
     {
-        AttackList.push_front(*iter);
+        AttackList.push_back(*iter);
         //std::cout << "Pushed pawn for attack:  "<< *iter << std::endl;
     }
     for(iter = kingVirtualAttackList.begin(); iter!= kingVirtualAttackList.end();iter++)
     {
-        AttackList.push_front(*iter);
+        AttackList.push_back(*iter);
         //std::cout << "Pushed king for attack:  "<< *iter << std::endl;
     }
 
@@ -624,8 +624,8 @@ void VirtualMoveTable::CheckForPins(int startSquare, int targetSquare)
                 std::cout << pinTargetSquare << " = " << targetSquare << " + " << dir << " * " << i << std::endl;
                 std::cout << "numSquaresToEdge: " << MoveTable::numSquaresToEdge[targetSquare][dir] << std::endl;
                 std::cout << "targetSquare: " << targetSquare << std::endl;*/
-                PinList.push_front(targetSquare);
-                PinDirectionList.push_front(dir);
+                PinList.push_back(targetSquare);
+                PinDirectionList.push_back(dir);
                 //std::cout << "Pinned dir: " << dir << std::endl;
                 break;
             }
@@ -842,10 +842,10 @@ void VirtualMoveTable::AddCurrentPosition()
         {
             it->occurrenceNum++;
             //std::cout << "num: " << it->occurrenceNum << std::endl;
-            if(it->occurrenceNum==5)
-                Board::DeclareDraw();
+            /*if(it->occurrenceNum==5)
+                Board::DeclareDraw(); !!!!!!!!!!!!!!!!!!!!!!!
             else if(it->occurrenceNum>=3)
-                IsThreefoldRepetition = true;
+                IsThreefoldRepetition = true;*/
             return;
         }
     }
@@ -868,10 +868,10 @@ void VirtualMoveTable::AddCurrentPosition(std::list<std::list<Position>::iterato
             iterList.push_back(it);
             it->occurrenceNum++;
             //std::cout << "num: " << it->occurrenceNum << std::endl;
-            if(it->occurrenceNum==5)
-                Board::DeclareDraw();
+            /*if(it->occurrenceNum==5)
+                Board::DeclareDraw(); !!!!!!!!!!!!!!!!!!!!!!!
             else if(it->occurrenceNum>=3)
-                IsThreefoldRepetition = true;
+                IsThreefoldRepetition = true;*/
             return;
         }
     }
