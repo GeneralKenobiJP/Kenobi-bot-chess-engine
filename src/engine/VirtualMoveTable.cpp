@@ -132,6 +132,8 @@ std::list<Move> VirtualMoveTable::GenerateMoves() ///DRAWS DEBUGGING
         Board::CanDeclareDraw = true; !!!!!!!!!!!!!!!!!!!
     }*/
 
+    std::cout << "Checkpoint 1" << std::endl;
+
     for(int i=0;i<64;i++)
     {
         Piece::ReadPiece(*squareState[i],pieceType,pieceColor);
@@ -139,21 +141,31 @@ std::list<Move> VirtualMoveTable::GenerateMoves() ///DRAWS DEBUGGING
         if(pieceColor/8 != *activePlayer)
             continue;
 
+        std::cout << "Checkpoint 2" << std::endl;
+
         if(Piece::IsLongRange(pieceType))
         {
+            std::cout << "Initialized path 3.1" << std::endl;
             this->GenerateLongRangeMoves(i,pieceType,MoveList);
+            std::cout << "Checkpoint 3.1" << std::endl;
         }
         else if(pieceType == Piece::knight)
         {
+            std::cout << "Initialized path 3.2" << std::endl;
             this->GenerateKnightMoves(i,MoveList);
+            std::cout << "Checkpoint 3.2" << std::endl;
         }
         else if(pieceType == Piece::pawn)
         {
+            std::cout << "Initialized path 3.3" << std::endl;
             this->GeneratePawnMoves(i,MoveList);
+            std::cout << "Checkpoint 3.3" << std::endl;
         }
         else //king
         {
+            std::cout << "Initialized path 3.4" << std::endl;
             this->GenerateKingMoves(i,MoveList);
+            std::cout << "Checkpoint 3.4" << std::endl;
         }
 
         //if(pieceColor != 0)
@@ -188,7 +200,7 @@ void VirtualMoveTable::GenerateLongRangeMoves(int square, int pieceType, std::li
                 if(std::abs(pinDir) != std::abs(VirtualMoveTable::directionShift[dir]))
                     continue;
         
-        for(int sq=1;sq<=MoveTable::numSquaresToEdge[square][dir];sq++)
+        for(int sq=1;sq<=VirtualMoveTable::numSquaresToEdge[square][dir];sq++)
         {
             targetSquare = square + VirtualMoveTable::directionShift[dir] * sq;
 
@@ -224,12 +236,20 @@ void VirtualMoveTable::GenerateKnightMoves(int square, std::list<Move> &moveList
     if(this->IsPinned(square))
         return;
 
+    std::cout << "Knight I: " << square << std::endl;
+    std::cout << VirtualMoveTable::knightTargetSquares[square].size() << " dot " << std::endl;
+
     for(int i=0;i<VirtualMoveTable::knightTargetSquares[square].size();i++)
     {
+        std::cout << "Knight I+" << std::endl;
         if(IsChecked && !this->IsCoveringCheck(VirtualMoveTable::knightTargetSquares[square][i]))
             continue;
 
+        std::cout << "Knight II" << std::endl;
+
         Piece::ReadPieceColor(*squareState[VirtualMoveTable::knightTargetSquares[square][i]],targetSquareColor);
+
+        std::cout << "Knight III" << std::endl;
 
         if(targetSquareColor/8 != *activePlayer)
         {
@@ -237,7 +257,10 @@ void VirtualMoveTable::GenerateKnightMoves(int square, std::list<Move> &moveList
         }
         else
             DefenseList.push_back(knightTargetSquares[square][i]);
+
+        std::cout << "Knight IV" << std::endl;
     }
+    std::cout << "Knight V" << std::endl;
 }
 
 void VirtualMoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
@@ -494,7 +517,7 @@ void VirtualMoveTable::GenerateAttacks()
             if(it->startSquare % 8 == it->targetSquare % 8) //this is not an attack for pawn (detection of the push foward move)
                 continue;
         
-        MoveTable::AttackList.push_back(it->targetSquare);
+        AttackList.push_back(it->targetSquare);
 
         //std::cout << "Pushed for attack. From: " << it->startSquare << " to: " << it->targetSquare << std::endl;
 
@@ -715,6 +738,7 @@ bool VirtualMoveTable::IsVirtuallyAttacked(int square)
 
 bool VirtualMoveTable::IsCoveringCheck(int square)
 {
+    std::cout << "A question stated you hath" << std::endl;
     if(!IsChecked)
         return true; //whatever
     if(KnightCheckNum == 1)
@@ -830,7 +854,7 @@ bool VirtualMoveTable::IsCastling(int startSquare, int targetSquare, bool &IsKin
 void VirtualMoveTable::AddCurrentPosition()
 {
     FEN currentFEN;
-    currentFEN.GetPosition();
+    currentFEN.GetPosition(*squareState, *activePlayer, W_CanCastleKingside, W_CanCastleQueenside, B_CanCastleKingside, B_CanCastleQueenside, enPassantSquare, consecutiveMoves);
 
     //std::cout << "currentFEN: " << currentFEN.FENtext << std::endl;
 
@@ -855,7 +879,7 @@ void VirtualMoveTable::AddCurrentPosition()
 void VirtualMoveTable::AddCurrentPosition(std::list<std::list<Position>::iterator> &iterList)
 {
     FEN currentFEN;
-    currentFEN.GetPosition();
+    currentFEN.GetPosition(*squareState, *activePlayer, W_CanCastleKingside, W_CanCastleQueenside, B_CanCastleKingside, B_CanCastleQueenside, enPassantSquare, consecutiveMoves);
 
     //std::cout << "currentFEN: " << currentFEN.FENtext << std::endl;
 

@@ -248,6 +248,100 @@ void FEN::GetPosition()
 
     // fullmove counter is useless, so did not implement
 }
+void FEN::GetPosition(int squareState[64], short activePlayer, bool W_K, bool W_Q, bool B_K, bool B_Q, int enPassantSquare, int consecutiveMoves)
+{
+    std::string thisFen = "";
+    int color;
+    int type;
+    int square = 56;
+    int emptyNum;
+    int colorChar;
+
+    for (int rank = 7; rank >= 0; rank--)
+    {
+        emptyNum = 0;
+        for (int file = 0; file <= 7; file++)
+        {
+            Piece::ReadPiece(squareState[square], type, color);
+            square++;
+
+            colorChar = (color - 8) * 4;
+
+            if (type == 0)
+            {
+                emptyNum++;
+                continue;
+            }
+
+            if (emptyNum > 0)
+            {
+                thisFen += std::to_string(emptyNum);
+                emptyNum = 0;
+            }
+
+            switch (type)
+            {
+            case Piece::pawn:
+                thisFen += ('P' + colorChar);
+                continue;
+            case Piece::knight:
+                thisFen += ('N' + colorChar);
+                continue;
+            case Piece::bishop:
+                thisFen += ('B' + colorChar);
+                continue;
+            case Piece::rook:
+                thisFen += ('R' + colorChar);
+                continue;
+            case Piece::queen:
+                thisFen += ('Q' + colorChar);
+                continue;
+            case Piece::king:
+                thisFen += ('K' + colorChar);
+                continue;
+            }
+        }
+        if (emptyNum > 0)
+        {
+            thisFen += std::to_string(emptyNum);
+            emptyNum = 0;
+        }
+        if (rank > 0)
+            thisFen += '/';
+        square -= 16;
+    }
+
+    if (activePlayer == 1)
+        thisFen += " w ";
+    else // 2
+        thisFen += " b ";
+
+    if (W_K)
+        thisFen += 'K';
+    if (W_Q)
+        thisFen += 'Q';
+    if (B_K)
+        thisFen += 'k';
+    if (B_Q)
+        thisFen += 'q';
+
+    if (thisFen[thisFen.length() - 1] != ' ')
+        thisFen += ' ';
+
+    if (enPassantSquare == -1)
+        thisFen += "- ";
+    else
+    {
+        thisFen += std::to_string(enPassantSquare);
+        thisFen += ' ';
+    }
+
+    thisFen += std::to_string(consecutiveMoves);
+
+    FENtext = thisFen;
+
+    // fullmove counter is useless, so did not implement
+}
 
 const std::string FEN::CutHalfmoves() const
 {

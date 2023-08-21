@@ -226,6 +226,7 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
     int pieceType;
     int pieceColor;
     Piece::ReadPiece(squareState[startSquare], pieceType, pieceColor);
+    std::cout << "The piece was hereby read as: " << startSquare << ", " << squareState[startSquare] <<", " << pieceType << ", " << pieceColor << std::endl;
 
     int capturedPiece;
 
@@ -276,6 +277,8 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
     else
         thisMoveTable.enPassantSquare = -1;
 
+    std::cout << "We got through the pawn stage" << std::endl;
+
     if (pieceType == Piece::king)
     {
         bool IsKingside;
@@ -306,6 +309,8 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
         }
     }
 
+    std::cout << "We got through the king stage" << std::endl;
+
     if (pieceType == Piece::rook)
     {
         if (startSquare == 0) // a1
@@ -318,6 +323,8 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
             thisMoveTable.B_CanCastleKingside = 0;
     }
 
+    std::cout << "We got through the rook stage" << std::endl;
+
     if (squareState[targetSquare] != 0)
     {
         // Piece::RemovePieceSprite(i);
@@ -325,15 +332,20 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
         this->RemoveFromSquare(targetSquare);
         hasCaptured = true;
     }
+    std::cout << "We got through the capture stage" << std::endl;
 
     if(hasCaptured)
         CaptureHistory.push_back(capturedPiece);
     else
         CaptureHistory.push_back(0); //Piece::none
 
+    std::cout << "We got through the capture history stage" << std::endl;
+
     this->PutOnSquare(targetSquare, squareState[startSquare]);
     this->RemoveFromSquare(startSquare);
+    std::cout << "We got through the Put piece stage" << std::endl;
     this->SwitchPlayer();
+    std::cout << "We got through the switch player stage" << std::endl;
     // break;
 
     if (pieceType != Piece::pawn && !hasCaptured)
@@ -341,12 +353,17 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
     else
         thisMoveTable.consecutiveMoves = 0;
 
+    std::cout << "We got through the consecutive moves stage" << std::endl;
+
     thisMoveTable.GenerateMoves(thisMoveTable.CurrentMoveList);
+
+    std::cout << "We got through the Generate Moves stage" << std::endl;
     //thisMoveTable.CheckState();
 }
 
-void VirtualBoard::MakeMove(std::list<Move>::iterator moveIterator)
+void VirtualBoard::MakeMove(std::list<Move>::iterator &moveIterator)
 {
+    std::cout << "Our iteration: " << moveIterator->startSquare << ", " << moveIterator->targetSquare << ", " << moveIterator->promotionPiece << std::endl;
     this->MakeMove(moveIterator->startSquare, moveIterator->targetSquare, moveIterator->promotionPiece);
 }
 void VirtualBoard::MakeMove(Move move)
@@ -419,9 +436,13 @@ void VirtualBoard::InitializeEvaluation()
     VirtualEvaluation::board = this;
 }
 
+#include "board.h"
+
 void VirtualBoard::InitializeBoard()
 {
     InitializeEvaluation();
+    thisMoveTable.CalculateStartMoveData();
+
     thisMoveTable.occurredPositions = MoveTable::occurredPositions;
     thisMoveTable.consecutiveMoves = MoveTable::consecutiveMoves;
     thisMoveTable.IsThreefoldRepetition = MoveTable::IsThreefoldRepetition;
@@ -447,6 +468,7 @@ void VirtualBoard::InitializeBoard()
     
     for(int i=0;i<64;i++)
     {
+        squareState[i] = Board::squareState[i];
         thisMoveTable.squareState[i] = &squareState[i];
     }
 

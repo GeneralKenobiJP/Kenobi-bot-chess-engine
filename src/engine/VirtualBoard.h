@@ -32,7 +32,7 @@ class VirtualBoard
     void RevertPlayer();
 
     void MakeMove(int startSquare, int targetSquare, int promotionNum);
-    void MakeMove(std::list<Move>::iterator moveIterator);
+    void MakeMove(std::list<Move>::iterator &moveIterator);
     void MakeMove(Move move);
     void UnmakeMove(Move move);
     void InitializeEvaluation();

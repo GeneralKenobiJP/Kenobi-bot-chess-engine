@@ -12,6 +12,9 @@ void Search::DebugSearch(int depth)
 {
     std::cout << "debugging search: " << depth << std::endl;
     //std::cout << VirtualEvaluation::Evaluate() << std::endl;
+
+    std::cout << "Move List count: " << SearchBoard.thisMoveTable.CurrentMoveList.size() << std::endl;
+
     if(depth == 0)
         return;
     
@@ -24,8 +27,11 @@ void Search::DebugSearch(int depth)
     std::list<Move> moveList = SearchBoard.thisMoveTable.CurrentMoveList;
     std::list<Move>::iterator it;
 
+    //std::cout << "Move List count: " << moveList.size() << std::endl;
+
     for(it = moveList.begin(); it!=moveList.end();it++)
     {
+        std::cout << "Ladies and gentlemen: " << it->startSquare << ", " << it->targetSquare << ", " << it->promotionPiece << std::endl;
         depthMoveNum[depth-1]++;
         SearchBoard.MakeMove(it);
         this->DebugSearch(depth-1);
