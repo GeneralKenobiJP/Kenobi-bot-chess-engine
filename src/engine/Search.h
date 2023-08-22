@@ -5,6 +5,8 @@
 class Search
 {
     std::vector<long long> depthMoveNum;
+    long long pieceMoveNum[6];
+    int counter;
 
     public:
 

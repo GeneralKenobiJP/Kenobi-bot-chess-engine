@@ -132,7 +132,7 @@ std::list<Move> VirtualMoveTable::GenerateMoves() ///DRAWS DEBUGGING
         Board::CanDeclareDraw = true; !!!!!!!!!!!!!!!!!!!
     }*/
 
-    std::cout << "Checkpoint 1" << std::endl;
+    //std::cout << "Checkpoint 1" << std::endl;
 
     for(int i=0;i<64;i++)
     {
@@ -141,31 +141,31 @@ std::list<Move> VirtualMoveTable::GenerateMoves() ///DRAWS DEBUGGING
         if(pieceColor/8 != *activePlayer)
             continue;
 
-        std::cout << "Checkpoint 2" << std::endl;
+        //std::cout << "Checkpoint 2" << std::endl;
 
         if(Piece::IsLongRange(pieceType))
         {
-            std::cout << "Initialized path 3.1" << std::endl;
+            //std::cout << "Initialized path 3.1" << std::endl;
             this->GenerateLongRangeMoves(i,pieceType,MoveList);
-            std::cout << "Checkpoint 3.1" << std::endl;
+            //std::cout << "Checkpoint 3.1" << std::endl;
         }
         else if(pieceType == Piece::knight)
         {
-            std::cout << "Initialized path 3.2" << std::endl;
+            //std::cout << "Initialized path 3.2" << std::endl;
             this->GenerateKnightMoves(i,MoveList);
-            std::cout << "Checkpoint 3.2" << std::endl;
+            //std::cout << "Checkpoint 3.2" << std::endl;
         }
         else if(pieceType == Piece::pawn)
         {
-            std::cout << "Initialized path 3.3" << std::endl;
+            //std::cout << "Initialized path 3.3" << std::endl;
             this->GeneratePawnMoves(i,MoveList);
-            std::cout << "Checkpoint 3.3" << std::endl;
+            //std::cout << "Checkpoint 3.3" << std::endl;
         }
         else //king
         {
-            std::cout << "Initialized path 3.4" << std::endl;
+            //std::cout << "Initialized path 3.4" << std::endl;
             this->GenerateKingMoves(i,MoveList);
-            std::cout << "Checkpoint 3.4" << std::endl;
+            //std::cout << "Checkpoint 3.4" << std::endl;
         }
 
         //if(pieceColor != 0)
@@ -218,7 +218,7 @@ void VirtualMoveTable::GenerateLongRangeMoves(int square, int pieceType, std::li
                 moveList.push_back(Move(square,targetSquare));
             }
 
-            std::cout << square << ' ' << targetSquare << std::endl;
+            //std::cout << square << ' ' << targetSquare << std::endl;
 
             if(targetSquarePieceColor != 0) //opponent's piece is blocking the way
             {
@@ -236,20 +236,20 @@ void VirtualMoveTable::GenerateKnightMoves(int square, std::list<Move> &moveList
     if(this->IsPinned(square))
         return;
 
-    std::cout << "Knight I: " << square << std::endl;
-    std::cout << VirtualMoveTable::knightTargetSquares[square].size() << " dot " << std::endl;
+    //std::cout << "Knight I: " << square << std::endl;
+    //std::cout << VirtualMoveTable::knightTargetSquares[square].size() << " dot " << std::endl;
 
     for(int i=0;i<VirtualMoveTable::knightTargetSquares[square].size();i++)
     {
-        std::cout << "Knight I+" << std::endl;
+        //std::cout << "Knight I+" << std::endl;
         if(IsChecked && !this->IsCoveringCheck(VirtualMoveTable::knightTargetSquares[square][i]))
             continue;
 
-        std::cout << "Knight II" << std::endl;
+        //std::cout << "Knight II" << std::endl;
 
         Piece::ReadPieceColor(*squareState[VirtualMoveTable::knightTargetSquares[square][i]],targetSquareColor);
 
-        std::cout << "Knight III" << std::endl;
+        //std::cout << "Knight III" << std::endl;
 
         if(targetSquareColor/8 != *activePlayer)
         {
@@ -258,9 +258,9 @@ void VirtualMoveTable::GenerateKnightMoves(int square, std::list<Move> &moveList
         else
             DefenseList.push_back(knightTargetSquares[square][i]);
 
-        std::cout << "Knight IV" << std::endl;
+        //std::cout << "Knight IV" << std::endl;
     }
-    std::cout << "Knight V" << std::endl;
+    //std::cout << "Knight V" << std::endl;
 }
 
 void VirtualMoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
@@ -319,7 +319,7 @@ void VirtualMoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
         if(targetSquare<0 || targetSquare>63)
             break;
         if((targetSquare % 8 != square % 8 - 1) && (targetSquare % 8 != square % 8 + 1)) //preventing from going around the board
-            break;
+            continue;
 
         Piece::ReadPieceColor(*squareState[targetSquare],targetSquareColor);
         //EN PASSANT
@@ -738,7 +738,7 @@ bool VirtualMoveTable::IsVirtuallyAttacked(int square)
 
 bool VirtualMoveTable::IsCoveringCheck(int square)
 {
-    std::cout << "A question stated you hath" << std::endl;
+    //std::cout << "A question stated you hath" << std::endl;
     if(!IsChecked)
         return true; //whatever
     if(KnightCheckNum == 1)

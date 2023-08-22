@@ -285,7 +285,7 @@ void MoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
         if(targetSquare<0 || targetSquare>63)
             break;
         if((targetSquare % 8 != square % 8 - 1) && (targetSquare % 8 != square % 8 + 1)) //preventing from going around the board
-            break;
+            continue;
 
         Piece::ReadPieceColor(Board::squareState[targetSquare],targetSquareColor);
         //EN PASSANT
