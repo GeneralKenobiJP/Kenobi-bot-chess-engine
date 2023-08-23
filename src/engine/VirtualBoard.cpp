@@ -374,6 +374,9 @@ void VirtualBoard::MakeMove(Move move)
 
 void VirtualBoard::UnmakeMove(Move move)
 {
+    int pieceType, pieceColor;
+    bool hasCaptured=false;
+    bool isKingside;
     //1std::cout << "Unmaking move... :" << move.startSquare << "->" << move.targetSquare << "(" << move.promotionPiece << ")" << std::endl;
     if(move.promotionPiece == 0)
     {
@@ -407,6 +410,7 @@ void VirtualBoard::UnmakeMove(Move move)
         if(CaptureHistory.back() != 0)
         {
             this->PutOnSquare(move.targetSquare, CaptureHistory.back());
+            hasCaptured = true;
         }
         CaptureHistory.pop_back();
     }
@@ -416,6 +420,24 @@ void VirtualBoard::UnmakeMove(Move move)
         thisMoveTable.RemovePosition(PositionIndexHistory.back());
         PositionIndexHistory.pop_back();
     }
+
+    Piece::ReadPiece(squareState[move.startSquare],pieceType,pieceColor);
+
+    if(pieceType==Piece::king && thisMoveTable.IsCastling(move.startSquare, move.targetSquare,isKingside))
+    {
+        if(isKingside)
+        {
+            this->RemoveFromSquare(move.startSquare+1);
+            this->PutOnSquare(move.targetSquare+1, Piece::rook, pieceColor);
+        }
+        else
+        {
+            this->RemoveFromSquare(move.startSquare-1);
+            this->PutOnSquare(move.targetSquare-2, Piece::rook, pieceColor);
+        }
+    }
+    std::cout << PositionIndexHistory.size() << std::endl;
+    //PositionIndexHistory.back()->fen.ReadContext(thisMoveTable.W_CanCastleKingside, thisMoveTable.W_CanCastleQueenside, thisMoveTable.B_CanCastleKingside, thisMoveTable.B_CanCastleQueenside, thisMoveTable.enPassantSquare, thisMoveTable.consecutiveMoves);
 
     this->RevertPlayer();
 }
@@ -454,6 +476,8 @@ void VirtualBoard::InitializeBoard()
     thisMoveTable.consecutiveMoves = MoveTable::consecutiveMoves;
     thisMoveTable.IsThreefoldRepetition = MoveTable::IsThreefoldRepetition;
     thisMoveTable.IsFiftymove = MoveTable::IsFiftymove;
+    auto it = thisMoveTable.occurredPositions.begin();
+    PositionIndexHistory.push_back(it);
 
     thisMoveTable.CurrentMoveList = MoveTable::CurrentMoveList;
     thisMoveTable.AttackList = MoveTable::AttackList;

@@ -74,5 +74,8 @@ class VirtualMoveTable
     bool IsCoveringCheck(int square);
     bool IsDefended(int targetSquare);
     bool IsCastling(int startSquare, int targetSquare, bool &IsKingside);
+    bool IsCastling(int startSquare, int targetSquare);
     bool IsSufficientMaterial();
+
+    void LogMoveList();
 };

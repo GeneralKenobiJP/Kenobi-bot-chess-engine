@@ -845,6 +845,41 @@ bool VirtualMoveTable::IsCastling(int startSquare, int targetSquare, bool &IsKin
     }
     return false;
 }
+bool VirtualMoveTable::IsCastling(int startSquare, int targetSquare)
+{
+    //we are assuming we've checked for a king on the startSquare and checked for castling booleans in the move generation
+    if(*activePlayer == 1)
+    {
+        if(startSquare != 4)
+            return false;
+
+        if(targetSquare == 6)
+        {
+            return true;
+        }
+        else if(targetSquare == 2)
+        {
+            return true;
+        }
+        return false;
+    }
+    else if(*activePlayer == 2)
+    {
+        if(startSquare != 60)
+            return false;
+
+        if(targetSquare == 62)
+        {
+            return true;
+        }
+        else if(targetSquare == 58)
+        {
+            return true;
+        }
+        return false;
+    }
+    return false;
+}
 
 /*void VirtualMoveTable::CheckState()
 {
@@ -964,4 +999,13 @@ void VirtualMoveTable::ReadSquare(int squareIndex, int &file, int &rank)
 {
     file = squareIndex % 8;
     rank = squareIndex / 8;
+}
+
+void VirtualMoveTable::LogMoveList()
+{
+    for(int i=0;i<CurrentMoveList.size();i++)
+    {
+        std::cout << i+1 << ": ";
+        CurrentMoveList[i].LogMove();
+    }
 }

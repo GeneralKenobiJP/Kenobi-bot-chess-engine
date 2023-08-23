@@ -10,6 +10,13 @@ struct Move
 
     int promotionPiece;
 
+    Move()
+    {
+        startSquare = 0;
+        targetSquare = 0;
+        promotionPiece = 0;
+    }
+
     Move(int start, int end)
     {
         startSquare = start;
@@ -22,6 +29,8 @@ struct Move
         targetSquare = end;
         promotionPiece = promotion;
     }
+
+    void LogMove();
 };
 
 struct Position

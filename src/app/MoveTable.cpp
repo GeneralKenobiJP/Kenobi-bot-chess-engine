@@ -105,6 +105,9 @@ void MoveTable::CalculateStartMoveData()
             }
         }
     }
+    FEN currentFEN;
+    currentFEN.GetPosition();
+    occurredPositions.push_back(Position(currentFEN,1));
 }
 
 std::vector<Move> MoveTable::GenerateMoves()
@@ -863,4 +866,9 @@ bool MoveTable::IsSufficientMaterial()
     //return false;
 
     return true;
+}
+
+void Move::LogMove()
+{
+    std::cout << "MOVE: " << this->startSquare << "->" << this->targetSquare << "(" << this->promotionPiece << ")" << std::endl;
 }

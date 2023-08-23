@@ -343,9 +343,93 @@ void FEN::GetPosition(int squareState[64], short activePlayer, bool W_K, bool W_
     // fullmove counter is useless, so did not implement
 }
 
+void FEN::ReadContext(bool &W_K, bool &W_Q, bool &B_K, bool &B_Q, short &enPassantSquare, int &consecutiveMoves)
+{
+    std::cout << FENtext << std::endl;
+    std::cout << "I push my fingers" << std::endl;
+    std::string fenTxt(FENtext);
+    std::cout << fenTxt << std::endl;
+    int index = fenTxt.find("w");
+
+    if(index == std::string::npos)
+        index = fenTxt.find("b");
+
+    std::cout << "we are before the sus" << std::endl;
+    std::cout << index << std::endl;
+
+    fenTxt = fenTxt.substr(index+2);
+
+    std::cout << "got past the sus" << std::endl;
+
+    W_K = 0;
+    W_Q = 0;
+    B_K = 0;
+    B_Q = 0;
+
+    while (fenTxt[0] != ' ')
+    {
+        switch (fenTxt[0])
+        {
+        case 'K':
+            W_K = 1;
+            break;
+        case 'Q':
+            W_Q = 1;
+            break;
+        case 'k':
+            B_K = 1;
+            break;
+        case 'q':
+            B_Q = 1;
+            break;
+        default:
+            fenTxt = "  " + fenTxt;
+            break;
+        }
+        fenTxt = fenTxt.substr(1);
+    }
+    fenTxt = fenTxt.substr(1);
+
+    std::string thisString = "";
+
+    if (fenTxt[0] == '-')
+    {
+        enPassantSquare = -1;
+        fenTxt = fenTxt.substr(2);
+    }
+    else
+    {
+        //fenTxt = fenTxt.substr(1);
+        while (fenTxt[0] != ' ')
+        {
+            thisString += fenTxt[0];
+            fenTxt = fenTxt.substr(1);
+        }
+        enPassantSquare = (short)std::stoi(thisString);
+        fenTxt = fenTxt.substr(1);
+    }
+
+    thisString = "";
+
+    while (fenTxt[0] != ' ')
+    {
+        thisString += fenTxt[0];
+        fenTxt = fenTxt.substr(1);
+    }
+    consecutiveMoves = std::stoi(thisString);
+}
+
 const std::string FEN::CutHalfmoves() const
 {
-    return FENtext.substr(0,FENtext.length()-3);
+    int halfMoveLength = 0;
+    int i = FENtext.size()-1;
+    while(FENtext[i]!=' ')
+    {
+        halfMoveLength++;
+        i--;
+    }
+
+    return FENtext.substr(0,FENtext.length()-2-halfMoveLength);
 }
 
 bool FEN::operator==(const FEN &f)
@@ -359,4 +443,21 @@ bool FEN::operator==(const FEN &f)
     }
     else
         return false;
+}
+
+int FEN::ReadConsecutiveMoves()
+{
+    std::string conMovesString;
+
+    int halfMoveLength = 0;
+    int i = FENtext.size()-1;
+    while(FENtext[i]!=' ')
+    {
+        halfMoveLength++;
+        i--;
+    }
+
+    conMovesString = FENtext.substr(FENtext.size()-1-halfMoveLength);
+
+    return std::stoi(conMovesString);
 }
