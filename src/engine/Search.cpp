@@ -1,5 +1,6 @@
 #include "Search.h"
 #include <iostream>
+//#include <SFML/System/Thread.hpp>
 
 Search::Search()
 {
@@ -26,10 +27,10 @@ void Search::DebugSearch(int depth)
     if(SearchBoard.IsDraw)
         return;
 
-    std::list<Move> moveList = SearchBoard.thisMoveTable.CurrentMoveList;
-    std::list<Move>::iterator it;
+    std::vector<Move> moveList = SearchBoard.thisMoveTable.CurrentMoveList;
+    std::vector<Move>::iterator it;
 
-    if(depth == 1)
+    /*if(depth == 1)
     {
         counter++;
         //if(counter == 282)
@@ -48,7 +49,7 @@ void Search::DebugSearch(int depth)
             }
         }
         std::cout << pawnCounter << std::endl;
-    }
+    }*/
 
     //std::cout << "Move List count: " << moveList.size() << std::endl;
 
@@ -59,7 +60,7 @@ void Search::DebugSearch(int depth)
         //1std::cout << "Active player: " << SearchBoard.activePlayer << ", *active player: " << *SearchBoard.thisMoveTable.activePlayer << std::endl;
         //1std::cout << &it;
         depthMoveNum[depth-1]++;
-        pieceMoveNum[Piece::ToType(SearchBoard.squareState[it->startSquare])-1]++;
+        //pieceMoveNum[Piece::ToType(SearchBoard.squareState[it->startSquare])-1]++;
         SearchBoard.MakeMove(it);
         this->DebugSearch(depth-1);
         //bestEval = std::max(bestEval, eval);
@@ -91,8 +92,8 @@ int Search::SearchMoves(int depth, int alpha, int beta) //
 
     //int bestEval;
     int eval;
-    std::list<Move> moveList = SearchBoard.thisMoveTable.CurrentMoveList;
-    std::list<Move>::iterator it;
+    std::vector<Move> moveList = SearchBoard.thisMoveTable.CurrentMoveList;
+    std::vector<Move>::iterator it;
 
     for(it = moveList.begin(); it!=moveList.end();it++)
     {

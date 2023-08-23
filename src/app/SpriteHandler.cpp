@@ -141,11 +141,11 @@ void SpriteHandler::DrawDot(int square)
     SpriteHandler::dots.push_back(thisDot);
 }
 
-void SpriteHandler::DrawMoveDots(int square, std::list<Move> moveList)
+void SpriteHandler::DrawMoveDots(int square, std::vector<Move> moveList)
 {
     //std::cout << "active square: " << square << std::endl;
     //std::list<Move> targetMoves;
-    std::list<Move>::iterator it = moveList.begin();
+    std::vector<Move>::iterator it = moveList.begin();
     //std::cout << "cello there" << std::endl;
     //std::cout << moveList.size();
     for(it=moveList.begin();it!=moveList.end();it++)
@@ -241,9 +241,9 @@ void SpriteHandler::HidePromotionMenu(int type, int color)
     SpriteHandler::IsPromotion = false;
 }
 
-void SpriteHandler::DrawDebug(std::list<int> feature, sf::Color color, int offset)
+void SpriteHandler::DrawDebug(std::vector<int> feature, sf::Color color, int offset)
 {
-    std::list<int>::iterator it;
+    std::vector<int>::iterator it;
 
     std::cout << "Le feature size: " << feature.size() << std::endl;
 

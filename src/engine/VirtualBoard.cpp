@@ -362,7 +362,7 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
     //thisMoveTable.CheckState();
 }
 
-void VirtualBoard::MakeMove(std::list<Move>::iterator &moveIterator)
+void VirtualBoard::MakeMove(std::vector<Move>::iterator &moveIterator)
 {
     //std::cout << "Our iteration: " << moveIterator->startSquare << ", " << moveIterator->targetSquare << ", " << moveIterator->promotionPiece << std::endl;
     this->MakeMove(moveIterator->startSquare, moveIterator->targetSquare, moveIterator->promotionPiece);

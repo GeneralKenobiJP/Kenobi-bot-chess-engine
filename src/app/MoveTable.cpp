@@ -12,25 +12,25 @@ const short MoveTable::directionShift[8] = {8,9,1,-7,-8,-9,-1,7};
 short MoveTable::numSquaresToEdge[64][8];
 std::vector<std::vector<short>> MoveTable::knightTargetSquares;
 std::vector<std::vector<short>> MoveTable::kingTargetSquares;
-std::list<Move> MoveTable::CurrentMoveList;
-std::list<int> MoveTable::AttackList;
-std::list<int> MoveTable::PinList;
+std::vector<Move> MoveTable::CurrentMoveList;
+std::vector<int> MoveTable::AttackList;
+std::vector<int> MoveTable::PinList;
 short MoveTable::enPassantSquare = -1;
 bool MoveTable::W_CanCastleKingside;
 bool MoveTable::B_CanCastleKingside;
 bool MoveTable::W_CanCastleQueenside;
 bool MoveTable::B_CanCastleQueenside;
-std::list<int> MoveTable::pawnAttackList;
-std::list<int> MoveTable::PinDirectionList;
-std::list<int> MoveTable::VirtualAttackList;
+std::vector<int> MoveTable::pawnAttackList;
+std::vector<int> MoveTable::PinDirectionList;
+std::vector<int> MoveTable::VirtualAttackList;
 bool MoveTable::IsChecked = false;
 short MoveTable::KnightCheckNum = 0;
-std::vector<std::list<int>> MoveTable::CheckSquares;
+std::vector<std::vector<int>> MoveTable::CheckSquares;
 int MoveTable::CheckingKnightSquare = -1;
-std::list<int> MoveTable::DefenseList;
-std::list<int> MoveTable::kingVirtualAttackList;
+std::vector<int> MoveTable::DefenseList;
+std::vector<int> MoveTable::kingVirtualAttackList;
 int MoveTable::consecutiveMoves=0;
-std::list<Position> MoveTable::occurredPositions;
+std::vector<Position> MoveTable::occurredPositions;
 bool MoveTable::IsThreefoldRepetition = false;
 bool MoveTable::IsFiftymove = false;
 
@@ -107,9 +107,9 @@ void MoveTable::CalculateStartMoveData()
     }
 }
 
-std::list<Move> MoveTable::GenerateMoves()
+std::vector<Move> MoveTable::GenerateMoves()
 {
-    std::list<Move> MoveList;
+    std::vector<Move> MoveList;
     int pieceType;
     int pieceColor;
 
@@ -162,12 +162,12 @@ std::list<Move> MoveTable::GenerateMoves()
 
 }
 
-void MoveTable::GenerateMoves(std::list<Move> &moveList)
+void MoveTable::GenerateMoves(std::vector<Move> &moveList)
 {
     moveList = MoveTable::GenerateMoves();
 }
 
-void MoveTable::GenerateLongRangeMoves(int square, int pieceType, std::list<Move> &moveList)
+void MoveTable::GenerateLongRangeMoves(int square, int pieceType, std::vector<Move> &moveList)
 {
     int startDir = (pieceType == Piece::bishop) ? 1 : 0; //if true => 1
     int dirIncr = (pieceType == Piece::queen) ? 1 : 2; //if true => 1
@@ -200,7 +200,7 @@ void MoveTable::GenerateLongRangeMoves(int square, int pieceType, std::list<Move
 
             if(!MoveTable::IsChecked || MoveTable::IsCoveringCheck(targetSquare))
             {
-                moveList.push_front(Move(square,targetSquare));
+                moveList.push_back(Move(square,targetSquare));
             }
 
             std::cout << square << ' ' << targetSquare << std::endl;
@@ -214,7 +214,7 @@ void MoveTable::GenerateLongRangeMoves(int square, int pieceType, std::list<Move
     }
 }
 
-void MoveTable::GenerateKnightMoves(int square, std::list<Move> &moveList)
+void MoveTable::GenerateKnightMoves(int square, std::vector<Move> &moveList)
 {
     int targetSquareColor;
 
@@ -230,14 +230,14 @@ void MoveTable::GenerateKnightMoves(int square, std::list<Move> &moveList)
 
         if(targetSquareColor/8 != Board::activePlayer)
         {
-            moveList.push_front(Move(square,knightTargetSquares[square][i]));
+            moveList.push_back(Move(square,knightTargetSquares[square][i]));
         }
         else
             MoveTable::DefenseList.push_back(knightTargetSquares[square][i]);
     }
 }
 
-void MoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
+void MoveTable::GeneratePawnMoves(int square, std::vector<Move> &moveList)
 {
     int pawnMoveShift = (Board::activePlayer == 1) ? 8 : -8;
     int pawnAttackShift[2];
@@ -267,7 +267,7 @@ void MoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
         {
             if(Board::squareState[targetSquare]==0 && targetSquare<64 && targetSquare >= 0)
             {
-                moveList.push_front(Move(square,targetSquare));
+                moveList.push_back(Move(square,targetSquare));
             }
         }
     }
@@ -291,21 +291,21 @@ void MoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
         //EN PASSANT
         if(enPassantSquare == targetSquare)
         {
-            moveList.push_front(Move(square,targetSquare));
+            moveList.push_back(Move(square,targetSquare));
             continue;
             //REMOVE EN PASSANT-ED PAWN
         }
         if(targetSquareColor != 0)
         {
             if(targetSquareColor/8 != Board::activePlayer)
-                moveList.push_front(Move(square,targetSquare));
+                moveList.push_back(Move(square,targetSquare));
             else
                 MoveTable::DefenseList.push_back(targetSquare);
             
             continue;
         }
 
-        MoveTable::pawnAttackList.push_front(targetSquare);
+        MoveTable::pawnAttackList.push_back(targetSquare);
     }
 
     // TWO-SQUARE ADVANCE
@@ -328,13 +328,13 @@ void MoveTable::GeneratePawnMoves(int square, std::list<Move> &moveList)
                 return;
             int passingSquare = square + pawnMoveShift;
             if(Board::squareState[targetSquare]==0 && Board::squareState[passingSquare] == 0)
-                moveList.push_front(Move(square,targetSquare));
+                moveList.push_back(Move(square,targetSquare));
         }
     }
 
 }
 
-void MoveTable::GenerateKingMoves(int square, std::list<Move> &moveList)
+void MoveTable::GenerateKingMoves(int square, std::vector<Move> &moveList)
 {
     int targetSquareColor;
 
@@ -359,7 +359,7 @@ void MoveTable::GenerateKingMoves(int square, std::list<Move> &moveList)
 
         if(targetSquareColor/8 != Board::activePlayer)
         {
-            moveList.push_front(Move(square,kingTargetSquares[square][i]));
+            moveList.push_back(Move(square,kingTargetSquares[square][i]));
         }
         else if(targetSquareColor != 0)
             MoveTable::DefenseList.push_back(kingTargetSquares[square][i]);
@@ -374,13 +374,13 @@ void MoveTable::GenerateKingMoves(int square, std::list<Move> &moveList)
             if(Board::squareState[7]==13) //white rook
                 if(Board::squareState[5]==0 && Board::squareState[6] == 0)
                     if(!MoveTable::IsAttacked(5) && !MoveTable::IsAttacked(6))
-                        moveList.push_front(Move(square,6));
+                        moveList.push_back(Move(square,6));
 
         if(MoveTable::W_CanCastleQueenside)
             if(Board::squareState[0]==13) //white rook
                 if(Board::squareState[2]==0 && Board::squareState[3] == 0)
                     if(!MoveTable::IsAttacked(2) && !MoveTable::IsAttacked(3))
-                        moveList.push_front(Move(square,2));
+                        moveList.push_back(Move(square,2));
     }
     if(Board::activePlayer == 2) //black
     {
@@ -388,19 +388,19 @@ void MoveTable::GenerateKingMoves(int square, std::list<Move> &moveList)
             if(Board::squareState[63]==21) //black rook
                 if(Board::squareState[61]==0 && Board::squareState[62] == 0)
                     if(!MoveTable::IsAttacked(61) && !MoveTable::IsAttacked(62))
-                        moveList.push_front(Move(square,62));
+                        moveList.push_back(Move(square,62));
 
         if(MoveTable::B_CanCastleQueenside)
             if(Board::squareState[56]==21) //black rook
                 if(Board::squareState[58]==0 && Board::squareState[59] == 0)
                     if(!MoveTable::IsAttacked(58) && !MoveTable::IsAttacked(59))
-                        moveList.push_front(Move(square,58));
+                        moveList.push_back(Move(square,58));
     }
 }
 
 bool MoveTable::IsLegal(int startSquare, int targetSquare)
 {
-    std::list<Move>::iterator it;
+    std::vector<Move>::iterator it;
 
     for(it=MoveTable::CurrentMoveList.begin();it!=MoveTable::CurrentMoveList.end();it++)
     {
@@ -443,7 +443,7 @@ void MoveTable::GenerateAttacks()
     MoveTable::CheckSquares.clear();
     MoveTable::VirtualAttackList.clear();
 
-    std::list<Move>::iterator it;
+    std::vector<Move>::iterator it;
     int startSquarePiece;
     int startSquareType;
 
@@ -456,7 +456,7 @@ void MoveTable::GenerateAttacks()
             if(it->startSquare % 8 == it->targetSquare % 8) //this is not an attack for pawn (detection of the push foward move)
                 continue;
         
-        MoveTable::AttackList.push_front(it->targetSquare);
+        MoveTable::AttackList.push_back(it->targetSquare);
 
         std::cout << "Pushed for attack. From: " << it->startSquare << " to: " << it->targetSquare << std::endl;
 
@@ -477,22 +477,30 @@ void MoveTable::GenerateAttacks()
 
     std::cout << "And for pawns" << std::endl;
 
-    std::list<int>::iterator iter;
+    std::vector<int>::iterator iter;
 
     for(iter = MoveTable::pawnAttackList.begin(); iter!= MoveTable::pawnAttackList.end();iter++)
     {
-        MoveTable::AttackList.push_front(*iter);
+        MoveTable::AttackList.push_back(*iter);
         std::cout << "Pushed pawn for attack:  "<< *iter << std::endl;
     }
     for(iter = MoveTable::kingVirtualAttackList.begin(); iter!= MoveTable::kingVirtualAttackList.end();iter++)
     {
-        MoveTable::AttackList.push_front(*iter);
+        MoveTable::AttackList.push_back(*iter);
         //std::cout << "Pushed king for attack:  "<< *iter << std::endl;
     }
 
-    MoveTable::AttackList.unique();
-    MoveTable::PinList.unique();
-    MoveTable::DefenseList.unique();
+    std::sort(AttackList.begin(), AttackList.end());
+    auto erasure1 = std::unique(AttackList.begin(), AttackList.end());
+    AttackList.erase(erasure1,AttackList.end());
+
+    std::sort(PinList.begin(), PinList.end());
+    auto erasure2 = std::unique(PinList.begin(), PinList.end());
+    PinList.erase(erasure2,PinList.end());
+
+    std::sort(DefenseList.begin(), DefenseList.end());
+    auto erasure3 = std::unique(DefenseList.begin(), DefenseList.end());
+    DefenseList.erase(erasure3,DefenseList.end());
 
     std::cout << "Well: " << MoveTable::AttackList.size() << std::endl;
     std::cout << "Hath our monarch been checked? " << MoveTable::IsChecked << std::endl;
@@ -586,8 +594,8 @@ void MoveTable::CheckForPins(int startSquare, int targetSquare)
                 std::cout << pinTargetSquare << " = " << targetSquare << " + " << dir << " * " << i << std::endl;
                 std::cout << "numSquaresToEdge: " << MoveTable::numSquaresToEdge[targetSquare][dir] << std::endl;
                 std::cout << "targetSquare: " << targetSquare << std::endl;*/
-                PinList.push_front(targetSquare);
-                PinDirectionList.push_front(dir);
+                PinList.push_back(targetSquare);
+                PinDirectionList.push_back(dir);
                 std::cout << "Pinned dir: " << dir << std::endl;
                 break;
             }
@@ -605,7 +613,7 @@ void MoveTable::CheckForPins(int startSquare, int targetSquare)
         MoveTable::IsChecked = true;
 
         int thisSquare;
-        std::list<int> thisList;
+        std::vector<int> thisList;
         for(int i=targetSquare-dir;i!=startSquare;i-=dir)
         {
             thisList.push_back(i);
@@ -626,7 +634,7 @@ void MoveTable::CheckForPins(int startSquare, int targetSquare)
 
 bool MoveTable::IsPinned(int square)
 {
-    std::list<int>::iterator it;
+    std::vector<int>::iterator it;
 
     for(it=MoveTable::PinList.begin();it!=MoveTable::PinList.end();it++)
         if(*it == square)
@@ -637,8 +645,8 @@ bool MoveTable::IsPinned(int square)
 
 bool MoveTable::IsPinned(int square, int &pinDir)
 {
-    std::list<int>::iterator it;
-    std::list<int>::iterator pinDirIt = MoveTable::PinDirectionList.begin();
+    std::vector<int>::iterator it;
+    std::vector<int>::iterator pinDirIt = MoveTable::PinDirectionList.begin();
 
     for(it=MoveTable::PinList.begin();it!=MoveTable::PinList.end();it++)
     {
@@ -655,7 +663,7 @@ bool MoveTable::IsPinned(int square, int &pinDir)
 
 bool MoveTable::IsAttacked(int square)
 {
-    std::list<int>::iterator it;
+    std::vector<int>::iterator it;
 
     for(it=MoveTable::AttackList.begin();it!=MoveTable::AttackList.end();it++)
         if(*it == square)
@@ -666,7 +674,7 @@ bool MoveTable::IsAttacked(int square)
 
 bool MoveTable::IsVirtuallyAttacked(int square)
 {
-    std::list<int>::iterator it;
+    std::vector<int>::iterator it;
 
     for(it=MoveTable::VirtualAttackList.begin();it!=MoveTable::VirtualAttackList.end();it++)
         if(*it == square)
@@ -687,7 +695,7 @@ bool MoveTable::IsCoveringCheck(int square)
     else if(MoveTable::KnightCheckNum > 1)
         return false;
 
-    std::list<int>::iterator it;
+    std::vector<int>::iterator it;
     bool IsThisPathCovered = false;
 
     for(int i=0;i<MoveTable::CheckSquares.size();i++)
@@ -728,7 +736,7 @@ void MoveTable::CheckForPawnChecks(int targetSquare)
 }
 bool MoveTable::IsDefended(int targetSquare)
 {
-    std::list<int>::iterator it;
+    std::vector<int>::iterator it;
 
     for(it=MoveTable::DefenseList.begin();it!=MoveTable::DefenseList.end();it++)
         if(*it == targetSquare)
@@ -796,7 +804,7 @@ void MoveTable::AddCurrentPosition()
 
     //std::cout << "currentFEN: " << currentFEN.FENtext << std::endl;
 
-    std::list<Position>::iterator it;
+    std::vector<Position>::iterator it;
     for(it=MoveTable::occurredPositions.begin();it!=MoveTable::occurredPositions.end();it++)
     {
         std::cout << "here" << std::endl;

@@ -30,13 +30,13 @@ class SpriteHandler //this class does not handle boardSprite, which is handled b
     static void DrawPieces(sf::RenderWindow &window); //draws each piece
     static void DrawPromotionMenu(sf::RenderWindow &window);
     static void DrawDot(int square);
-    static void DrawMoveDots(int square, std::list<Move> moveList); //draws dots at the center of each square, where a move can be made (after piece selection)
+    static void DrawMoveDots(int square, std::vector<Move> moveList); //draws dots at the center of each square, where a move can be made (after piece selection)
     static void RemoveMoveDots();
     static void DrawDots(sf::RenderWindow &window);
     static void ShowPromotionMenu(int square);
     static void InitializePromotionMenu();
     static void HidePromotionMenu(int type, int color);
-    static void DrawDebug(std::list<int> feature, sf::Color color, int offset);
+    static void DrawDebug(std::vector<int> feature, sf::Color color, int offset);
     static void DrawDebugShapes(sf::RenderWindow &window);
     static void ClearDebug();
     static void DisplayCurrentEvaluation();
