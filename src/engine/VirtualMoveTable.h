@@ -39,7 +39,7 @@ class VirtualMoveTable
 
     //Draw
     int consecutiveMoves; //if =100, any player can declare a draw; if =150, there is an automatic draw
-    std::vector<Position> occurredPositions;
+    std::list<Position> occurredPositions;
     bool IsThreefoldRepetition;
     bool IsFiftymove;
 
@@ -61,8 +61,9 @@ class VirtualMoveTable
     void CheckForPawnChecks(int targetSquare);
     //void CheckState();// migrated to virtualevaluation
     void AddCurrentPosition();
-    void AddCurrentPosition(std::vector<std::vector<Position>::iterator> &iterList);
-    void RemovePosition(std::vector<Position>::iterator it);
+    void AddCurrentPosition(std::vector<std::list<Position>::iterator> &iterList);
+    void RemovePosition(std::list<Position>::iterator it);
+    //void RemovePosition(int index);
     static int ReadPromotionPieceFromIndex(int index, int color);
     bool IsLegal(int startSquare, int targetSquare);
     bool IsEnPassant(int targetSquare);

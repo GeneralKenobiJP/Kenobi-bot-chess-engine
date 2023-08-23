@@ -46,7 +46,6 @@ int main(){
     ChessClock blackClock;
 
     Board::InitializeBoard(windowX,windowY);
-    FEN::ReadPosition(FEN::startFEN);
     MoveTable::CalculateStartMoveData();
 
     SpriteHandler::LoadFonts(650,300,thisDir);
@@ -57,6 +56,9 @@ int main(){
     whiteClock.SetTime(600);
     blackClock.SetTime(600);
 
+    FEN::ReadPosition(FEN::startFEN);
+    MoveTable::AddCurrentPosition();
+
     ChessClock::SetActivePlayer(1,whiteClock);
     Thread clockThread(std::bind(&ChessClock::CountDown,whiteClock,blackClock));
     clockThread.launch();
@@ -65,9 +67,9 @@ int main(){
     //SpriteHandler::DrawMoveDots(1,MoveTable::GenerateMoves());
 
     //Board::Promote(3,Piece::white);
-    std::cout << "Search time" << std::endl;
+
     Search thisSearch;
-    Thread searchThread(std::bind(&Search::LogDebugSearch,&thisSearch,1));
+    Thread searchThread(std::bind(&Search::LogDebugSearch,&thisSearch,3));
     searchThread.launch();
 
     /// DEBUGGING CODE ENDS HERE

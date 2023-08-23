@@ -345,6 +345,7 @@ void FEN::GetPosition(int squareState[64], short activePlayer, bool W_K, bool W_
 
 void FEN::ReadContext(bool &W_K, bool &W_Q, bool &B_K, bool &B_Q, short &enPassantSquare, int &consecutiveMoves)
 {
+    std::cout << "Been called, chief?" << std::endl;
     std::cout << FENtext << std::endl;
     std::cout << "I push my fingers" << std::endl;
     std::string fenTxt(FENtext);
@@ -352,7 +353,7 @@ void FEN::ReadContext(bool &W_K, bool &W_Q, bool &B_K, bool &B_Q, short &enPassa
     int index = fenTxt.find("w");
 
     if(index == std::string::npos)
-        index = fenTxt.find("b");
+        index = fenTxt.rfind("b");
 
     std::cout << "we are before the sus" << std::endl;
     std::cout << index << std::endl;
@@ -390,6 +391,8 @@ void FEN::ReadContext(bool &W_K, bool &W_Q, bool &B_K, bool &B_Q, short &enPassa
     }
     fenTxt = fenTxt.substr(1);
 
+    std::cout << "Woah, we're halfway there, oo-ooh livin' on a prayer" << std::endl;
+
     std::string thisString = "";
 
     if (fenTxt[0] == '-')
@@ -409,14 +412,25 @@ void FEN::ReadContext(bool &W_K, bool &W_Q, bool &B_K, bool &B_Q, short &enPassa
         fenTxt = fenTxt.substr(1);
     }
 
+    std::cout << "Gotchya en-passanted" << std::endl;
+
+    std::cout << fenTxt <<std::endl;
+
     thisString = "";
 
     while (fenTxt[0] != ' ')
     {
         thisString += fenTxt[0];
+        if(fenTxt.size()==1)
+            break;
         fenTxt = fenTxt.substr(1);
     }
+
+    std::cout << "Almost done, eh?" << std::endl;
+
     consecutiveMoves = std::stoi(thisString);
+
+    std::cout << "It's done, chief" << std::endl;
 }
 
 const std::string FEN::CutHalfmoves() const

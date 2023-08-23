@@ -30,7 +30,7 @@ int MoveTable::CheckingKnightSquare = -1;
 std::vector<int> MoveTable::DefenseList;
 std::vector<int> MoveTable::kingVirtualAttackList;
 int MoveTable::consecutiveMoves=0;
-std::vector<Position> MoveTable::occurredPositions;
+std::list<Position> MoveTable::occurredPositions;
 bool MoveTable::IsThreefoldRepetition = false;
 bool MoveTable::IsFiftymove = false;
 
@@ -105,9 +105,7 @@ void MoveTable::CalculateStartMoveData()
             }
         }
     }
-    FEN currentFEN;
-    currentFEN.GetPosition();
-    occurredPositions.push_back(Position(currentFEN,1));
+    //MoveTable::AddCurrentPosition();
 }
 
 std::vector<Move> MoveTable::GenerateMoves()
@@ -807,7 +805,7 @@ void MoveTable::AddCurrentPosition()
 
     //std::cout << "currentFEN: " << currentFEN.FENtext << std::endl;
 
-    std::vector<Position>::iterator it;
+    std::list<Position>::iterator it;
     for(it=MoveTable::occurredPositions.begin();it!=MoveTable::occurredPositions.end();it++)
     {
         std::cout << "here" << std::endl;
@@ -823,7 +821,7 @@ void MoveTable::AddCurrentPosition()
         }
     }
 
-    MoveTable::occurredPositions.push_back(Position(currentFEN,0));
+    MoveTable::occurredPositions.push_back(Position(currentFEN,1));
 }
 bool MoveTable::IsSufficientMaterial()
 {

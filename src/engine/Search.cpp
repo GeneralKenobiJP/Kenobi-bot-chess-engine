@@ -72,9 +72,9 @@ void Search::DebugSearch(int depth)
         SearchBoard.MakeMove(move);
         this->DebugSearch(depth-1);
         //bestEval = std::max(bestEval, eval);
-        //std::cout << "Now we shall unmake that which had been done" << std::endl;
+        std::cout << "Now we shall unmake that which had been done" << std::endl;
         SearchBoard.UnmakeMove(move);
-        //std::cout << "Unmade has become that which had been done" << std::endl;
+        std::cout << "Unmade has become that which had been done" << std::endl;
         //if(eval >= beta)
         //    return beta;
         //alpha = std::max(alpha, eval);

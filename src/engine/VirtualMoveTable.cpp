@@ -901,7 +901,7 @@ void VirtualMoveTable::AddCurrentPosition()
 
     //std::cout << "currentFEN: " << currentFEN.FENtext << std::endl;
 
-    std::vector<Position>::iterator it;
+    std::list<Position>::iterator it;
     for(it=occurredPositions.begin();it!=occurredPositions.end();it++)
     {
         //std::cout << "here" << std::endl;
@@ -917,16 +917,16 @@ void VirtualMoveTable::AddCurrentPosition()
         }
     }
 
-    occurredPositions.push_back(Position(currentFEN,0));
+    occurredPositions.push_back(Position(currentFEN,1));
 }
-void VirtualMoveTable::AddCurrentPosition(std::vector<std::vector<Position>::iterator> &iterList)
+void VirtualMoveTable::AddCurrentPosition(std::vector<std::list<Position>::iterator> &iterList)
 {
     FEN currentFEN;
     currentFEN.GetPosition(*squareState, *activePlayer, W_CanCastleKingside, W_CanCastleQueenside, B_CanCastleKingside, B_CanCastleQueenside, enPassantSquare, consecutiveMoves);
 
     //std::cout << "currentFEN: " << currentFEN.FENtext << std::endl;
 
-    std::vector<Position>::iterator it;
+    std::list<Position>::iterator it;
     for(it=occurredPositions.begin();it!=occurredPositions.end();it++)
     {
         //std::cout << "here" << std::endl;
@@ -943,16 +943,25 @@ void VirtualMoveTable::AddCurrentPosition(std::vector<std::vector<Position>::ite
         }
     }
 
-    occurredPositions.push_back(Position(currentFEN,0));
+    occurredPositions.push_back(Position(currentFEN,1));
     iterList.push_back(std::prev(occurredPositions.end()));
 }
-void VirtualMoveTable::RemovePosition(std::vector<Position>::iterator it)
+void VirtualMoveTable::RemovePosition(std::list<Position>::iterator it)
 {
+    std::cout << "Over" << std::endl;
+    std::cout << it->occurrenceNum << std::endl;
     if(it->occurrenceNum>1)
         it->occurrenceNum--;
     else
         occurredPositions.erase(it);
 }
+/*void VirtualMoveTable::RemovePosition(int index)
+{
+    std::cout << "Over" << std::endl;
+    //if(occurredPositions[index].occurrenceNum>1)
+    occurredPositions[index].occurrenceNum--;
+    //else
+}*/
 
 bool VirtualMoveTable::IsSufficientMaterial()
 {

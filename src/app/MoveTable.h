@@ -76,7 +76,7 @@ class MoveTable
 
     //Draw
     static int consecutiveMoves; //if =100, any player can declare a draw; if =150, there is an automatic draw
-    static std::vector<Position> occurredPositions;
+    static std::list<Position> occurredPositions;
     static bool IsThreefoldRepetition;
     static bool IsFiftymove;
 

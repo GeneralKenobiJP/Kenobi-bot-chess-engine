@@ -6,7 +6,7 @@ class VirtualBoard
     std::list<bool> EnPassantHistory;
     //std::list<bool> PromotionHistory;
     std::list<int> CaptureHistory;
-    std::list<std::vector<Position>::iterator> PositionIndexHistory; //if 1 eliminate, otherwise decrease occurrenceNum by 1;
+    std::vector<std::list<Position>::iterator> PositionIndexHistory; //if 1 eliminate, otherwise decrease occurrenceNum by 1;
 
     public:
     

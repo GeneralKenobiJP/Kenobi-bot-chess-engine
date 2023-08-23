@@ -222,6 +222,7 @@ bool VirtualBoard::IsKingBlocked(int color)
 
 void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum) // WE ARE ASSUMING IT IS A LEGAL MOVE
 {
+    std::cout << PositionIndexHistory.size() << std::endl;
     bool hasCaptured = 0;
     int pieceType;
     int pieceColor;
@@ -342,17 +343,17 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
 
     //std::cout << "We got through the capture history stage" << std::endl;
 
+    if (pieceType != Piece::pawn && !hasCaptured)
+        thisMoveTable.consecutiveMoves++;
+    else
+        thisMoveTable.consecutiveMoves = 0;
+
     this->PutOnSquare(targetSquare, squareState[startSquare]);
     this->RemoveFromSquare(startSquare);
     //std::cout << "We got through the Put piece stage" << std::endl;
     this->SwitchPlayer();
     //std::cout << "We got through the switch player stage" << std::endl;
     // break;
-
-    if (pieceType != Piece::pawn && !hasCaptured)
-        thisMoveTable.consecutiveMoves++;
-    else
-        thisMoveTable.consecutiveMoves = 0;
 
     //std::cout << "We got through the consecutive moves stage" << std::endl;
 
@@ -415,11 +416,19 @@ void VirtualBoard::UnmakeMove(Move move)
         CaptureHistory.pop_back();
     }
 
+    std::cout << "Before 'istory" << std::endl;
+    //std::cout << PositionIndexHistory.back()->fen.FENtext << std::endl;
+    std::cout << PositionIndexHistory.size() << std::endl;
+
     if(!PositionIndexHistory.empty())
     {
+        std::cout << "We've been enlooped" << std::endl;
         thisMoveTable.RemovePosition(PositionIndexHistory.back());
+        std::cout << "El removal" << std::endl;
         PositionIndexHistory.pop_back();
     }
+
+    std::cout << "Francis Fukuyama" << std::endl;
 
     Piece::ReadPiece(squareState[move.startSquare],pieceType,pieceColor);
 
@@ -436,8 +445,13 @@ void VirtualBoard::UnmakeMove(Move move)
             this->PutOnSquare(move.targetSquare-2, Piece::rook, pieceColor);
         }
     }
-    std::cout << PositionIndexHistory.size() << std::endl;
-    //PositionIndexHistory.back()->fen.ReadContext(thisMoveTable.W_CanCastleKingside, thisMoveTable.W_CanCastleQueenside, thisMoveTable.B_CanCastleKingside, thisMoveTable.B_CanCastleQueenside, thisMoveTable.enPassantSquare, thisMoveTable.consecutiveMoves);
+    //auto x = PositionIndexHistory.begin();
+    //std::cout << PositionIndexHistory.front()->fen.FENtext << std::endl;
+    //std::cout << PositionIndexHistory.size() << std::endl;
+    std::cout << "Here" << std::endl;
+    //std::cout << PositionIndexHistory.back()->occurrenceNum << std::endl;
+    std::cout << thisMoveTable.occurredPositions.size() << std::endl;
+    PositionIndexHistory[PositionIndexHistory.size()-1]->fen.ReadContext(thisMoveTable.W_CanCastleKingside, thisMoveTable.W_CanCastleQueenside, thisMoveTable.B_CanCastleKingside, thisMoveTable.B_CanCastleQueenside, thisMoveTable.enPassantSquare, thisMoveTable.consecutiveMoves);
 
     this->RevertPlayer();
 }
@@ -447,7 +461,15 @@ void VirtualBoard::SwitchPlayer()
     thisMoveTable.GenerateAttacks();
     activePlayer = (activePlayer % 2) + 1;
     CurrentEvalution = VirtualEvaluation::Evaluate();
-    thisMoveTable.AddCurrentPosition();
+    FEN curFEN;
+    curFEN.GetPosition();
+    std::cout << curFEN.FENtext << std::endl;
+    std::cout << curFEN.FENtext << std::endl;
+    thisMoveTable.AddCurrentPosition(PositionIndexHistory);
+    //PositionIndexHistory.push_back(thisMoveTable.occurredPositions.back());
+    std::cout << "Ze size: " << thisMoveTable.occurredPositions.size() << std::endl;
+    //std::cout << thisMoveTable.occurredPositions[0].fen.FENtext << std::endl;
+    //std::cout << thisMoveTable.occurredPositions[0].occurrenceNum << std::endl;
 }
 void VirtualBoard::RevertPlayer()
 {
@@ -476,8 +498,8 @@ void VirtualBoard::InitializeBoard()
     thisMoveTable.consecutiveMoves = MoveTable::consecutiveMoves;
     thisMoveTable.IsThreefoldRepetition = MoveTable::IsThreefoldRepetition;
     thisMoveTable.IsFiftymove = MoveTable::IsFiftymove;
-    auto it = thisMoveTable.occurredPositions.begin();
-    PositionIndexHistory.push_back(it);
+    //auto it = thisMoveTable.occurredPositions.begin();
+    PositionIndexHistory.push_back(thisMoveTable.occurredPositions.begin());
 
     thisMoveTable.CurrentMoveList = MoveTable::CurrentMoveList;
     thisMoveTable.AttackList = MoveTable::AttackList;
