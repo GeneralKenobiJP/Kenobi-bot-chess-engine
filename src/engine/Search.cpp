@@ -11,8 +11,8 @@ Search::Search()
 
 void Search::DebugSearch(int depth)
 {
-    //1std::cout << "hereby search hath been proclaimed: " << depth << std::endl;
-    //1std::cout << "move list hath a modest count of: " << SearchBoard.thisMoveTable.CurrentMoveList.size() << std::endl;
+    //std::cout << "hereby search hath been proclaimed: " << depth << std::endl;
+    //std::cout << "move list hath a modest count of: " << SearchBoard.thisMoveTable.CurrentMoveList.size() << std::endl;
     //std::cout << "debugging search: " << depth << std::endl;
     //std::cout << VirtualEvaluation::Evaluate() << std::endl;
 
@@ -20,6 +20,17 @@ void Search::DebugSearch(int depth)
 
     if(depth == 0)
         return;
+
+    //std::cout << "hereby search hath been proclaimed: " << depth << std::endl;
+    //std::cout << "move list hath a modest count of: " << SearchBoard.thisMoveTable.CurrentMoveList.size() << std::endl;
+
+    /*if(depth == 4 && SearchBoard.thisMoveTable.CurrentMoveList.size() != 20)
+    {
+        std::cout << "Corrupted: " << SearchBoard.thisMoveTable.CurrentMoveList.size() << std::endl;
+        SearchBoard.thisMoveTable.LogMoveList();
+    }*/
+
+    SearchBoard.thisMoveTable.LogMoveList();
     
     if(SearchBoard.thisMoveTable.CurrentMoveList.size() == 0)
         return;
@@ -57,24 +68,26 @@ void Search::DebugSearch(int depth)
 
     for(int i=0; i<SearchBoard.thisMoveTable.CurrentMoveList.size(); i++)
     {
+        
         //std::cout << "Ladies and gentlemen: " << it->startSquare << ", " << it->targetSquare << ", " << it->promotionPiece << std::endl;
         //1std::cout << "Depth: " << depth << std::endl;
         //1std::cout << "Active player: " << SearchBoard.activePlayer << ", *active player: " << *SearchBoard.thisMoveTable.activePlayer << std::endl;
         //1std::cout << &it;
-        SearchBoard.thisMoveTable.LogMoveList();
-        std::cout << std::endl;
+        //SearchBoard.thisMoveTable.LogMoveList();
+        //std::cout << std::endl;
         depthMoveNum[depth-1]++;
         //pieceMoveNum[Piece::ToType(SearchBoard.squareState[it->startSquare])-1]++;
         move = SearchBoard.thisMoveTable.CurrentMoveList[i];
-        move.LogMove();
-        std::cout << std::endl << std::endl;
+        //move.LogMove();
+        //std::cout << std::endl << std::endl;
         //std::cout << "MOVE: " << move.startSquare << "->" << move.targetSquare << "(" << move.promotionPiece << ")" << std::endl;
         SearchBoard.MakeMove(move);
         this->DebugSearch(depth-1);
         //bestEval = std::max(bestEval, eval);
-        std::cout << "Now we shall unmake that which had been done" << std::endl;
+        //std::cout << "Now we shall unmake that which had been done" << std::endl;
+        move.LogMove();
         SearchBoard.UnmakeMove(move);
-        std::cout << "Unmade has become that which had been done" << std::endl;
+        //std::cout << "Unmade has become that which had been done" << std::endl;
         //if(eval >= beta)
         //    return beta;
         //alpha = std::max(alpha, eval);

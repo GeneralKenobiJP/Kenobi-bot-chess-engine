@@ -4,7 +4,8 @@
 #include "board.h"
 #include <MoveTable.h>
 
-const std::string FEN::startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+//const std::string FEN::startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0";
+const std::string FEN::startFEN = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1";
 //const std::string FEN::startFEN = "rnbqkbnr/pppp1ppp/4p3/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 //const std::string FEN::startFEN = "8/1k6/3p4/p1p1p2p/P1PPP1pP/6P1/5K2/8 w - 0 1";
 //const std::string FEN::startFEN = "1k7/8/8/8/8/8/8/8 w - 0 1";
@@ -345,22 +346,22 @@ void FEN::GetPosition(int squareState[64], short activePlayer, bool W_K, bool W_
 
 void FEN::ReadContext(bool &W_K, bool &W_Q, bool &B_K, bool &B_Q, short &enPassantSquare, int &consecutiveMoves)
 {
-    std::cout << "Been called, chief?" << std::endl;
-    std::cout << FENtext << std::endl;
-    std::cout << "I push my fingers" << std::endl;
+    //std::cout << "Been called, chief?" << std::endl;
+    //std::cout << FENtext << std::endl;
+    //std::cout << "I push my fingers" << std::endl;
     std::string fenTxt(FENtext);
-    std::cout << fenTxt << std::endl;
+    //std::cout << fenTxt << std::endl;
     int index = fenTxt.find("w");
 
     if(index == std::string::npos)
         index = fenTxt.rfind("b");
 
-    std::cout << "we are before the sus" << std::endl;
-    std::cout << index << std::endl;
+    //std::cout << "we are before the sus" << std::endl;
+    //std::cout << index << std::endl;
 
     fenTxt = fenTxt.substr(index+2);
 
-    std::cout << "got past the sus" << std::endl;
+    //std::cout << "got past the sus" << std::endl;
 
     W_K = 0;
     W_Q = 0;
@@ -391,7 +392,7 @@ void FEN::ReadContext(bool &W_K, bool &W_Q, bool &B_K, bool &B_Q, short &enPassa
     }
     fenTxt = fenTxt.substr(1);
 
-    std::cout << "Woah, we're halfway there, oo-ooh livin' on a prayer" << std::endl;
+    //std::cout << "Woah, we're halfway there, oo-ooh livin' on a prayer" << std::endl;
 
     std::string thisString = "";
 
@@ -412,9 +413,9 @@ void FEN::ReadContext(bool &W_K, bool &W_Q, bool &B_K, bool &B_Q, short &enPassa
         fenTxt = fenTxt.substr(1);
     }
 
-    std::cout << "Gotchya en-passanted" << std::endl;
+    //std::cout << "Gotchya en-passanted" << std::endl;
 
-    std::cout << fenTxt <<std::endl;
+    //std::cout << fenTxt <<std::endl;
 
     thisString = "";
 
@@ -426,11 +427,11 @@ void FEN::ReadContext(bool &W_K, bool &W_Q, bool &B_K, bool &B_Q, short &enPassa
         fenTxt = fenTxt.substr(1);
     }
 
-    std::cout << "Almost done, eh?" << std::endl;
+    //std::cout << "Almost done, eh?" << std::endl;
 
     consecutiveMoves = std::stoi(thisString);
 
-    std::cout << "It's done, chief" << std::endl;
+    //std::cout << "It's done, chief" << std::endl;
 }
 
 const std::string FEN::CutHalfmoves() const

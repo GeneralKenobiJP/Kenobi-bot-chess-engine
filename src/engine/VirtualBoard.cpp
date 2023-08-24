@@ -222,10 +222,11 @@ bool VirtualBoard::IsKingBlocked(int color)
 
 void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum) // WE ARE ASSUMING IT IS A LEGAL MOVE
 {
-    std::cout << PositionIndexHistory.size() << std::endl;
+    //std::cout << PositionIndexHistory.size() << std::endl;
     bool hasCaptured = 0;
     int pieceType;
     int pieceColor;
+    //FEN currentFEN;
     Piece::ReadPiece(squareState[startSquare], pieceType, pieceColor);
     //1std::cout << "The piece was hereby read as: " << squareState[startSquare] <<", " << pieceType << ", " << pieceColor << std::endl;
     //1std::cout << "Move" << startSquare << "->" << targetSquare << "(" << promotionNum << ")" << std::endl;
@@ -281,6 +282,9 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
 
     //std::cout << "We got through the pawn stage" << std::endl;
 
+    //currentFEN.GetPosition(squareState, activePlayer, thisMoveTable.W_CanCastleKingside, thisMoveTable.W_CanCastleQueenside, thisMoveTable.B_CanCastleKingside, thisMoveTable.B_CanCastleQueenside, thisMoveTable.enPassantSquare, thisMoveTable.consecutiveMoves);
+    //std::cout << currentFEN.FENtext << std::endl;
+
     if (pieceType == Piece::king)
     {
         bool IsKingside;
@@ -296,21 +300,25 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
             thisMoveTable.B_CanCastleQueenside = 0;
         }
 
-        if (thisMoveTable.IsCastling(startSquare, targetSquare, IsKingside))
+        if (thisMoveTable.IsCastling(startSquare, targetSquare, pieceColor , IsKingside))
         {
+            std::cout << "CASTLING ATTEMPT DETECTED." << std::endl;
             if (IsKingside)
             {
+                std::cout << "kingside" << std::endl;
                 this->RemoveFromSquare(targetSquare + 1);
-                this->PutOnSquare(Piece::rook, Piece::ToColor(squareState[startSquare]), targetSquare - 1);
+                this->PutOnSquare(targetSquare - 1,Piece::rook, pieceColor);
             }
             else
             {
                 this->RemoveFromSquare(targetSquare - 2);
-                this->PutOnSquare(Piece::rook, Piece::ToColor(squareState[startSquare]), targetSquare + 1);
+                this->PutOnSquare(targetSquare + 1,Piece::rook, pieceColor);
             }
         }
     }
 
+    //currentFEN.GetPosition(squareState, activePlayer, thisMoveTable.W_CanCastleKingside, thisMoveTable.W_CanCastleQueenside, thisMoveTable.B_CanCastleKingside, thisMoveTable.B_CanCastleQueenside, thisMoveTable.enPassantSquare, thisMoveTable.consecutiveMoves);
+    //std::cout << currentFEN.FENtext << std::endl;
     //std::cout << "We got through the king stage" << std::endl;
 
     if (pieceType == Piece::rook)
@@ -325,6 +333,8 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
             thisMoveTable.B_CanCastleKingside = 0;
     }
 
+    //currentFEN.GetPosition(squareState, activePlayer, thisMoveTable.W_CanCastleKingside, thisMoveTable.W_CanCastleQueenside, thisMoveTable.B_CanCastleKingside, thisMoveTable.B_CanCastleQueenside, thisMoveTable.enPassantSquare, thisMoveTable.consecutiveMoves);
+    //std::cout << currentFEN.FENtext << std::endl;
     //std::cout << "We got through the rook stage" << std::endl;
 
     if (squareState[targetSquare] != 0)
@@ -356,6 +366,11 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
     // break;
 
     //std::cout << "We got through the consecutive moves stage" << std::endl;
+    //std::cout << "MADE MOVE..." << std::flush;
+    //Move move(startSquare,targetSquare, promotionNum);
+    //move.LogMove();
+    //currentFEN.GetPosition(squareState, activePlayer, thisMoveTable.W_CanCastleKingside, thisMoveTable.W_CanCastleQueenside, thisMoveTable.B_CanCastleKingside, thisMoveTable.B_CanCastleQueenside, thisMoveTable.enPassantSquare, thisMoveTable.consecutiveMoves);
+    //std::cout << currentFEN.FENtext << std::endl;
 
     thisMoveTable.GenerateMoves(thisMoveTable.CurrentMoveList);
 
@@ -416,24 +431,32 @@ void VirtualBoard::UnmakeMove(Move move)
         CaptureHistory.pop_back();
     }
 
-    std::cout << "Before 'istory" << std::endl;
+    //std::cout << "Before 'istory" << std::endl;
     //std::cout << PositionIndexHistory.back()->fen.FENtext << std::endl;
-    std::cout << PositionIndexHistory.size() << std::endl;
+    //std::cout << PositionIndexHistory.size() << std::endl;
 
     if(!PositionIndexHistory.empty())
     {
-        std::cout << "We've been enlooped" << std::endl;
+        //std::cout << "We've been enlooped" << std::endl;
         thisMoveTable.RemovePosition(PositionIndexHistory.back());
-        std::cout << "El removal" << std::endl;
+        //std::cout << "El removal" << std::endl;
         PositionIndexHistory.pop_back();
     }
 
-    std::cout << "Francis Fukuyama" << std::endl;
+    //std::cout << "Francis Fukuyama" << std::endl;
 
     Piece::ReadPiece(squareState[move.startSquare],pieceType,pieceColor);
 
-    if(pieceType==Piece::king && thisMoveTable.IsCastling(move.startSquare, move.targetSquare,isKingside))
+    //std::cout << "Piece Type: " << pieceType << std::endl;
+    //std::cout << thisMoveTable.IsCastling(move.startSquare, move.targetSquare,pieceColor, isKingside) << std::endl;
+
+    //FEN currentFEN;
+    //currentFEN.GetPosition(squareState, activePlayer, thisMoveTable.W_CanCastleKingside, thisMoveTable.W_CanCastleQueenside, thisMoveTable.B_CanCastleKingside, thisMoveTable.B_CanCastleQueenside, thisMoveTable.enPassantSquare, thisMoveTable.consecutiveMoves);
+    //std::cout << currentFEN.FENtext << std::endl;
+
+    if(pieceType==Piece::king && thisMoveTable.IsCastling(move.startSquare, move.targetSquare, pieceColor , isKingside))
     {
+        //std::cout << "CASTLING DETECTED. LETHAL PROCEDURES ENGAGED" << std::endl;
         if(isKingside)
         {
             this->RemoveFromSquare(move.startSquare+1);
@@ -441,16 +464,20 @@ void VirtualBoard::UnmakeMove(Move move)
         }
         else
         {
+            //currentFEN.GetPosition(squareState, activePlayer, thisMoveTable.W_CanCastleKingside, thisMoveTable.W_CanCastleQueenside, thisMoveTable.B_CanCastleKingside, thisMoveTable.B_CanCastleQueenside, thisMoveTable.enPassantSquare, thisMoveTable.consecutiveMoves);
+    //std::cout << currentFEN.FENtext << std::endl;
             this->RemoveFromSquare(move.startSquare-1);
             this->PutOnSquare(move.targetSquare-2, Piece::rook, pieceColor);
+            //currentFEN.GetPosition(squareState, activePlayer, thisMoveTable.W_CanCastleKingside, thisMoveTable.W_CanCastleQueenside, thisMoveTable.B_CanCastleKingside, thisMoveTable.B_CanCastleQueenside, thisMoveTable.enPassantSquare, thisMoveTable.consecutiveMoves);
+    //std::cout << currentFEN.FENtext << std::endl;
         }
     }
     //auto x = PositionIndexHistory.begin();
     //std::cout << PositionIndexHistory.front()->fen.FENtext << std::endl;
     //std::cout << PositionIndexHistory.size() << std::endl;
-    std::cout << "Here" << std::endl;
+    //std::cout << "Here" << std::endl;
     //std::cout << PositionIndexHistory.back()->occurrenceNum << std::endl;
-    std::cout << thisMoveTable.occurredPositions.size() << std::endl;
+    //std::cout << thisMoveTable.occurredPositions.size() << std::endl;
     PositionIndexHistory[PositionIndexHistory.size()-1]->fen.ReadContext(thisMoveTable.W_CanCastleKingside, thisMoveTable.W_CanCastleQueenside, thisMoveTable.B_CanCastleKingside, thisMoveTable.B_CanCastleQueenside, thisMoveTable.enPassantSquare, thisMoveTable.consecutiveMoves);
 
     this->RevertPlayer();
@@ -461,13 +488,13 @@ void VirtualBoard::SwitchPlayer()
     thisMoveTable.GenerateAttacks();
     activePlayer = (activePlayer % 2) + 1;
     CurrentEvalution = VirtualEvaluation::Evaluate();
-    FEN curFEN;
-    curFEN.GetPosition();
-    std::cout << curFEN.FENtext << std::endl;
-    std::cout << curFEN.FENtext << std::endl;
+    //FEN curFEN;
+    //curFEN.GetPosition();
+    //std::cout << curFEN.FENtext << std::endl;
+    //std::cout << curFEN.FENtext << std::endl;
     thisMoveTable.AddCurrentPosition(PositionIndexHistory);
     //PositionIndexHistory.push_back(thisMoveTable.occurredPositions.back());
-    std::cout << "Ze size: " << thisMoveTable.occurredPositions.size() << std::endl;
+    //std::cout << "Ze size: " << thisMoveTable.occurredPositions.size() << std::endl;
     //std::cout << thisMoveTable.occurredPositions[0].fen.FENtext << std::endl;
     //std::cout << thisMoveTable.occurredPositions[0].occurrenceNum << std::endl;
 }

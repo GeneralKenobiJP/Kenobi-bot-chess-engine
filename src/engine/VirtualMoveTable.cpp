@@ -845,6 +845,45 @@ bool VirtualMoveTable::IsCastling(int startSquare, int targetSquare, bool &IsKin
     }
     return false;
 }
+bool VirtualMoveTable::IsCastling(int startSquare, int targetSquare, int color, bool &IsKingside)
+{
+    //we are assuming we've checked for a king on the startSquare and checked for castling booleans in the move generation
+    if(color == 8)
+    {
+        if(startSquare != 4)
+            return false;
+
+        if(targetSquare == 6)
+        {
+            IsKingside = 1;
+            return true;
+        }
+        else if(targetSquare == 2)
+        {
+            IsKingside = 0;
+            return true;
+        }
+        return false;
+    }
+    else if(color == 16)
+    {
+        if(startSquare != 60)
+            return false;
+
+        if(targetSquare == 62)
+        {
+            IsKingside = 1;
+            return true;
+        }
+        else if(targetSquare == 58)
+        {
+            IsKingside = 0;
+            return true;
+        }
+        return false;
+    }
+    return false;
+}
 bool VirtualMoveTable::IsCastling(int startSquare, int targetSquare)
 {
     //we are assuming we've checked for a king on the startSquare and checked for castling booleans in the move generation
@@ -948,8 +987,8 @@ void VirtualMoveTable::AddCurrentPosition(std::vector<std::list<Position>::itera
 }
 void VirtualMoveTable::RemovePosition(std::list<Position>::iterator it)
 {
-    std::cout << "Over" << std::endl;
-    std::cout << it->occurrenceNum << std::endl;
+    //std::cout << "Over" << std::endl;
+    //std::cout << it->occurrenceNum << std::endl;
     if(it->occurrenceNum>1)
         it->occurrenceNum--;
     else
