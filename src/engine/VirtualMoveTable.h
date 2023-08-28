@@ -76,6 +76,7 @@ class VirtualMoveTable
     bool IsDefended(int targetSquare);
     bool IsCastling(int startSquare, int targetSquare, bool &IsKingside);
     bool IsCastling(int startSquare, int targetSquare, int color, bool &IsKingside);
+    bool IsCastling(int startSquare, int targetSquare, int color);
     bool IsCastling(int startSquare, int targetSquare);
     bool IsSufficientMaterial();
 

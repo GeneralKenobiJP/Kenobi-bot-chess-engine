@@ -7,6 +7,7 @@ class Search
     std::vector<long long> depthMoveNum;
     long long pieceMoveNum[6];
     int counter;
+    long long capture, ep, castles, promotions, checks, checkmates, draws;
 
     public:
 

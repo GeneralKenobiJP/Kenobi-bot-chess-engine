@@ -884,6 +884,43 @@ bool VirtualMoveTable::IsCastling(int startSquare, int targetSquare, int color, 
     }
     return false;
 }
+
+bool VirtualMoveTable::IsCastling(int startSquare, int targetSquare, int color)
+{
+    //we are assuming we've checked for a king on the startSquare and checked for castling booleans in the move generation
+    if(color == 8)
+    {
+        if(startSquare != 4)
+            return false;
+
+        if(targetSquare == 6)
+        {
+            return true;
+        }
+        else if(targetSquare == 2)
+        {
+            return true;
+        }
+        return false;
+    }
+    else if(color == 16)
+    {
+        if(startSquare != 60)
+            return false;
+
+        if(targetSquare == 62)
+        {
+            return true;
+        }
+        else if(targetSquare == 58)
+        {
+            return true;
+        }
+        return false;
+    }
+    return false;
+}
+
 bool VirtualMoveTable::IsCastling(int startSquare, int targetSquare)
 {
     //we are assuming we've checked for a king on the startSquare and checked for castling booleans in the move generation

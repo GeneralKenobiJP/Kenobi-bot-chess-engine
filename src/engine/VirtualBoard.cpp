@@ -224,6 +224,7 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
 {
     //std::cout << PositionIndexHistory.size() << std::endl;
     bool hasCaptured = 0;
+    bool isEnPassant = 0;
     int pieceType;
     int pieceColor;
     //FEN currentFEN;
@@ -235,7 +236,8 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
 
     if (pieceType == Piece::pawn)
     {
-        if (thisMoveTable.IsEnPassant(targetSquare))
+        isEnPassant = thisMoveTable.IsEnPassant(targetSquare);
+        if (isEnPassant)
         {
             hasCaptured = true;
             if (activePlayer == 1)
@@ -278,7 +280,10 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
         }
     }
     else
+    {
         thisMoveTable.enPassantSquare = -1;
+        EnPassantHistory.push_back(false);
+    }
 
     //std::cout << "We got through the pawn stage" << std::endl;
 
@@ -302,10 +307,10 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
 
         if (thisMoveTable.IsCastling(startSquare, targetSquare, pieceColor , IsKingside))
         {
-            std::cout << "CASTLING ATTEMPT DETECTED." << std::endl;
+            //std::cout << "CASTLING ATTEMPT DETECTED." << std::endl;
             if (IsKingside)
             {
-                std::cout << "kingside" << std::endl;
+                //std::cout << "kingside" << std::endl;
                 this->RemoveFromSquare(targetSquare + 1);
                 this->PutOnSquare(targetSquare - 1,Piece::rook, pieceColor);
             }
@@ -346,7 +351,7 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
     }
     //std::cout << "We got through the capture stage" << std::endl;
 
-    if(hasCaptured)
+    if(hasCaptured && !isEnPassant)
         CaptureHistory.push_back(capturedPiece);
     else
         CaptureHistory.push_back(0); //Piece::none
@@ -400,7 +405,7 @@ void VirtualBoard::UnmakeMove(Move move)
         this->PutOnSquare(move.startSquare, squareState[move.targetSquare]);
     }
     else
-        this->PutOnSquare(move.startSquare, Piece::pawn ,Piece::ToColor(move.promotionPiece));
+        this->PutOnSquare(move.startSquare, Piece::pawn, Piece::ToColor(move.promotionPiece));
 
     //std::cout << "Thy piece has been cast upon the mortal soil of your choice" << std::endl;
 
@@ -409,6 +414,8 @@ void VirtualBoard::UnmakeMove(Move move)
     {
         if(EnPassantHistory.back() == true)
         {
+            //std::cout << "ALMIGHTY EN PASSANT" << std::endl;
+            //move.LogMove();
             if(move.targetSquare/8 == 5)
                 this->PutOnSquare(move.targetSquare-8, Piece::pawn, Piece::black);
             else

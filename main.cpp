@@ -53,8 +53,8 @@ int main(){
 
     whiteClock.InitializeClock(650,400,thisDir);
     blackClock.InitializeClock(650,200,thisDir,whiteClock,blackClock);
-    whiteClock.SetTime(600);
-    blackClock.SetTime(600);
+    whiteClock.SetTime(6000);
+    blackClock.SetTime(6000);
 
     FEN::ReadPosition(FEN::startFEN);
     MoveTable::AddCurrentPosition();

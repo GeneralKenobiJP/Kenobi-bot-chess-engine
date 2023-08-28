@@ -30,10 +30,15 @@ void Search::DebugSearch(int depth)
         SearchBoard.thisMoveTable.LogMoveList();
     }*/
 
-    SearchBoard.thisMoveTable.LogMoveList();
+    //SearchBoard.thisMoveTable.LogMoveList();
+
+    
     
     if(SearchBoard.thisMoveTable.CurrentMoveList.size() == 0)
+    {
+        checkmates++;
         return;
+    }
 
     if(SearchBoard.IsDraw)
         return;
@@ -68,6 +73,26 @@ void Search::DebugSearch(int depth)
 
     for(int i=0; i<SearchBoard.thisMoveTable.CurrentMoveList.size(); i++)
     {
+        FEN curcurFEN;
+            curcurFEN.GetPosition(SearchBoard.squareState, SearchBoard.activePlayer, SearchBoard.thisMoveTable.W_CanCastleKingside, SearchBoard.thisMoveTable.W_CanCastleQueenside, SearchBoard.thisMoveTable.B_CanCastleKingside, SearchBoard.thisMoveTable.B_CanCastleQueenside, SearchBoard.thisMoveTable.enPassantSquare, SearchBoard.thisMoveTable.consecutiveMoves);
+            std::cout << curcurFEN.FENtext << std::endl;
+        if(depth==3)
+        {
+            FEN curFEN;
+            curFEN.GetPosition(SearchBoard.squareState, SearchBoard.activePlayer, SearchBoard.thisMoveTable.W_CanCastleKingside, SearchBoard.thisMoveTable.W_CanCastleQueenside, SearchBoard.thisMoveTable.B_CanCastleKingside, SearchBoard.thisMoveTable.B_CanCastleQueenside, SearchBoard.thisMoveTable.enPassantSquare, SearchBoard.thisMoveTable.consecutiveMoves);
+            std::cout << curFEN.FENtext << std::endl;
+            std::cout << "a2: " << SearchBoard.squareState[8] << std::endl;
+            std::cout << "a2: " << *SearchBoard.thisMoveTable.squareState[8] << std::endl;
+            SearchBoard.thisMoveTable.LogMoveList();
+            if(counter != 0 && SearchBoard.thisMoveTable.CurrentMoveList.size()!= counter)
+            {
+                curFEN.GetPosition(SearchBoard.squareState, SearchBoard.activePlayer, SearchBoard.thisMoveTable.W_CanCastleKingside, SearchBoard.thisMoveTable.W_CanCastleQueenside, SearchBoard.thisMoveTable.B_CanCastleKingside, SearchBoard.thisMoveTable.B_CanCastleQueenside, SearchBoard.thisMoveTable.enPassantSquare, SearchBoard.thisMoveTable.consecutiveMoves);
+                std::cout << curFEN.FENtext << std::endl;
+                std::cout << "HERE HERE HERE" << std::endl;
+            }
+
+            counter=SearchBoard.thisMoveTable.CurrentMoveList.size();
+        }
         
         //std::cout << "Ladies and gentlemen: " << it->startSquare << ", " << it->targetSquare << ", " << it->promotionPiece << std::endl;
         //1std::cout << "Depth: " << depth << std::endl;
@@ -78,14 +103,26 @@ void Search::DebugSearch(int depth)
         depthMoveNum[depth-1]++;
         //pieceMoveNum[Piece::ToType(SearchBoard.squareState[it->startSquare])-1]++;
         move = SearchBoard.thisMoveTable.CurrentMoveList[i];
+        std::cout << "Depth: " << depth << std::endl;
+        move.LogMove();
+        if(SearchBoard.squareState[move.targetSquare]!=0)
+            capture++;
+        if(SearchBoard.thisMoveTable.IsEnPassant(move.targetSquare) && Piece::ToType(SearchBoard.squareState[move.startSquare])==Piece::pawn)
+            ep++;
+        if(Piece::ToType(SearchBoard.squareState[move.startSquare])==Piece::king && SearchBoard.thisMoveTable.IsCastling(move.startSquare, move.targetSquare, SearchBoard.activePlayer*8))
+            castles++;
+        if(move.promotionPiece!=0)
+            promotions++;
         //move.LogMove();
         //std::cout << std::endl << std::endl;
         //std::cout << "MOVE: " << move.startSquare << "->" << move.targetSquare << "(" << move.promotionPiece << ")" << std::endl;
         SearchBoard.MakeMove(move);
+        if(SearchBoard.thisMoveTable.IsChecked)
+            checks++;
         this->DebugSearch(depth-1);
         //bestEval = std::max(bestEval, eval);
         //std::cout << "Now we shall unmake that which had been done" << std::endl;
-        move.LogMove();
+        //move.LogMove();
         SearchBoard.UnmakeMove(move);
         //std::cout << "Unmade has become that which had been done" << std::endl;
         //if(eval >= beta)
@@ -135,6 +172,7 @@ void Search::LogDebugSearch(int depth)
 {
     depthMoveNum.resize(depth);
     counter=0;
+    capture=0; ep=0; castles=0; promotions=0; checks=0; checkmates=0; draws=0;
 
     for(int i=0;i<depth;i++)
         depthMoveNum[i] = 0;
@@ -148,6 +186,15 @@ void Search::LogDebugSearch(int depth)
     {
         std::cout << (depth-i) << ": " << depthMoveNum[i] << std::endl;
     }
-    for(int i=1;i<=6;i++)
-        std::cout << i << ": " << pieceMoveNum[i-1] << std::endl;
+    //for(int i=1;i<=6;i++)
+        //std::cout << i << ": " << pieceMoveNum[i-1] << std::endl;
+
+    capture+=ep;
+
+    std::cout << "Captures: " << capture << std::endl;
+    std::cout << "EP: " << ep << std::endl;
+    std::cout << "Castles: " << castles << std::endl;
+    std::cout << "Promotions:  " << promotions << std::endl;
+    std::cout << "Checks:  " << checks << std::endl;
+    std::cout << "Checkmates:  " << checkmates << std::endl;
 }
