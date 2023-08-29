@@ -4,8 +4,9 @@
 #include "board.h"
 #include <MoveTable.h>
 
-//const std::string FEN::startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0";
-const std::string FEN::startFEN = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1";
+//const std::string FEN::startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0"; //INITIAL POSITION
+//const std::string FEN::startFEN = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1"; //POSITION 2
+const std::string FEN::startFEN = "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0"; //POSITION 3
 //const std::string FEN::startFEN = "rnbqkbnr/pppp1ppp/4p3/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 //const std::string FEN::startFEN = "8/1k6/3p4/p1p1p2p/P1PPP1pP/6P1/5K2/8 w - 0 1";
 //const std::string FEN::startFEN = "1k7/8/8/8/8/8/8/8 w - 0 1";
@@ -97,7 +98,7 @@ void FEN::ReadPosition(std::string fenTxt) // static
 
     fenTxt = fenTxt.substr(3);
 
-    //std::cout << fenTxt << std::endl;
+    std::cout << fenTxt << std::endl;
 
     while (fenTxt[0] != ' ')
     {
@@ -115,13 +116,18 @@ void FEN::ReadPosition(std::string fenTxt) // static
         case 'q':
             MoveTable::B_CanCastleQueenside = 1;
             break;
+        case '-':
+            break;
         default:
             fenTxt = "  " + fenTxt;
             break;
         }
         fenTxt = fenTxt.substr(1);
+        std::cout << fenTxt << std::endl;
     }
+    std::cout << fenTxt << std::endl;
     fenTxt = fenTxt.substr(1);
+    std::cout << fenTxt << std::endl;
 
     std::string thisString = "";
 
@@ -142,9 +148,11 @@ void FEN::ReadPosition(std::string fenTxt) // static
         fenTxt = fenTxt.substr(1);
     }
 
+    std::cout << fenTxt << std::endl;
+
     thisString = "";
 
-    while (fenTxt[0] != ' ')
+    while (fenTxt[0] != ' ' && !fenTxt.empty())
     {
         thisString += fenTxt[0];
         fenTxt = fenTxt.substr(1);

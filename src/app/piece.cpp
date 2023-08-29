@@ -128,3 +128,23 @@ bool Piece::IsEnemyKing(int pieceNum)
     return false;
 
 }
+
+bool Piece::IsEnemyKing(int pieceNum, int color)
+{
+    int pieceType;
+    int pieceColor;
+
+    if(pieceNum == 0)
+        return false;
+
+    Piece::ReadPiece(pieceNum, pieceType, pieceColor);
+
+    if(pieceType != Piece::king)
+        return false;
+
+    if(pieceColor/8 != color)
+        return true;
+
+    return false;
+
+}

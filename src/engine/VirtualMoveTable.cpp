@@ -197,8 +197,8 @@ void VirtualMoveTable::GenerateLongRangeMoves(int square, int pieceType, std::ve
     for(int dir=startDir;dir<8;dir+=dirIncr)
     {
         if(IsPinned)
-                if(std::abs(pinDir) != std::abs(VirtualMoveTable::directionShift[dir]))
-                    continue;
+            if(std::abs(pinDir) != std::abs(VirtualMoveTable::directionShift[dir]))
+                continue;
         
         for(int sq=1;sq<=VirtualMoveTable::numSquaresToEdge[square][dir];sq++)
         {
@@ -536,6 +536,9 @@ void VirtualMoveTable::GenerateAttacks()
             this->CheckForPawnChecks(it->targetSquare);
     }
 
+    if(IsChecked)
+        std::cout << "HELP! I'VE BEEN CHECKED!" << std::endl;
+
     //std::cout << "And for pawns" << std::endl;
 
     std::vector<int>::iterator iter;
@@ -570,6 +573,10 @@ void VirtualMoveTable::GenerateAttacks()
 
 void VirtualMoveTable::CheckForPins(int startSquare, int targetSquare)
 {
+    std::cout << "Checkin' for pins, y'all: " << std::flush;
+    Move move(startSquare, targetSquare);
+    move.LogMove();
+
     int diff = (targetSquare - startSquare);
 
     int startFile, startRank;
@@ -635,7 +642,9 @@ void VirtualMoveTable::CheckForPins(int startSquare, int targetSquare)
             else //SE
             {
                 dir = -7;
+                //dir = -7
                 dirIndex = 3;
+                //dirindex = 3
             }
         }
 
@@ -648,7 +657,7 @@ void VirtualMoveTable::CheckForPins(int startSquare, int targetSquare)
         
         if(*squareState[pinTargetSquare] != 0)
         {
-            if(Piece::IsEnemyKing(*squareState[pinTargetSquare]))
+            if(Piece::IsEnemyKing(*squareState[pinTargetSquare],*activePlayer))
             {
                 /*std::cout << "Hereby, there stands a king: " << pinTargetSquare << std::endl;
                 std::cout << "And the direction of the pin is: " << dir << std::endl;
@@ -668,9 +677,12 @@ void VirtualMoveTable::CheckForPins(int startSquare, int targetSquare)
 
     }
 
+    std::cout << "Get 'ere lads for we're about to check for a check" << std::endl;
+
     ///CHECKING FOR CHECKS AND VIRTUAL ATTACKS
-    if(Piece::IsEnemyKing(*squareState[targetSquare]))
+    if(Piece::IsEnemyKing(*squareState[targetSquare],*activePlayer))
     {
+        std::cout << "Sir, you've tested positive for check" << std::endl;
         IsChecked = true;
 
         int thisSquare;
@@ -781,7 +793,7 @@ bool VirtualMoveTable::IsCoveringCheck(int square)
 
 void VirtualMoveTable::CheckForKnightChecks(int targetSquare, int knightSquare)
 {
-    if(Piece::IsEnemyKing(*squareState[targetSquare]))
+    if(Piece::IsEnemyKing(*squareState[targetSquare],*activePlayer))
     {
         //std::cout << "We have verified this potential knight adversary to be the king" << std::endl;
         IsChecked = true;
@@ -791,7 +803,7 @@ void VirtualMoveTable::CheckForKnightChecks(int targetSquare, int knightSquare)
 }
 void VirtualMoveTable::CheckForPawnChecks(int targetSquare)
 {
-    if(Piece::IsEnemyKing(*squareState[targetSquare]))
+    if(Piece::IsEnemyKing(*squareState[targetSquare],*activePlayer))
     {
         IsChecked = true;
     }

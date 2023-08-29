@@ -33,6 +33,8 @@ int MoveTable::consecutiveMoves=0;
 std::list<Position> MoveTable::occurredPositions;
 bool MoveTable::IsThreefoldRepetition = false;
 bool MoveTable::IsFiftymove = false;
+std::vector<int> MoveTable::forbiddenEnPassantStartSquares;
+
 
 void MoveTable::CalculateStartMoveData()
 {
@@ -290,7 +292,7 @@ void MoveTable::GeneratePawnMoves(int square, std::vector<Move> &moveList)
 
         Piece::ReadPieceColor(Board::squareState[targetSquare],targetSquareColor);
         //EN PASSANT
-        if(enPassantSquare == targetSquare)
+        if(enPassantSquare == targetSquare && MoveTable::CanDoEnPassant(square))
         {
             moveList.push_back(Move(square,targetSquare));
             continue;
@@ -443,6 +445,7 @@ void MoveTable::GenerateAttacks()
     MoveTable::PinDirectionList.clear();
     MoveTable::CheckSquares.clear();
     MoveTable::VirtualAttackList.clear();
+    MoveTable::forbiddenEnPassantStartSquares.clear();
 
     std::vector<Move>::iterator it;
     int startSquarePiece;
@@ -581,6 +584,9 @@ void MoveTable::CheckForPins(int startSquare, int targetSquare)
 
     }
 
+    int enPassantTargetSquare = (Board::activePlayer == 1) ? MoveTable::enPassantSquare+8 : MoveTable::enPassantSquare-8;
+    bool IsEvaluatingEnPassant = false;
+
     //THE FUNCTION IS CALLED JUST BEFORE SWITCHING PLAYERS
     for(int i=1;i<=MoveTable::numSquaresToEdge[targetSquare][dirIndex];i++)
     {
@@ -590,20 +596,40 @@ void MoveTable::CheckForPins(int startSquare, int targetSquare)
         {
             if(Piece::IsEnemyKing(Board::squareState[pinTargetSquare]))
             {
-                /*std::cout << "Hereby, there stands a king: " << pinTargetSquare << std::endl;
-                std::cout << "And the direction of the pin is: " << dir << std::endl;
-                std::cout << pinTargetSquare << " = " << targetSquare << " + " << dir << " * " << i << std::endl;
-                std::cout << "numSquaresToEdge: " << MoveTable::numSquaresToEdge[targetSquare][dir] << std::endl;
-                std::cout << "targetSquare: " << targetSquare << std::endl;*/
-                PinList.push_back(targetSquare);
-                PinDirectionList.push_back(dir);
-                std::cout << "Pinned dir: " << dir << std::endl;
-                break;
+                if(!IsEvaluatingEnPassant)
+                {
+                    /*std::cout << "Hereby, there stands a king: " << pinTargetSquare << std::endl;
+                    std::cout << "And the direction of the pin is: " << dir << std::endl;
+                    std::cout << pinTargetSquare << " = " << targetSquare << " + " << dir << " * " << i << std::endl;
+                    std::cout << "numSquaresToEdge: " << MoveTable::numSquaresToEdge[targetSquare][dir] << std::endl;
+                    std::cout << "targetSquare: " << targetSquare << std::endl;*/
+                    PinList.push_back(targetSquare);
+                    PinDirectionList.push_back(dir);
+                    std::cout << "Pinned dir: " << dir << std::endl;
+                    break;
+                }
+                else
+                {
+                    forbiddenEnPassantStartSquares.push_back(targetSquare);
+                    IsEvaluatingEnPassant = false;
+                    break;
+                }
+            }
+            else if(!IsEvaluatingEnPassant)
+            {
+                if(pinTargetSquare == enPassantTargetSquare)
+                    IsEvaluatingEnPassant = true;
+                else
+                    break;
+                
+                //break;
             }
             else
             {
+                IsEvaluatingEnPassant = false;
                 break;
             }
+
         }
 
     }
@@ -869,4 +895,18 @@ bool MoveTable::IsSufficientMaterial()
 void Move::LogMove()
 {
     std::cout << "MOVE: " << this->startSquare << "->" << this->targetSquare << "(" << this->promotionPiece << ")" << std::endl;
+}
+
+bool MoveTable::CanDoEnPassant(int square)
+{
+    if(MoveTable::forbiddenEnPassantStartSquares.empty())
+        return true;
+    else
+    {
+        for(int i=0;i<MoveTable::forbiddenEnPassantStartSquares.size();i++)
+            if(forbiddenEnPassantStartSquares[i]==square)
+                return false;
+    }
+
+    return true;
 }

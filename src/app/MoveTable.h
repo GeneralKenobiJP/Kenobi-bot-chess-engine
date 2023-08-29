@@ -73,6 +73,7 @@ class MoveTable
     static bool B_CanCastleKingside;
     static bool W_CanCastleQueenside;
     static bool B_CanCastleQueenside;
+    static std::vector<int> forbiddenEnPassantStartSquares;
 
     //Draw
     static int consecutiveMoves; //if =100, any player can declare a draw; if =150, there is an automatic draw
@@ -105,4 +106,5 @@ class MoveTable
     static bool IsDefended(int targetSquare);
     static bool IsCastling(int startSquare, int targetSquare, bool &IsKingside);
     static bool IsSufficientMaterial();
+    static bool CanDoEnPassant(int square);
 };
