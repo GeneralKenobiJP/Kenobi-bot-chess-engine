@@ -74,6 +74,8 @@ class MoveTable
     static bool W_CanCastleQueenside;
     static bool B_CanCastleQueenside;
     static std::vector<int> forbiddenEnPassantStartSquares;
+    static std::vector<Move> OwnEnPassantPins;
+    static bool IsEnPassantPinned;
 
     //Draw
     static int consecutiveMoves; //if =100, any player can declare a draw; if =150, there is an automatic draw
@@ -84,13 +86,17 @@ class MoveTable
     //Fill numSquaresToEdge
     static void CalculateStartMoveData();
     static std::vector<Move> GenerateMoves();
+    static std::vector<Move> GenerateMoves(int EnPassantPawnSquare);
     static void GenerateMoves(std::vector<Move> &moveList);
+    static void GenerateMoves(std::vector<Move> &moveList, int EnPassantPawnSquare);
     static void GenerateLongRangeMoves(int square, int pieceType, std::vector<Move> &moveList);
+    static void GenerateLongRangeMoves(int square, int pieceType, std::vector<Move> &moveList, int EnPassantPawnSquare);
     static void GenerateKnightMoves(int square, std::vector<Move> &moveList);
     static void GeneratePawnMoves(int square, std::vector<Move> &moveList);
     static void GenerateKingMoves(int square, std::vector<Move> &moveList);
     static void GenerateAttacks();
     static void CheckForPins(int startSquare, int targetSquare);
+    static void CheckForEnPassantPins(int startSquare, int targetSquare);
     static void CheckForKnightChecks(int targetSquare, int knightSquare);
     static void CheckForPawnChecks(int targetSquare);
     static void CheckState();
