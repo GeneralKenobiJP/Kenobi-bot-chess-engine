@@ -69,12 +69,13 @@ void Search::DebugSearch(int depth)
 
     //std::cout << "Move List count: " << moveList.size() << std::endl;
 
-    SearchBoard.thisMoveTable.LogMoveList();
+    //SearchBoard.thisMoveTable.LogMoveList();
 
     Move move;
 
     for(int i=0; i<SearchBoard.thisMoveTable.CurrentMoveList.size(); i++)
     {
+        SearchBoard.thisMoveTable.LogMoveList();
         FEN curcurFEN;
             curcurFEN.GetPosition(SearchBoard.squareState, SearchBoard.activePlayer, SearchBoard.thisMoveTable.W_CanCastleKingside, SearchBoard.thisMoveTable.W_CanCastleQueenside, SearchBoard.thisMoveTable.B_CanCastleKingside, SearchBoard.thisMoveTable.B_CanCastleQueenside, SearchBoard.thisMoveTable.enPassantSquare, SearchBoard.thisMoveTable.consecutiveMoves);
             std::cout << curcurFEN.FENtext << std::endl;

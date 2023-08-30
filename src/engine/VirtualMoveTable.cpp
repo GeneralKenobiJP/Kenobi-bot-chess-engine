@@ -446,7 +446,7 @@ void VirtualMoveTable::GeneratePawnMoves(int square, std::vector<Move> &moveList
 
         Piece::ReadPieceColor(*squareState[targetSquare],targetSquareColor);
         //EN PASSANT
-        if(enPassantSquare == targetSquare)
+        if(enPassantSquare == targetSquare && this->CanDoEnPassant(square))
         {
             moveList.push_back(Move(square,targetSquare));
             continue;
@@ -616,6 +616,9 @@ void VirtualMoveTable::GenerateAttacks()
     DefenseList.clear();
     OwnEnPassantPins.clear();
     IsEnPassantPinned = false;
+    IsChecked = false;
+    KnightCheckNum = 0;
+    CheckingKnightSquare = -1;
 
     if(enPassantSquare != -1)
     {
@@ -624,10 +627,6 @@ void VirtualMoveTable::GenerateAttacks()
     }
     else
         this->GenerateMoves(CurrentMoveList);
-
-    IsChecked = false;
-    KnightCheckNum = 0;
-    CheckingKnightSquare = -1;
 
     AttackList.clear();
     PinList.clear();
@@ -639,8 +638,8 @@ void VirtualMoveTable::GenerateAttacks()
     int startSquarePiece;
     int startSquareType;
 
-    std::cout << "Hereby, we've gathered for an attack 'o almighty" << std::endl;
-    this->LogMoveList();
+    //std::cout << "Hereby, we've gathered for an attack 'o almighty" << std::endl;
+    //this->LogMoveList();
 
 
     for(it=CurrentMoveList.begin();it!=CurrentMoveList.end();it++)
@@ -673,6 +672,8 @@ void VirtualMoveTable::GenerateAttacks()
     {
         CheckForEnPassantPins(it->startSquare, it->targetSquare);
     }
+
+    std::cout << "IsEnPassantPinned: " << IsEnPassantPinned << std::endl;
 
     if(IsChecked)
         std::cout << "HELP! I'VE BEEN CHECKED!" << std::endl;
@@ -956,7 +957,7 @@ void VirtualMoveTable::CheckForEnPassantPins(int startSquare, int targetSquare)
         if(*squareState[pinTargetSquare] != 0)
         {
             Piece::ReadPiece(*squareState[pinTargetSquare],targetType, targetColor);
-            if(Piece::IsEnemyKing(*squareState[pinTargetSquare]))
+            if(Piece::IsEnemyKing(*squareState[pinTargetSquare],*activePlayer))
             {
                 IsEnPassantPinned = true;
             }
