@@ -713,7 +713,7 @@ void MoveTable::CheckForPins(int startSquare, int targetSquare)
 
     }
 
-    int enPassantTargetSquare = (Board::activePlayer == 1) ? MoveTable::enPassantSquare+8 : MoveTable::enPassantSquare-8;
+    int enPassantTargetSquare = (MoveTable::enPassantSquare == -1) ? -1 : ((Board::activePlayer == 1) ? MoveTable::enPassantSquare+8 : MoveTable::enPassantSquare-8);
     bool IsEvaluatingEnPassant = false;
 
     //THE FUNCTION IS CALLED JUST BEFORE SWITCHING PLAYERS
@@ -888,29 +888,6 @@ void MoveTable::CheckForEnPassantPins(int startSquare, int targetSquare)
 
         }
 
-    }
-
-    ///CHECKING FOR CHECKS AND VIRTUAL ATTACKS
-    if(Piece::IsEnemyKing(Board::squareState[targetSquare]))
-    {
-        MoveTable::IsChecked = true;
-
-        int thisSquare;
-        std::vector<int> thisList;
-        for(int i=targetSquare-dir;i!=startSquare;i-=dir)
-        {
-            thisList.push_back(i);
-        }
-        for(int i=1;i <= MoveTable::numSquaresToEdge[targetSquare][dirIndex];i++)
-        {
-            thisSquare = targetSquare + i*dir;
-            if(Board::squareState[thisSquare] != 0)
-                break;
-            std::cout << "Virtual square: " << thisSquare << std::endl;
-            MoveTable::VirtualAttackList.push_back(thisSquare);
-        }
-        thisList.push_back(startSquare);
-        MoveTable::CheckSquares.push_back(thisList);
     }
 
 }

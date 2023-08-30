@@ -57,9 +57,12 @@ int main(){
     blackClock.SetTime(6000);
 
     FEN::ReadPosition(FEN::startFEN);
-    MoveTable::AddCurrentPosition();
+    //MoveTable::AddCurrentPosition();
 
     ChessClock::SetActivePlayer(1,whiteClock);
+
+    Board::PrepareBoard();
+
     Thread clockThread(std::bind(&ChessClock::CountDown,whiteClock,blackClock));
     clockThread.launch();
 

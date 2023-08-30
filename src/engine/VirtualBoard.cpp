@@ -507,6 +507,9 @@ void VirtualBoard::SwitchPlayer()
 }
 void VirtualBoard::RevertPlayer()
 {
+    FEN thisFEN;
+    thisFEN.GetPosition(squareState, activePlayer, thisMoveTable.W_CanCastleKingside, thisMoveTable.W_CanCastleQueenside, thisMoveTable.B_CanCastleKingside, thisMoveTable.B_CanCastleQueenside, thisMoveTable.enPassantSquare, thisMoveTable.consecutiveMoves);
+    std::cout << "Reverend: " << thisFEN.FENtext << std::endl;
     thisMoveTable.GenerateAttacks();
     activePlayer = (activePlayer % 2) + 1;
     CurrentEvalution = VirtualEvaluation::Evaluate();
@@ -550,6 +553,9 @@ void VirtualBoard::InitializeBoard()
     thisMoveTable.W_CanCastleQueenside = MoveTable::W_CanCastleQueenside;
     thisMoveTable.B_CanCastleKingside = MoveTable::B_CanCastleKingside;
     thisMoveTable.B_CanCastleQueenside = MoveTable::B_CanCastleQueenside;
+    thisMoveTable.forbiddenEnPassantStartSquares = MoveTable::forbiddenEnPassantStartSquares;
+    thisMoveTable.OwnEnPassantPins = MoveTable::OwnEnPassantPins;
+    thisMoveTable.IsEnPassantPinned = MoveTable::IsEnPassantPinned;
 
     thisMoveTable.activePlayer = &activePlayer;
     

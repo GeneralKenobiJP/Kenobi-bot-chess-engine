@@ -40,6 +40,7 @@ public:
     static int CalculateDistance(int squareA, int squareB);
     static int CalculateDirection(int startSquare, int targetSquare);
     static void SwitchPlayer();
+    static void PrepareBoard(); //generates attacks at move 1
     static void Promote(int square, int color);
     static void HandlePromotion(int promotionSpriteIndex);
     static void DeclareWin(int victoriousPlayer);

@@ -110,7 +110,7 @@ void VirtualMoveTable::CalculateStartMoveData()
     }
 }
 
-std::vector<Move> VirtualMoveTable::GenerateMoves() ///DRAWS DEBUGGING
+std::vector<Move> VirtualMoveTable::GenerateMoves()
 {
     std::vector<Move> MoveList;
     int pieceType;
@@ -176,10 +176,81 @@ std::vector<Move> VirtualMoveTable::GenerateMoves() ///DRAWS DEBUGGING
     return MoveList;
 
 }
+std::vector<Move> VirtualMoveTable::GenerateMoves(int EnPassantPawnSquare)
+{
+    std::vector<Move> MoveList;
+    int pieceType;
+    int pieceColor;
+
+    VirtualMoveTable::pawnAttackList.clear();
+    VirtualMoveTable::kingVirtualAttackList.clear();
+
+    /*if(consecutiveMoves >= 150) //leaving space for nuances here
+        Board::DeclareDraw();
+    else if(consecutiveMoves >= 100) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        IsFiftymove = true;*/
+
+    //if(!this->IsSufficientMaterial())
+    //    Board::DeclareDraw(); !!!!!!!!!!!!!!!!!!!!!
+
+    /*if(IsFiftymove || IsThreefoldRepetition)
+    {
+        Board::CanDeclareDraw = true; !!!!!!!!!!!!!!!!!!!
+    }*/
+
+    //std::cout << "Checkpoint 1" << std::endl;
+
+    for(int i=0;i<64;i++)
+    {
+        Piece::ReadPiece(*squareState[i],pieceType,pieceColor);
+
+        if(pieceColor/8 != *activePlayer)
+            continue;
+
+        //std::cout << "Checkpoint 2" << std::endl;
+
+        if(Piece::IsLongRange(pieceType))
+        {
+            //std::cout << "Initialized path 3.1" << std::endl;
+            this->GenerateLongRangeMoves(i,pieceType,MoveList, EnPassantPawnSquare);
+            //std::cout << "Checkpoint 3.1" << std::endl;
+        }
+        else if(pieceType == Piece::knight)
+        {
+            //std::cout << "Initialized path 3.2" << std::endl;
+            this->GenerateKnightMoves(i,MoveList);
+            //std::cout << "Checkpoint 3.2" << std::endl;
+        }
+        else if(pieceType == Piece::pawn)
+        {
+            //std::cout << "Initialized path 3.3" << std::endl;
+            this->GeneratePawnMoves(i,MoveList);
+            //std::cout << "Checkpoint 3.3" << std::endl;
+        }
+        else //king
+        {
+            //std::cout << "Initialized path 3.4" << std::endl;
+            this->GenerateKingMoves(i,MoveList);
+            //std::cout << "Checkpoint 3.4" << std::endl;
+        }
+
+        //if(pieceColor != 0)
+            //break;
+        
+    }
+
+    return MoveList;
+
+}
 
 void VirtualMoveTable::GenerateMoves(std::vector<Move> &moveList)
 {
     moveList = this->GenerateMoves();
+}
+
+void VirtualMoveTable::GenerateMoves(std::vector<Move> &moveList, int EnPassantPawnSquare)
+{
+    moveList = this->GenerateMoves(EnPassantPawnSquare);
 }
 
 void VirtualMoveTable::GenerateLongRangeMoves(int square, int pieceType, std::vector<Move> &moveList)
@@ -203,6 +274,58 @@ void VirtualMoveTable::GenerateLongRangeMoves(int square, int pieceType, std::ve
         for(int sq=1;sq<=VirtualMoveTable::numSquaresToEdge[square][dir];sq++)
         {
             targetSquare = square + VirtualMoveTable::directionShift[dir] * sq;
+
+            targetSquareState = *squareState[targetSquare];
+            Piece::ReadPieceColor(targetSquareState,targetSquarePieceColor);
+            
+            if(targetSquarePieceColor/8 == *activePlayer) //our piece is blocking the way
+            {
+                DefenseList.push_back(targetSquare);
+                break;
+            }
+
+            if(!IsChecked || this->IsCoveringCheck(targetSquare))
+            {
+                moveList.push_back(Move(square,targetSquare));
+            }
+
+            //std::cout << square << ' ' << targetSquare << std::endl;
+
+            if(targetSquarePieceColor != 0) //opponent's piece is blocking the way
+            {
+                break;
+            }
+
+        }
+    }
+}
+
+void VirtualMoveTable::GenerateLongRangeMoves(int square, int pieceType, std::vector<Move> &moveList, int EnPassantPawnSquare)
+{
+    int startDir = (pieceType == Piece::bishop) ? 1 : 0; //if true => 1
+    int dirIncr = (pieceType == Piece::queen) ? 1 : 2; //if true => 1
+    int targetSquare;
+    int targetSquareState;
+    int targetSquarePieceColor;
+    bool IsPinned;
+    int pinDir;
+
+    IsPinned = this->IsPinned(square, pinDir);
+
+    for(int dir=startDir;dir<8;dir+=dirIncr)
+    {
+        if(IsPinned)
+            if(std::abs(pinDir) != std::abs(VirtualMoveTable::directionShift[dir]))
+                continue;
+        
+        for(int sq=1;sq<=VirtualMoveTable::numSquaresToEdge[square][dir];sq++)
+        {
+            targetSquare = square + VirtualMoveTable::directionShift[dir] * sq;
+
+            if(targetSquare == EnPassantPawnSquare)
+            {
+                OwnEnPassantPins.push_back(Move(square, targetSquare));
+            }
 
             targetSquareState = *squareState[targetSquare];
             Piece::ReadPieceColor(targetSquareState,targetSquarePieceColor);
@@ -491,8 +614,16 @@ void VirtualMoveTable::GenerateAttacks()
 {
 
     DefenseList.clear();
+    OwnEnPassantPins.clear();
+    IsEnPassantPinned = false;
 
-    this->GenerateMoves(CurrentMoveList);
+    if(enPassantSquare != -1)
+    {
+        int EnPassantPawnSquare = (enPassantSquare / 8 == 2) ? (enPassantSquare + 8) : (enPassantSquare-8);
+        this->GenerateMoves(CurrentMoveList, EnPassantPawnSquare);
+    }
+    else
+        this->GenerateMoves(CurrentMoveList);
 
     IsChecked = false;
     KnightCheckNum = 0;
@@ -507,6 +638,9 @@ void VirtualMoveTable::GenerateAttacks()
     std::vector<Move>::iterator it;
     int startSquarePiece;
     int startSquareType;
+
+    std::cout << "Hereby, we've gathered for an attack 'o almighty" << std::endl;
+    this->LogMoveList();
 
 
     for(it=CurrentMoveList.begin();it!=CurrentMoveList.end();it++)
@@ -534,6 +668,10 @@ void VirtualMoveTable::GenerateAttacks()
 
         if(startSquareType == Piece::pawn)
             this->CheckForPawnChecks(it->targetSquare);
+    }
+    for(it = OwnEnPassantPins.begin(); it!=OwnEnPassantPins.end();it++)
+    {
+        CheckForEnPassantPins(it->startSquare, it->targetSquare);
     }
 
     if(IsChecked)
@@ -650,29 +788,56 @@ void VirtualMoveTable::CheckForPins(int startSquare, int targetSquare)
 
     }
 
+    std::cout << "DIR: " << dir << std::endl;
+    
+    int enPassantTargetSquare = (enPassantSquare == -1) ? -1 : ((*activePlayer == 1) ? enPassantSquare+8 : enPassantSquare-8);
+    bool IsEvaluatingEnPassant = false;
+
     //THE FUNCTION IS CALLED JUST BEFORE SWITCHING PLAYERS
     for(int i=1;i<=VirtualMoveTable::numSquaresToEdge[targetSquare][dirIndex];i++)
     {
         pinTargetSquare = targetSquare + dir*i;
+        std::cout << "pinTargetSquare: " << pinTargetSquare << std::endl;
+        std::cout << *squareState[pinTargetSquare] << std::endl;
         
         if(*squareState[pinTargetSquare] != 0)
         {
-            if(Piece::IsEnemyKing(*squareState[pinTargetSquare],*activePlayer))
+            if(Piece::IsEnemyKing(*squareState[pinTargetSquare], *activePlayer))
             {
-                /*std::cout << "Hereby, there stands a king: " << pinTargetSquare << std::endl;
-                std::cout << "And the direction of the pin is: " << dir << std::endl;
-                std::cout << pinTargetSquare << " = " << targetSquare << " + " << dir << " * " << i << std::endl;
-                std::cout << "numSquaresToEdge: " << MoveTable::numSquaresToEdge[targetSquare][dir] << std::endl;
-                std::cout << "targetSquare: " << targetSquare << std::endl;*/
-                PinList.push_back(targetSquare);
-                PinDirectionList.push_back(dir);
-                //std::cout << "Pinned dir: " << dir << std::endl;
-                break;
+                if(!IsEvaluatingEnPassant)
+                {
+                    /*std::cout << "Hereby, there stands a king: " << pinTargetSquare << std::endl;
+                    std::cout << "And the direction of the pin is: " << dir << std::endl;
+                    std::cout << pinTargetSquare << " = " << targetSquare << " + " << dir << " * " << i << std::endl;
+                    std::cout << "numSquaresToEdge: " << MoveTable::numSquaresToEdge[targetSquare][dir] << std::endl;
+                    std::cout << "targetSquare: " << targetSquare << std::endl;*/
+                    PinList.push_back(targetSquare);
+                    PinDirectionList.push_back(dir);
+                    std::cout << "Pinned dir: " << dir << std::endl;
+                    break;
+                }
+                else
+                {
+                    forbiddenEnPassantStartSquares.push_back(targetSquare);
+                    IsEvaluatingEnPassant = false;
+                    break;
+                }
+            }
+            else if(!IsEvaluatingEnPassant)
+            {
+                if(pinTargetSquare == enPassantTargetSquare)
+                    IsEvaluatingEnPassant = true;
+                else
+                    break;
+                
+                //break;
             }
             else
             {
+                IsEvaluatingEnPassant = false;
                 break;
             }
+
         }
 
     }
@@ -701,6 +866,111 @@ void VirtualMoveTable::CheckForPins(int startSquare, int targetSquare)
         }
         thisList.push_back(startSquare);
         CheckSquares.push_back(thisList);
+    }
+
+}
+
+void VirtualMoveTable::CheckForEnPassantPins(int startSquare, int targetSquare)
+{
+    int diff = (targetSquare - startSquare);
+
+    int startFile, startRank;
+    int targetFile, targetRank;
+
+    int dir, dirIndex;
+
+    int pinTargetSquare;
+
+    //bool IsVirtual = false;
+
+    Board::ReadSquare(startSquare, startFile, startRank);
+    Board::ReadSquare(targetSquare, targetFile, targetRank);
+
+    if(startFile == targetFile) //vertical move
+    {
+        if(diff>0) //up
+        {
+            dir = 8;
+            dirIndex = 0;
+        }
+        else //down
+        {
+            dir = -8;
+            dirIndex = 4;
+        }
+    }
+    else if(startRank == targetRank) //horizontal move
+    {
+        if(diff>0) //right
+        {
+            dir = 1;
+            dirIndex = 2;
+        }
+        else //left
+        {
+            dir = -1;
+            dirIndex = 6;
+        }
+    }
+    else //diagonal move
+    {
+        if(diff%9==0) //if it's 63=7*9, it must be 7 times +9 moves, because the maximum move is 8 squares
+        {
+            if(diff>0) //NE
+            {
+                dir = 9;
+                dirIndex = 1;
+            }
+            else //SW
+            {
+                dir = -9;
+                dirIndex = 5;
+            }
+        }
+        else
+        {
+            if(diff>0) //NW
+            {
+                dir = 7;
+                dirIndex = 7;
+            }
+            else //SE
+            {
+                dir = -7;
+                dirIndex = 3;
+            }
+        }
+
+    }
+
+    int enPassantTargetSquare = (*activePlayer == 1) ? enPassantSquare+8 : enPassantSquare-8;
+
+    std::cout << "En Passant target square: " << enPassantTargetSquare << std::endl;
+
+    //THE FUNCTION IS CALLED JUST BEFORE SWITCHING PLAYERS
+    for(int i=1;i<=VirtualMoveTable::numSquaresToEdge[targetSquare][dirIndex];i++)
+    {
+        pinTargetSquare = targetSquare + dir*i;
+        int targetType, targetColor;
+        
+        if(*squareState[pinTargetSquare] != 0)
+        {
+            Piece::ReadPiece(*squareState[pinTargetSquare],targetType, targetColor);
+            if(Piece::IsEnemyKing(*squareState[pinTargetSquare]))
+            {
+                IsEnPassantPinned = true;
+            }
+            else if((dir == 1 || dir == -1) && i == 1 && targetType == Piece::pawn && targetColor/8 != *activePlayer)
+            {
+                continue;
+            }
+            else
+            {
+                break;
+            }
+
+        }
+
     }
 
 }
@@ -1105,4 +1375,16 @@ void VirtualMoveTable::LogMoveList()
         std::cout << i+1 << ": ";
         CurrentMoveList[i].LogMove();
     }
+}
+
+bool VirtualMoveTable::CanDoEnPassant(int square)
+{
+    if(IsEnPassantPinned)
+        return false;
+
+    for(int i=0;i<forbiddenEnPassantStartSquares.size();i++)
+        if(forbiddenEnPassantStartSquares[i]==square)
+            return false;
+
+    return true;
 }

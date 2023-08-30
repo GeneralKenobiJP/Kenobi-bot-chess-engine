@@ -313,6 +313,16 @@ void Board::SwitchPlayer()
     std::cout << "switcheroo, now: " << Board::activePlayer << std::endl;
 }
 
+void Board::PrepareBoard()
+{
+    Board::activePlayer = (Board::activePlayer % 2) + 1;
+    MoveTable::GenerateAttacks();
+    Board::activePlayer = (Board::activePlayer % 2) + 1;
+    Board::CurrentEvalution = Evaluation::Evaluate();
+    ChessClock::SetActivePlayer(Board::activePlayer);
+    MoveTable::AddCurrentPosition();
+}
+
 void Board::Promote(int square, int color)
 {
     SpriteHandler::IsPromotion = true;

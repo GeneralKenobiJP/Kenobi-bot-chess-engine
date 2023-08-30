@@ -69,6 +69,8 @@ void Search::DebugSearch(int depth)
 
     //std::cout << "Move List count: " << moveList.size() << std::endl;
 
+    SearchBoard.thisMoveTable.LogMoveList();
+
     Move move;
 
     for(int i=0; i<SearchBoard.thisMoveTable.CurrentMoveList.size(); i++)

@@ -36,6 +36,9 @@ class VirtualMoveTable
     bool B_CanCastleKingside;
     bool W_CanCastleQueenside;
     bool B_CanCastleQueenside;
+    std::vector<int> forbiddenEnPassantStartSquares;
+    std::vector<Move> OwnEnPassantPins;
+    bool IsEnPassantPinned;
 
     //Draw
     int consecutiveMoves; //if =100, any player can declare a draw; if =150, there is an automatic draw
@@ -50,13 +53,17 @@ class VirtualMoveTable
     //Fill numSquaresToEdge
     static void CalculateStartMoveData();
     std::vector<Move> GenerateMoves();
+    std::vector<Move> GenerateMoves(int EnPassantPawnSquare);
     void GenerateMoves(std::vector<Move> &moveList);
+    void GenerateMoves(std::vector<Move> &moveList, int EnPassantPawnSquare);
     void GenerateLongRangeMoves(int square, int pieceType, std::vector<Move> &moveList);
+    void GenerateLongRangeMoves(int square, int pieceType, std::vector<Move> &moveList, int EnPassantPawnSquare);
     void GenerateKnightMoves(int square, std::vector<Move> &moveList);
     void GeneratePawnMoves(int square, std::vector<Move> &moveList);
     void GenerateKingMoves(int square, std::vector<Move> &moveList);
     void GenerateAttacks();
     void CheckForPins(int startSquare, int targetSquare);
+    void CheckForEnPassantPins(int startSquare, int targetSquare);
     void CheckForKnightChecks(int targetSquare, int knightSquare);
     void CheckForPawnChecks(int targetSquare);
     //void CheckState();// migrated to virtualevaluation
@@ -79,6 +86,7 @@ class VirtualMoveTable
     bool IsCastling(int startSquare, int targetSquare, int color);
     bool IsCastling(int startSquare, int targetSquare);
     bool IsSufficientMaterial();
+    bool CanDoEnPassant(int square);
 
     void LogMoveList();
 };
