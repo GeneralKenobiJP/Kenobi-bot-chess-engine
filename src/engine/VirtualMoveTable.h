@@ -65,7 +65,7 @@ class VirtualMoveTable
     void CheckForPins(int startSquare, int targetSquare);
     void CheckForEnPassantPins(int startSquare, int targetSquare);
     void CheckForKnightChecks(int targetSquare, int knightSquare);
-    void CheckForPawnChecks(int targetSquare);
+    void CheckForPawnChecks(int targetSquare, int pawnSquare);
     //void CheckState();// migrated to virtualevaluation
     void AddCurrentPosition();
     void AddCurrentPosition(std::vector<std::list<Position>::iterator> &iterList);

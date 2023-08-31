@@ -72,7 +72,7 @@ int main(){
     //Board::Promote(3,Piece::white);
 
     Search thisSearch;
-    Thread searchThread(std::bind(&Search::LogDebugSearch,&thisSearch,2));
+    Thread searchThread(std::bind(&Search::LogDebugSearch,&thisSearch,4));
     searchThread.launch();
 
     /// DEBUGGING CODE ENDS HERE

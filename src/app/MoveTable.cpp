@@ -581,7 +581,10 @@ void MoveTable::GenerateAttacks()
 
         if(Piece::ToType(Board::squareState[it->startSquare]) == Piece::pawn)
             if(it->startSquare % 8 == it->targetSquare % 8) //this is not an attack for pawn (detection of the push foward move)
+            {
+                std::cout << "Mere weak pawn move forward" << std::endl;
                 continue;
+            }
         
         MoveTable::AttackList.push_back(it->targetSquare);
 
@@ -599,7 +602,7 @@ void MoveTable::GenerateAttacks()
             CheckForKnightChecks(it->targetSquare, it->startSquare);
 
         if(startSquareType == Piece::pawn)
-            CheckForPawnChecks(it->targetSquare);
+            CheckForPawnChecks(it->targetSquare, it->startSquare);
     }
     for(it = MoveTable::OwnEnPassantPins.begin(); it!=MoveTable::OwnEnPassantPins.end();it++)
     {
@@ -987,11 +990,16 @@ void MoveTable::CheckForKnightChecks(int targetSquare, int knightSquare)
         MoveTable::CheckingKnightSquare = knightSquare;
     }
 }
-void MoveTable::CheckForPawnChecks(int targetSquare)
+void MoveTable::CheckForPawnChecks(int targetSquare, int pawnSquare)
 {
+    std::cout << "I'm checkin' for this pesky pawns" << std::endl;
     if(Piece::IsEnemyKing(Board::squareState[targetSquare]))
     {
+        std::cout << "Yup, a pawn check goddamnit" << std::endl;
         MoveTable::IsChecked = true;
+        std::vector<int> thisList;
+        thisList.push_back(pawnSquare);
+        MoveTable::CheckSquares.push_back(thisList);
     }
 }
 bool MoveTable::IsDefended(int targetSquare)

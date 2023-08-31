@@ -98,7 +98,7 @@ class MoveTable
     static void CheckForPins(int startSquare, int targetSquare);
     static void CheckForEnPassantPins(int startSquare, int targetSquare);
     static void CheckForKnightChecks(int targetSquare, int knightSquare);
-    static void CheckForPawnChecks(int targetSquare);
+    static void CheckForPawnChecks(int targetSquare, int pawnSquare);
     static void CheckState();
     static void AddCurrentPosition();
     static bool IsLegal(int startSquare, int targetSquare);

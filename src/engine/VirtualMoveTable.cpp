@@ -666,7 +666,7 @@ void VirtualMoveTable::GenerateAttacks()
             this->CheckForKnightChecks(it->targetSquare, it->startSquare);
 
         if(startSquareType == Piece::pawn)
-            this->CheckForPawnChecks(it->targetSquare);
+            this->CheckForPawnChecks(it->targetSquare, it->startSquare);
     }
     for(it = OwnEnPassantPins.begin(); it!=OwnEnPassantPins.end();it++)
     {
@@ -1072,11 +1072,14 @@ void VirtualMoveTable::CheckForKnightChecks(int targetSquare, int knightSquare)
         CheckingKnightSquare = knightSquare;
     }
 }
-void VirtualMoveTable::CheckForPawnChecks(int targetSquare)
+void VirtualMoveTable::CheckForPawnChecks(int targetSquare, int pawnSquare)
 {
     if(Piece::IsEnemyKing(*squareState[targetSquare],*activePlayer))
     {
         IsChecked = true;
+        std::vector<int> thisList;
+        thisList.push_back(pawnSquare);
+        CheckSquares.push_back(thisList);
     }
 }
 bool VirtualMoveTable::IsDefended(int targetSquare)
