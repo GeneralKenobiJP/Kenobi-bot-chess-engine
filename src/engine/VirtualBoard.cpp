@@ -44,28 +44,28 @@ int VirtualBoard::CalculateDistance(int squareA, int squareB)
     return dist;
 }
 
-void VirtualBoard::Promote(int square, int pieceID) // to develop
+void VirtualBoard::Promote(int square, int pieceID)
 {
-    PutOnSquare(square, pieceID);
+    this->PutOnSquare(square, pieceID);
 }
 
-void VirtualBoard::HandlePromotion(int promotionSpriteIndex)
+void VirtualBoard::HandlePromotion(int promotionSpriteIndex) //obsolete
 {
-    int type = promotionSpriteIndex % 4;
-    int color = (promotionSpriteIndex > 3) ? Piece::black : Piece::white;
+    int type = promotionSpriteIndex % 4 + 1;
+    int color = (promotionSpriteIndex > 4) ? Piece::black : Piece::white;
 
     switch (type)
     {
-    case 0:
+    case 1:
         type = Piece::queen;
         break;
-    case 1:
+    case 2:
         type = Piece::knight;
         break;
-    case 2:
+    case 3:
         type = Piece::rook;
         break;
-    case 3:
+    case 4:
         type = Piece::bishop;
         break;
     }
@@ -229,8 +229,8 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
     int pieceColor;
     //FEN currentFEN;
     Piece::ReadPiece(squareState[startSquare], pieceType, pieceColor);
-    //1std::cout << "The piece was hereby read as: " << squareState[startSquare] <<", " << pieceType << ", " << pieceColor << std::endl;
-    //1std::cout << "Move" << startSquare << "->" << targetSquare << "(" << promotionNum << ")" << std::endl;
+    std::cout << "The piece was hereby read as: " << squareState[startSquare] <<", " << pieceType << ", " << pieceColor << std::endl;
+    std::cout << "Move" << startSquare << "->" << targetSquare << "(" << promotionNum << ")" << std::endl;
 
     int capturedPiece;
 
@@ -260,14 +260,15 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
         {
             thisMoveTable.enPassantSquare = (targetSquare + startSquare) / 2;
         }
-        if (targetSquare / 8 == 7 || targetSquare / 8 == 0) // PROMOTION
+        if (promotionNum != 0) // PROMOTION
         {
+            std::cout << "We are approaching the promotion, sir" << std::endl;
             if (squareState[targetSquare] != 0) // enemy piece
             {
                 hasCaptured = true;
                 capturedPiece = squareState[targetSquare];
                 this->RemoveFromSquare(targetSquare);
-                this->Promote(targetSquare, pieceColor);
+                this->Promote(targetSquare, promotionNum);
                 // Board::SwitchPlayer();
                 // break;
             }
@@ -277,6 +278,7 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
                 // Board::SwitchPlayer();
                 // break;
             }
+            std::cout << "We've successfully completed the promotion" << std::endl;
         }
     }
     else
@@ -342,7 +344,7 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
     //std::cout << currentFEN.FENtext << std::endl;
     //std::cout << "We got through the rook stage" << std::endl;
 
-    if (squareState[targetSquare] != 0)
+    if (squareState[targetSquare] != 0 && promotionNum == 0)
     {
         // Piece::RemovePieceSprite(i);
         capturedPiece = squareState[targetSquare];
@@ -363,9 +365,10 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
     else
         thisMoveTable.consecutiveMoves = 0;
 
-    this->PutOnSquare(targetSquare, squareState[startSquare]);
+    if(promotionNum==0)
+        this->PutOnSquare(targetSquare, squareState[startSquare]);
     this->RemoveFromSquare(startSquare);
-    //std::cout << "We got through the Put piece stage" << std::endl;
+    std::cout << "We got through the Put piece stage" << std::endl;
     this->SwitchPlayer();
     //std::cout << "We got through the switch player stage" << std::endl;
     // break;
@@ -401,11 +404,16 @@ void VirtualBoard::UnmakeMove(Move move)
     //1std::cout << "Unmaking move... :" << move.startSquare << "->" << move.targetSquare << "(" << move.promotionPiece << ")" << std::endl;
     if(move.promotionPiece == 0)
     {
+        std::cout << "heyyeahyeah" << std::endl;
         //std::cout << "squareState: " << squareState[move.targetSquare] << std::endl;
         this->PutOnSquare(move.startSquare, squareState[move.targetSquare]);
     }
     else
-        this->PutOnSquare(move.startSquare, Piece::pawn, Piece::ToColor(move.promotionPiece));
+    {
+        this->PutOnSquare(move.startSquare, Piece::pawn, ((activePlayer+1)%2)*8);
+        std::cout << "move.startSquare = " << move.startSquare << std::endl;
+        std::cout << "squareState = " << squareState[move.startSquare] << std::endl;
+    }
 
     //std::cout << "Thy piece has been cast upon the mortal soil of your choice" << std::endl;
 

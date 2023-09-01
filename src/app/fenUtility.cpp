@@ -6,8 +6,10 @@
 
 //const std::string FEN::startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0"; //INITIAL POSITION
 //const std::string FEN::startFEN = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1"; //POSITION 2
-const std::string FEN::startFEN = "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0"; //POSITION 3
-//const std::string FEN::startFEN = "8/2p5/3p3k/KP6/5p2/8/3BP1P1/8 w - - 0"; //POSITION 3 modified for a bishop pinning en passant
+//const std::string FEN::startFEN = "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0"; //POSITION 3
+const std::string FEN::startFEN = "r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1"; //POSITION 4
+//const std::string FEN::startFEN = "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8"; //POSITION 5
+//const std::string FEN::startFEN = "1k6/8/8/8/8/8/8/Q3K2R w KQ - 0 1"; //Castling check
 //const std::string FEN::startFEN = "rnbqkbnr/pppp1ppp/4p3/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 //const std::string FEN::startFEN = "8/1k6/3p4/p1p1p2p/P1PPP1pP/6P1/5K2/8 w - 0 1";
 //const std::string FEN::startFEN = "1k7/8/8/8/8/8/8/8 w - 0 1";

@@ -18,6 +18,12 @@ void Search::DebugSearch(int depth)
 
     //std::cout << "Move List count: " << SearchBoard.thisMoveTable.CurrentMoveList.size() << std::endl;
 
+    if(SearchBoard.thisMoveTable.CurrentMoveList.size() == 0)
+    {
+        checkmates++;
+        return;
+    }
+
     if(depth == 0)
         return;
 
@@ -33,12 +39,6 @@ void Search::DebugSearch(int depth)
     //SearchBoard.thisMoveTable.LogMoveList();
 
     
-    
-    if(SearchBoard.thisMoveTable.CurrentMoveList.size() == 0)
-    {
-        checkmates++;
-        return;
-    }
 
     if(SearchBoard.IsDraw)
         return;

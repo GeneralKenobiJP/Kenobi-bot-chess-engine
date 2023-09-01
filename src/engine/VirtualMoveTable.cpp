@@ -422,8 +422,8 @@ void VirtualMoveTable::GeneratePawnMoves(int square, std::vector<Move> &moveList
                 }
                 else //PROMOTION (without capture)
                 {
-                    for(int i=0; i<4; i++)
-                        moveList.push_back(Move(square,targetSquare,VirtualMoveTable::ReadPromotionPieceFromIndex(i,*activePlayer)));
+                    for(int i=1; i<5; i++)
+                        moveList.push_back(Move(square,targetSquare,VirtualMoveTable::ReadPromotionPieceFromIndex(i,*activePlayer*8)));
                 }
             }
         }
@@ -456,14 +456,16 @@ void VirtualMoveTable::GeneratePawnMoves(int square, std::vector<Move> &moveList
         {
             if(targetSquareColor/8 != *activePlayer)
                 {
-                    if(targetSquare != 0 && targetSquare != 7)
+                    if(targetSquare/8 != 0 && targetSquare/8 != 7)
                     {
+                        std::cout << "Pawn's target square rank: " << targetSquare/8 << std::endl;
                         moveList.push_back(Move(square,targetSquare));
                     }
                     else //PROMOTION (with capture)
                     {
-                        for(int num = 0; num<4;num++)
-                            moveList.push_back(Move(square,targetSquare,num));
+                        std::cout << "We are promotin' with a capture, baby" << std::endl;
+                        for(int num = 1; num<5;num++)
+                            moveList.push_back(Move(square,targetSquare,VirtualMoveTable::ReadPromotionPieceFromIndex(num,*activePlayer*8)));
                     }
                 }
             else
@@ -569,13 +571,13 @@ int VirtualMoveTable::ReadPromotionPieceFromIndex(int index, int color)
 {
     switch(index)
     {
-        case 0:
-            return Piece::ComputePiece(Piece::queen, color);
         case 1:
-            return Piece::ComputePiece(Piece::knight, color);
+            return Piece::ComputePiece(Piece::queen, color);
         case 2:
-            return Piece::ComputePiece(Piece::rook, color);
+            return Piece::ComputePiece(Piece::knight, color);
         case 3:
+            return Piece::ComputePiece(Piece::rook, color);
+        case 4:
             return Piece::ComputePiece(Piece::bishop, color);
         default:
             return Piece::ComputePiece(Piece::queen, color);
