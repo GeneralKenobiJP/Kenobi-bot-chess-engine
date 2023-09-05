@@ -370,7 +370,7 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
     this->RemoveFromSquare(startSquare);
     std::cout << "We got through the Put piece stage" << std::endl;
     this->SwitchPlayer();
-    //std::cout << "We got through the switch player stage" << std::endl;
+    std::cout << "We got through the switch player stage" << std::endl;
     // break;
 
     //std::cout << "We got through the consecutive moves stage" << std::endl;
@@ -410,7 +410,7 @@ void VirtualBoard::UnmakeMove(Move move)
     }
     else
     {
-        this->PutOnSquare(move.startSquare, Piece::pawn, ((activePlayer+1)%2)*8);
+        this->PutOnSquare(move.startSquare, Piece::pawn, ((activePlayer%2)+1)*8);
         std::cout << "move.startSquare = " << move.startSquare << std::endl;
         std::cout << "squareState = " << squareState[move.startSquare] << std::endl;
     }
@@ -501,6 +501,7 @@ void VirtualBoard::UnmakeMove(Move move)
 void VirtualBoard::SwitchPlayer()
 {
     thisMoveTable.GenerateAttacks();
+    std::cout << "Generated attacks" << std::endl;
     activePlayer = (activePlayer % 2) + 1;
     CurrentEvalution = VirtualEvaluation::Evaluate();
     //FEN curFEN;
@@ -518,6 +519,9 @@ void VirtualBoard::RevertPlayer()
     FEN thisFEN;
     thisFEN.GetPosition(squareState, activePlayer, thisMoveTable.W_CanCastleKingside, thisMoveTable.W_CanCastleQueenside, thisMoveTable.B_CanCastleKingside, thisMoveTable.B_CanCastleQueenside, thisMoveTable.enPassantSquare, thisMoveTable.consecutiveMoves);
     std::cout << "Reverend: " << thisFEN.FENtext << std::endl;
+    std::cout << "squareState[8]: " << squareState[8] << std::endl;
+    std::cout << "squareState[9]: " << squareState[9] << std::endl;
+    std::cout << "squareState[10]: " << squareState[10] << std::endl;
     thisMoveTable.GenerateAttacks();
     activePlayer = (activePlayer % 2) + 1;
     CurrentEvalution = VirtualEvaluation::Evaluate();

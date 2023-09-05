@@ -132,7 +132,7 @@ std::vector<Move> VirtualMoveTable::GenerateMoves()
         Board::CanDeclareDraw = true; !!!!!!!!!!!!!!!!!!!
     }*/
 
-    //std::cout << "Checkpoint 1" << std::endl;
+    std::cout << "Checkpoint 1" << std::endl;
 
     for(int i=0;i<64;i++)
     {
@@ -141,31 +141,33 @@ std::vector<Move> VirtualMoveTable::GenerateMoves()
         if(pieceColor/8 != *activePlayer)
             continue;
 
-        //std::cout << "Checkpoint 2" << std::endl;
+        std::cout << "Checkpoint 2" << std::endl;
+
+        std::cout << pieceType << std::endl;
 
         if(Piece::IsLongRange(pieceType))
         {
-            //std::cout << "Initialized path 3.1" << std::endl;
+            std::cout << "Initialized path 3.1" << std::endl;
             this->GenerateLongRangeMoves(i,pieceType,MoveList);
-            //std::cout << "Checkpoint 3.1" << std::endl;
+            std::cout << "Checkpoint 3.1" << std::endl;
         }
         else if(pieceType == Piece::knight)
         {
-            //std::cout << "Initialized path 3.2" << std::endl;
+            std::cout << "Initialized path 3.2" << std::endl;
             this->GenerateKnightMoves(i,MoveList);
-            //std::cout << "Checkpoint 3.2" << std::endl;
+            std::cout << "Checkpoint 3.2" << std::endl;
         }
         else if(pieceType == Piece::pawn)
         {
-            //std::cout << "Initialized path 3.3" << std::endl;
+            std::cout << "Initialized path 3.3" << std::endl;
             this->GeneratePawnMoves(i,MoveList);
-            //std::cout << "Checkpoint 3.3" << std::endl;
+            std::cout << "Checkpoint 3.3" << std::endl;
         }
         else //king
         {
-            //std::cout << "Initialized path 3.4" << std::endl;
+            std::cout << "Initialized path 3.4" << std::endl;
             this->GenerateKingMoves(i,MoveList);
-            //std::cout << "Checkpoint 3.4" << std::endl;
+            std::cout << "Checkpoint 3.4" << std::endl;
         }
 
         //if(pieceColor != 0)
@@ -396,6 +398,9 @@ void VirtualMoveTable::GeneratePawnMoves(int square, std::vector<Move> &moveList
     bool IsPinned;
     int pinDir;
 
+    std::cout << "Square: " << square << std::endl;
+    std::cout << "Square state: " << *squareState[square] << std::endl;
+
     IsPinned = this->IsPinned(square, pinDir);
 
     if(*activePlayer == 1)
@@ -622,6 +627,9 @@ void VirtualMoveTable::GenerateAttacks()
     KnightCheckNum = 0;
     CheckingKnightSquare = -1;
 
+    std::cout << "Let's get down to work" << std::endl;
+    std::cout << "EN PASSANT " << enPassantSquare << std::endl;
+
     if(enPassantSquare != -1)
     {
         int EnPassantPawnSquare = (enPassantSquare / 8 == 2) ? (enPassantSquare + 8) : (enPassantSquare-8);
@@ -629,6 +637,8 @@ void VirtualMoveTable::GenerateAttacks()
     }
     else
         this->GenerateMoves(CurrentMoveList);
+
+    std::cout << "El moves generated" << std::endl;
 
     AttackList.clear();
     PinList.clear();
@@ -640,7 +650,7 @@ void VirtualMoveTable::GenerateAttacks()
     int startSquarePiece;
     int startSquareType;
 
-    //std::cout << "Hereby, we've gathered for an attack 'o almighty" << std::endl;
+    std::cout << "Hereby, we've gathered for an attack 'o almighty" << std::endl;
     //this->LogMoveList();
 
 

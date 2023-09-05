@@ -384,7 +384,13 @@ void MoveTable::GeneratePawnMoves(int square, std::vector<Move> &moveList)
         {
             if(Board::squareState[targetSquare]==0 && targetSquare<64 && targetSquare >= 0)
             {
-                moveList.push_back(Move(square,targetSquare));
+                if(targetSquare/8 != 7 && targetSquare/8 != 0)
+                    moveList.push_back(Move(square,targetSquare));
+                else //promotion (without capture)
+                {
+                    for(int i=1; i<5; i++)
+                        moveList.push_back(Move(square,targetSquare,MoveTable::ReadPromotionPieceFromIndex(i,Board::activePlayer*8)));
+                }
             }
         }
     }
@@ -415,7 +421,17 @@ void MoveTable::GeneratePawnMoves(int square, std::vector<Move> &moveList)
         if(targetSquareColor != 0)
         {
             if(targetSquareColor/8 != Board::activePlayer)
-                moveList.push_back(Move(square,targetSquare));
+            {
+                if(targetSquare/8 != 7 && targetSquare/8 != 0)
+                {
+                    moveList.push_back(Move(square,targetSquare));
+                }                    
+                else //PROMOTION (with capture)
+                {
+                    for(int num = 1; num<5;num++)
+                        moveList.push_back(Move(square,targetSquare,MoveTable::ReadPromotionPieceFromIndex(num,Board::activePlayer*8)));
+                }
+            }
             else
                 MoveTable::DefenseList.push_back(targetSquare);
             
@@ -1148,4 +1164,21 @@ bool MoveTable::CanDoEnPassant(int square)
             return false;
 
     return true;
+}
+
+int MoveTable::ReadPromotionPieceFromIndex(int index, int color)
+{
+    switch(index)
+    {
+        case 1:
+            return Piece::ComputePiece(Piece::queen, color);
+        case 2:
+            return Piece::ComputePiece(Piece::knight, color);
+        case 3:
+            return Piece::ComputePiece(Piece::rook, color);
+        case 4:
+            return Piece::ComputePiece(Piece::bishop, color);
+        default:
+            return Piece::ComputePiece(Piece::queen, color);
+    }
 }

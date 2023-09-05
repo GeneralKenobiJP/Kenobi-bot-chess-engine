@@ -113,4 +113,5 @@ class MoveTable
     static bool IsCastling(int startSquare, int targetSquare, bool &IsKingside);
     static bool IsSufficientMaterial();
     static bool CanDoEnPassant(int square);
+    static int ReadPromotionPieceFromIndex(int index, int color);
 };
