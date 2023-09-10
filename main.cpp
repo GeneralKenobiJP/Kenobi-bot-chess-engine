@@ -72,7 +72,7 @@ int main(){
     //Board::Promote(3,Piece::white);
 
     Search thisSearch;
-    Thread searchThread(std::bind(&Search::LogDebugSearch,&thisSearch,2));
+    Thread searchThread(std::bind(&Search::LogDebugSearch,&thisSearch,4));
     searchThread.launch();
 
     /// DEBUGGING CODE ENDS HERE
@@ -146,9 +146,13 @@ int main(){
                 }
                 if(event.key.code == Keyboard::T)
                 {
-                    Piece::LogPiece(Board::squareState[16]);
-                    MoveTable::GenerateMoves();
-                    SpriteHandler::DrawMoveDots(1,MoveTable::GenerateMoves());
+                    //Piece::LogPiece(Board::squareState[16]);
+                    //MoveTable::GenerateMoves();
+                    //SpriteHandler::DrawMoveDots(1,MoveTable::GenerateMoves());
+                    std::cout << "... ... ..." << std::endl;
+                    std::cout << MoveTable::IsAttacked(43) << std::endl;
+                    std::cout << MoveTable::IsAttacked(52) << std::endl;
+                    std::cout << MoveTable::IsAttacked(61) << std::endl;
                 }
                 if(event.key.code == Keyboard::L)
                 {

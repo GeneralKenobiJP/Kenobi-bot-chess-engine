@@ -1,6 +1,6 @@
-?Position 1 clear up to Move 5
+?Position 1 clear up to Move 3, ?possibly up to Move 5
 ?Position 2 Move 3: 41 castles more than expected
 ?Position 3 Move 4 node problem
-Position 4 Move 2 node problem (promotions fucked up)
+?Position 4 Move 2 node problem (promotions fucked up)
 ?Position 5 Move 2 node problem
 Castling seems fine
