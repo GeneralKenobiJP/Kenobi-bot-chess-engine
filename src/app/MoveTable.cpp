@@ -349,7 +349,13 @@ void MoveTable::GenerateKnightMoves(int square, std::vector<Move> &moveList)
     int targetSquareColor;
 
     if(MoveTable::IsPinned(square))
+    {
+        for(int i=0;i<MoveTable::knightTargetSquares[square].size();i++)
+        {
+            PinnedLongMoveList.push_back(Move(square, knightTargetSquares[square][i]));
+        }
         return;
+    }
 
     for(int i=0;i<MoveTable::knightTargetSquares[square].size();i++)
     {
@@ -411,7 +417,10 @@ void MoveTable::GeneratePawnMoves(int square, std::vector<Move> &moveList)
     for(int i=0;i<2;i++)
     {
         if(IsPinned && std::abs(pinDir)!= std::abs(pawnAttackShift[i]))
+        {
+            PinnedLongMoveList.push_back(Move(square, square + pawnAttackShift[i]));
             continue;
+        }
 
         targetSquare = square + pawnAttackShift[i];
 
@@ -666,6 +675,8 @@ void MoveTable::GenerateAttacks()
     for(it = MoveTable::PinnedLongMoveList.begin(); it!=MoveTable::PinnedLongMoveList.end();it++)
     {
         MoveTable::AttackList.push_back(it->targetSquare);
+        if(Board::squareState[it->targetSquare] != 0)
+            MoveTable::DefenseList.push_back(it->targetSquare);
     }
 
     std::sort(AttackList.begin(), AttackList.end());

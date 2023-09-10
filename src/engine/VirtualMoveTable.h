@@ -38,6 +38,7 @@ class VirtualMoveTable
     bool B_CanCastleQueenside;
     std::vector<int> forbiddenEnPassantStartSquares;
     std::vector<Move> OwnEnPassantPins;
+    std::vector<Move> PinnedLongMoveList;
     bool IsEnPassantPinned;
 
     //Draw
@@ -70,6 +71,7 @@ class VirtualMoveTable
     void AddCurrentPosition();
     void AddCurrentPosition(std::vector<std::list<Position>::iterator> &iterList);
     void RemovePosition(std::list<Position>::iterator it);
+    void GeneratePinnedLongMoves(int square, int pieceType, int dir);
     //void RemovePosition(int index);
     static int ReadPromotionPieceFromIndex(int index, int color);
     bool IsLegal(int startSquare, int targetSquare);

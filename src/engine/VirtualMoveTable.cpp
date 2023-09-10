@@ -118,6 +118,7 @@ std::vector<Move> VirtualMoveTable::GenerateMoves()
 
     VirtualMoveTable::pawnAttackList.clear();
     VirtualMoveTable::kingVirtualAttackList.clear();
+    VirtualMoveTable::PinnedLongMoveList.clear();
 
     /*if(consecutiveMoves >= 150) //leaving space for nuances here
         Board::DeclareDraw();
@@ -186,6 +187,7 @@ std::vector<Move> VirtualMoveTable::GenerateMoves(int EnPassantPawnSquare)
 
     VirtualMoveTable::pawnAttackList.clear();
     VirtualMoveTable::kingVirtualAttackList.clear();
+    VirtualMoveTable::PinnedLongMoveList.clear();
 
     /*if(consecutiveMoves >= 150) //leaving space for nuances here
         Board::DeclareDraw();
@@ -271,7 +273,10 @@ void VirtualMoveTable::GenerateLongRangeMoves(int square, int pieceType, std::ve
     {
         if(IsPinned)
             if(std::abs(pinDir) != std::abs(VirtualMoveTable::directionShift[dir]))
+            {
+                GeneratePinnedLongMoves(square, pieceType, dir);
                 continue;
+            }
         
         for(int sq=1;sq<=VirtualMoveTable::numSquaresToEdge[square][dir];sq++)
         {
@@ -318,7 +323,10 @@ void VirtualMoveTable::GenerateLongRangeMoves(int square, int pieceType, std::ve
     {
         if(IsPinned)
             if(std::abs(pinDir) != std::abs(VirtualMoveTable::directionShift[dir]))
+            {
+                GeneratePinnedLongMoves(square, pieceType, dir);
                 continue;
+            }
         
         for(int sq=1;sq<=VirtualMoveTable::numSquaresToEdge[square][dir];sq++)
         {
@@ -359,7 +367,13 @@ void VirtualMoveTable::GenerateKnightMoves(int square, std::vector<Move> &moveLi
     int targetSquareColor;
 
     if(this->IsPinned(square))
+    {
+        for(int i=0;i<VirtualMoveTable::knightTargetSquares[square].size();i++)
+        {
+            PinnedLongMoveList.push_back(Move(square, knightTargetSquares[square][i]));
+        }
         return;
+    }
 
     //std::cout << "Knight I: " << square << std::endl;
     //std::cout << VirtualMoveTable::knightTargetSquares[square].size() << " dot " << std::endl;
@@ -437,7 +451,10 @@ void VirtualMoveTable::GeneratePawnMoves(int square, std::vector<Move> &moveList
     for(int i=0;i<2;i++)
     {
         if(IsPinned && std::abs(pinDir)!= std::abs(pawnAttackShift[i]))
+        {
+            PinnedLongMoveList.push_back(Move(square, square + pawnAttackShift[i]));
             continue;
+        }
 
         targetSquare = square + pawnAttackShift[i];
 
@@ -703,6 +720,13 @@ void VirtualMoveTable::GenerateAttacks()
     {
         AttackList.push_back(*iter);
         //std::cout << "Pushed king for attack:  "<< *iter << std::endl;
+    }
+
+    for(it = PinnedLongMoveList.begin(); it!=PinnedLongMoveList.end();it++)
+    {
+        AttackList.push_back(it->targetSquare);
+        if(*squareState[it->targetSquare]!=0)
+            DefenseList.push_back(it->targetSquare);
     }
 
     std::sort(AttackList.begin(), AttackList.end());
@@ -1403,4 +1427,39 @@ bool VirtualMoveTable::CanDoEnPassant(int square)
             return false;
 
     return true;
+}
+
+void VirtualMoveTable::GeneratePinnedLongMoves(int square, int pieceType, int dir)
+{
+    int targetSquare;
+    int targetSquareState;
+    int targetSquarePieceColor;
+
+    for(int sq=1;sq<=VirtualMoveTable::numSquaresToEdge[square][dir];sq++)
+        {
+            targetSquare = square + VirtualMoveTable::directionShift[dir] * sq;
+
+            targetSquareState = *squareState[targetSquare];
+
+            Piece::ReadPieceColor(targetSquareState,targetSquarePieceColor);
+            
+            if(targetSquarePieceColor/8 == *activePlayer) //our piece is blocking the way
+            {
+                DefenseList.push_back(targetSquare);
+                break;
+            }
+
+            if(!IsChecked || this->IsCoveringCheck(targetSquare))
+            {
+                PinnedLongMoveList.push_back(Move(square,targetSquare));
+            }
+
+            std::cout << square << ' ' << targetSquare << std::endl;
+
+            if(targetSquarePieceColor != 0) //opponent's piece is blocking the way
+            {
+                break;
+            }
+
+        }
 }
