@@ -1798,30 +1798,6 @@
 			"value" : ""
 		},
 		{
-			"name" : "app-lib_BINARY_DIR",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Value Computed by CMake"
-				}
-			],
-			"type" : "STATIC",
-			"value" : "/Users/jakubpietrzak/Desktop/Github-projects/Kenobi-bot-chess-engine/build/src/app"
-		},
-		{
-			"name" : "app-lib_IS_TOP_LEVEL",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Value Computed by CMake"
-				}
-			],
-			"type" : "STATIC",
-			"value" : "OFF"
-		},
-		{
 			"name" : "app-lib_LIB_DEPENDS",
 			"properties" : 
 			[
@@ -1832,18 +1808,6 @@
 			],
 			"type" : "STATIC",
 			"value" : "general;sfml-network;general;sfml-audio;general;sfml-graphics;general;sfml-window;general;sfml-system;"
-		},
-		{
-			"name" : "app-lib_SOURCE_DIR",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Value Computed by CMake"
-				}
-			],
-			"type" : "STATIC",
-			"value" : "/Users/jakubpietrzak/Desktop/Github-projects/Kenobi-bot-chess-engine/src/app"
 		},
 		{
 			"name" : "engine-lib_LIB_DEPENDS",

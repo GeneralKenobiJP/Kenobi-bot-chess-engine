@@ -313,6 +313,16 @@ void Board::SwitchPlayer()
     std::cout << "switcheroo, now: " << Board::activePlayer << std::endl;
 }
 
+void Board::PrepareBoard()
+{
+    Board::activePlayer = (Board::activePlayer % 2) + 1;
+    MoveTable::GenerateAttacks();
+    Board::activePlayer = (Board::activePlayer % 2) + 1;
+    Board::CurrentEvalution = Evaluation::Evaluate();
+    ChessClock::SetActivePlayer(Board::activePlayer);
+    MoveTable::AddCurrentPosition();
+}
+
 void Board::Promote(int square, int color)
 {
     SpriteHandler::IsPromotion = true;
@@ -502,4 +512,72 @@ bool Board::IsKingBlocked(int color)
     }
 
     return true;
+}
+
+int Board::CalculateDirection(int startSquare, int targetSquare)
+{
+    int diff = (targetSquare - startSquare);
+
+    int startFile, startRank;
+    int targetFile, targetRank;
+
+    int dir;
+
+    int pinTargetSquare;
+
+    //bool IsVirtual = false;
+
+    Board::ReadSquare(startSquare, startFile, startRank);
+    Board::ReadSquare(targetSquare, targetFile, targetRank);
+
+    if(startFile == targetFile) //vertical move
+    {
+        if(diff>0) //up
+        {
+            dir = 8;
+        }
+        else //down
+        {
+            dir = -8;
+        }
+    }
+    else if(startRank == targetRank) //horizontal move
+    {
+        if(diff>0) //right
+        {
+            dir = 1;
+        }
+        else //left
+        {
+            dir = -1;
+        }
+    }
+    else //diagonal move
+    {
+        if(diff%9==0) //if it's 63=7*9, it must be 7 times +9 moves, because the maximum move is 8 squares
+        {
+            if(diff>0) //NE
+            {
+                dir = 9;
+            }
+            else //SW
+            {
+                dir = -9;
+            }
+        }
+        else
+        {
+            if(diff>0) //NW
+            {
+                dir = 7;
+            }
+            else //SE
+            {
+                dir = -7;
+            }
+        }
+
+    }
+
+    return dir;
 }

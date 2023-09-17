@@ -4,7 +4,13 @@
 #include "board.h"
 #include <MoveTable.h>
 
-const std::string FEN::startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+const std::string FEN::startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0"; //INITIAL POSITION
+//const std::string FEN::startFEN = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1"; //POSITION 2
+//const std::string FEN::startFEN = "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0"; //POSITION 3
+//const std::string FEN::startFEN = "r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1"; //POSITION 4
+//const std::string FEN::startFEN = "r3k2r/Pppp1ppp/1b3nbN/nPB5/B1P1P3/q4N2/Pp1P2PP/R2Q1RK1 b kq - 0 1"; //POSITION 4 Move 2 after Bc5
+//const std::string FEN::startFEN = "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8"; //POSITION 5
+//const std::string FEN::startFEN = "1k6/8/8/8/8/8/8/Q3K2R w KQ - 0 1"; //Castling check
 //const std::string FEN::startFEN = "rnbqkbnr/pppp1ppp/4p3/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 //const std::string FEN::startFEN = "8/1k6/3p4/p1p1p2p/P1PPP1pP/6P1/5K2/8 w - 0 1";
 //const std::string FEN::startFEN = "1k7/8/8/8/8/8/8/8 w - 0 1";
@@ -96,7 +102,7 @@ void FEN::ReadPosition(std::string fenTxt) // static
 
     fenTxt = fenTxt.substr(3);
 
-    //std::cout << fenTxt << std::endl;
+    std::cout << fenTxt << std::endl;
 
     while (fenTxt[0] != ' ')
     {
@@ -114,13 +120,18 @@ void FEN::ReadPosition(std::string fenTxt) // static
         case 'q':
             MoveTable::B_CanCastleQueenside = 1;
             break;
+        case '-':
+            break;
         default:
             fenTxt = "  " + fenTxt;
             break;
         }
         fenTxt = fenTxt.substr(1);
+        std::cout << fenTxt << std::endl;
     }
+    std::cout << fenTxt << std::endl;
     fenTxt = fenTxt.substr(1);
+    std::cout << fenTxt << std::endl;
 
     std::string thisString = "";
 
@@ -141,9 +152,11 @@ void FEN::ReadPosition(std::string fenTxt) // static
         fenTxt = fenTxt.substr(1);
     }
 
+    std::cout << fenTxt << std::endl;
+
     thisString = "";
 
-    while (fenTxt[0] != ' ')
+    while (fenTxt[0] != ' ' && !fenTxt.empty())
     {
         thisString += fenTxt[0];
         fenTxt = fenTxt.substr(1);
@@ -343,9 +356,107 @@ void FEN::GetPosition(int squareState[64], short activePlayer, bool W_K, bool W_
     // fullmove counter is useless, so did not implement
 }
 
+void FEN::ReadContext(bool &W_K, bool &W_Q, bool &B_K, bool &B_Q, short &enPassantSquare, int &consecutiveMoves)
+{
+    //std::cout << "Been called, chief?" << std::endl;
+    //std::cout << FENtext << std::endl;
+    //std::cout << "I push my fingers" << std::endl;
+    std::string fenTxt(FENtext);
+    //std::cout << fenTxt << std::endl;
+    int index = fenTxt.find("w");
+
+    if(index == std::string::npos)
+        index = fenTxt.rfind("b");
+
+    //std::cout << "we are before the sus" << std::endl;
+    //std::cout << index << std::endl;
+
+    fenTxt = fenTxt.substr(index+2);
+
+    //std::cout << "got past the sus" << std::endl;
+
+    W_K = 0;
+    W_Q = 0;
+    B_K = 0;
+    B_Q = 0;
+
+    while (fenTxt[0] != ' ')
+    {
+        switch (fenTxt[0])
+        {
+        case 'K':
+            W_K = 1;
+            break;
+        case 'Q':
+            W_Q = 1;
+            break;
+        case 'k':
+            B_K = 1;
+            break;
+        case 'q':
+            B_Q = 1;
+            break;
+        default:
+            fenTxt = "  " + fenTxt;
+            break;
+        }
+        fenTxt = fenTxt.substr(1);
+    }
+    fenTxt = fenTxt.substr(1);
+
+    //std::cout << "Woah, we're halfway there, oo-ooh livin' on a prayer" << std::endl;
+
+    std::string thisString = "";
+
+    if (fenTxt[0] == '-')
+    {
+        enPassantSquare = -1;
+        fenTxt = fenTxt.substr(2);
+    }
+    else
+    {
+        //fenTxt = fenTxt.substr(1);
+        while (fenTxt[0] != ' ')
+        {
+            thisString += fenTxt[0];
+            fenTxt = fenTxt.substr(1);
+        }
+        enPassantSquare = (short)std::stoi(thisString);
+        fenTxt = fenTxt.substr(1);
+    }
+
+    //std::cout << "Gotchya en-passanted" << std::endl;
+
+    //std::cout << fenTxt <<std::endl;
+
+    thisString = "";
+
+    while (fenTxt[0] != ' ')
+    {
+        thisString += fenTxt[0];
+        if(fenTxt.size()==1)
+            break;
+        fenTxt = fenTxt.substr(1);
+    }
+
+    //std::cout << "Almost done, eh?" << std::endl;
+
+    consecutiveMoves = std::stoi(thisString);
+
+    //std::cout << "It's done, chief" << std::endl;
+}
+
 const std::string FEN::CutHalfmoves() const
 {
-    return FENtext.substr(0,FENtext.length()-3);
+    int halfMoveLength = 0;
+    int i = FENtext.size()-1;
+    while(FENtext[i]!=' ')
+    {
+        halfMoveLength++;
+        i--;
+    }
+
+    return FENtext.substr(0,FENtext.length()-2-halfMoveLength);
 }
 
 bool FEN::operator==(const FEN &f)
@@ -359,4 +470,21 @@ bool FEN::operator==(const FEN &f)
     }
     else
         return false;
+}
+
+int FEN::ReadConsecutiveMoves()
+{
+    std::string conMovesString;
+
+    int halfMoveLength = 0;
+    int i = FENtext.size()-1;
+    while(FENtext[i]!=' ')
+    {
+        halfMoveLength++;
+        i--;
+    }
+
+    conMovesString = FENtext.substr(FENtext.size()-1-halfMoveLength);
+
+    return std::stoi(conMovesString);
 }

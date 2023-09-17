@@ -36,4 +36,5 @@ class Piece
     static bool IsLongRange(int pieceType); //checks if a bishop or a rook or a queen
     static void RemovePieceSprite(int square); // receives a square from which to remove a piece sprite and deletes it
     static bool IsEnemyKing(int pieceNum);
+    static bool IsEnemyKing(int pieceNum, int color);
 };

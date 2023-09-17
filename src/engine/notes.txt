@@ -1,0 +1,8 @@
+Position 1 clear up to Move 3, ?possibly up to Move 5
+Position 2 Move 3: 41 castles more than expected
+Position 3 Move 4 node problem
+Position 4 Move 4 node problem (115 too few captures, 122 en passant too few, 120 nodes too few)
+Position 5 Move clear up to move 3
+?Castling seems fine
+
+INVESTIGATE MOVE 4->11

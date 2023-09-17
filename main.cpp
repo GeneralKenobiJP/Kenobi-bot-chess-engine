@@ -53,11 +53,16 @@ int main(){
 
     whiteClock.InitializeClock(650,400,thisDir);
     blackClock.InitializeClock(650,200,thisDir,whiteClock,blackClock);
-    whiteClock.SetTime(600);
-    blackClock.SetTime(600);
+    whiteClock.SetTime(6000);
+    blackClock.SetTime(6000);
 
     FEN::ReadPosition(FEN::startFEN);
+    //MoveTable::AddCurrentPosition();
+
     ChessClock::SetActivePlayer(1,whiteClock);
+
+    Board::PrepareBoard();
+
     Thread clockThread(std::bind(&ChessClock::CountDown,whiteClock,blackClock));
     clockThread.launch();
 
@@ -141,9 +146,13 @@ int main(){
                 }
                 if(event.key.code == Keyboard::T)
                 {
-                    Piece::LogPiece(Board::squareState[16]);
-                    MoveTable::GenerateMoves();
-                    SpriteHandler::DrawMoveDots(1,MoveTable::GenerateMoves());
+                    //Piece::LogPiece(Board::squareState[16]);
+                    //MoveTable::GenerateMoves();
+                    //SpriteHandler::DrawMoveDots(1,MoveTable::GenerateMoves());
+                    std::cout << "... ... ..." << std::endl;
+                    std::cout << MoveTable::IsAttacked(43) << std::endl;
+                    std::cout << MoveTable::IsAttacked(52) << std::endl;
+                    std::cout << MoveTable::IsAttacked(61) << std::endl;
                 }
                 if(event.key.code == Keyboard::L)
                 {
