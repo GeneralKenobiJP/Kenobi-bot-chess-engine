@@ -273,22 +273,60 @@ void Search::OrderMoves()
         orderVector.push_back(std::make_pair(*it,moveScore));
     }
 
-    std::qsort(&orderVector, orderVector.size(), sizeof(std::pair<Move,int>), [](const void *a, const void *b)
+    for(auto it = orderVector.begin(); it != orderVector.end(); it++)
     {
-        int evalA = std::get<1>(*(std::pair<Move, int>*) a);
-        int evalB = std::get<1>(*(std::pair<Move, int>*) b);
+        std::cout << "'Tis an orderVector: (" << std::flush;
+        it->first.LogMove();
+        std::cout << ", " << it->second << ")" << std::endl;
+    }
+
+    std::cout << "We got before the qsort" << std::endl;
+
+    /*std::qsort(&orderVector, orderVector.size(), sizeof(std::pair<Move,int>), [](const void *a, const void *b)
+    {
+        //int evalA = std::get<1>(*(std::pair<Move, int>*) a);
+        //int evalB = std::get<1>(*(std::pair<Move, int>*) b);
+        //const std::pair<Move,int> pairA = *(std::pair<Move,int>*) a;
+        const std::pair<Move,int>* pairA = (const std::pair<Move, int>*) a;
+        const std::pair<Move,int>* pairB = (const std::pair<Move, int>*) b;
+        //const std::pair<Move,int> pairB = *(std::pair<Move,int>*) b;
+        int evalA = pairA->second;
+        int evalB = pairB->second;
+        std::cout << "evalA: " << evalA << std::endl;
+        std::cout << "evalB: " << evalB << std::endl;
         if(evalA > evalB)
             return 1;
         if(evalA == evalB)
             return 0;
         return -1;
     }
+    );*/
+
+    std::sort(orderVector.begin(),orderVector.end(), [](std::pair<Move,int> a, std::pair<Move,int> b)
+    {
+        int evalA = a.second;
+        int evalB = b.second;
+
+        std::cout << "evalA: " << evalA << std::endl;
+        std::cout << "evalB: " << evalB << std::endl;
+
+        if(evalA > evalB)
+            return true;
+        
+        return false;
+    }
     );
+
+    std::vector<std::pair<Move,int>>::iterator debugIt = orderVector.begin();
+    std::cout << (debugIt == orderVector.end()) << std::endl;
+    debugIt++;
+
+    std::cout << "We got after the qsort" << std::endl;
 
     for(auto it = orderVector.begin(); it != orderVector.end(); it++)
     {
-        std::cout << "'Tis an orderVector: (";
-        std::get<Move>(*it).LogMove();
+        std::cout << "'Tis an orderVector: (" << std::flush;
+        it->first.LogMove();
         std::cout << ", " << it->second << ")" << std::endl;
     }
     
