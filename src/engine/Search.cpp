@@ -5,9 +5,9 @@
 
 Search::Search()
 {
-    std::cout << "Started init" <<std::endl;
+    //\std::cout << "Started init" <<std::endl;
     SearchBoard.InitializeBoard();
-    std::cout << "Init init?" << std::endl;
+    //\std::cout << "Init init?" << std::endl;
 }
 
 void Search::DebugSearch(int depth)
@@ -76,10 +76,10 @@ void Search::DebugSearch(int depth)
 
     for(int i=0; i<SearchBoard.thisMoveTable.CurrentMoveList.size(); i++)
     {
-        SearchBoard.thisMoveTable.LogMoveList();
+        //\SearchBoard.thisMoveTable.LogMoveList();
         FEN curcurFEN;
             curcurFEN.GetPosition(SearchBoard.squareState, SearchBoard.activePlayer, SearchBoard.thisMoveTable.W_CanCastleKingside, SearchBoard.thisMoveTable.W_CanCastleQueenside, SearchBoard.thisMoveTable.B_CanCastleKingside, SearchBoard.thisMoveTable.B_CanCastleQueenside, SearchBoard.thisMoveTable.enPassantSquare, SearchBoard.thisMoveTable.consecutiveMoves);
-            std::cout << curcurFEN.FENtext << std::endl;
+            //\std::cout << curcurFEN.FENtext << std::endl;
         /*if(depth==3)
         {
             FEN curFEN;
@@ -107,8 +107,8 @@ void Search::DebugSearch(int depth)
         depthMoveNum[depth-1]++;
         //pieceMoveNum[Piece::ToType(SearchBoard.squareState[it->startSquare])-1]++;
         move = SearchBoard.thisMoveTable.CurrentMoveList[i];
-        std::cout << "Depth: " << depth << std::endl;
-        move.LogMove();
+        //\std::cout << "Depth: " << depth << std::endl;
+        //\move.LogMove();
         if(SearchBoard.squareState[move.targetSquare]!=0)
             capture++;
         if(SearchBoard.thisMoveTable.IsEnPassant(move.targetSquare) && Piece::ToType(SearchBoard.squareState[move.startSquare])==Piece::pawn)
@@ -116,10 +116,10 @@ void Search::DebugSearch(int depth)
         if(Piece::ToType(SearchBoard.squareState[move.startSquare])==Piece::king && SearchBoard.thisMoveTable.IsCastling(move.startSquare, move.targetSquare, SearchBoard.activePlayer*8))
         {
             castles++;
-            std::cout << "BEHOLD, FOR THIS IS A CASTLING MOVE DOWN BELOW" << std::endl;
+            //\std::cout << "BEHOLD, FOR THIS IS A CASTLING MOVE DOWN BELOW" << std::endl;
             curcurFEN.GetPosition(SearchBoard.squareState, SearchBoard.activePlayer, SearchBoard.thisMoveTable.W_CanCastleKingside, SearchBoard.thisMoveTable.W_CanCastleQueenside, SearchBoard.thisMoveTable.B_CanCastleKingside, SearchBoard.thisMoveTable.B_CanCastleQueenside, SearchBoard.thisMoveTable.enPassantSquare, SearchBoard.thisMoveTable.consecutiveMoves);
-            std::cout << curcurFEN.FENtext << std::endl;
-            move.LogMove();
+            //\std::cout << curcurFEN.FENtext << std::endl;
+            //\move.LogMove();
         }
         if(move.promotionPiece!=0)
             promotions++;
@@ -135,8 +135,8 @@ void Search::DebugSearch(int depth)
         //move.LogMove();
         SearchBoard.UnmakeMove(move);
 
-        if(!change && numOfMoves[3-depth]!= SearchBoard.thisMoveTable.CurrentMoveList.size())
-            std::cout << "LE SHOUT: le old: " << numOfMoves[3-depth] << " le new: " << SearchBoard.thisMoveTable.CurrentMoveList.size() << std::endl;
+        //\if(!change && numOfMoves[3-depth]!= SearchBoard.thisMoveTable.CurrentMoveList.size())
+            //\std::cout << "LE SHOUT: le old: " << numOfMoves[3-depth] << " le new: " << SearchBoard.thisMoveTable.CurrentMoveList.size() << std::endl;
         change = false;
         numOfMoves[3-depth] = SearchBoard.thisMoveTable.CurrentMoveList.size();
         //std::cout << "Unmade has become that which had been done" << std::endl;
@@ -182,6 +182,12 @@ int Search::SearchMoves(int depth, int alpha, int beta) //
         alpha = std::max(alpha, eval);
     }
 
+    ///DELETE THE IF
+    if(depth == 6)
+    {
+        std::cout << "Final result:" << alpha << std::endl;
+    }
+
     return alpha;
     
 }
@@ -204,21 +210,21 @@ void Search::LogDebugSearch(int depth)
 
     DebugSearch(depth);
 
-    for(int i=depth-1;i>=0;i--)
-    {
-        std::cout << (depth-i) << ": " << depthMoveNum[i] << std::endl;
-    }
+    //\for(int i=depth-1;i>=0;i--)
+    //\{
+        //\std::cout << (depth-i) << ": " << depthMoveNum[i] << std::endl;
+    //\}
     //for(int i=1;i<=6;i++)
         //std::cout << i << ": " << pieceMoveNum[i-1] << std::endl;
 
     capture+=ep;
 
-    std::cout << "Captures: " << capture << std::endl;
-    std::cout << "EP: " << ep << std::endl;
-    std::cout << "Castles: " << castles << std::endl;
-    std::cout << "Promotions:  " << promotions << std::endl;
-    std::cout << "Checks:  " << checks << std::endl;
-    std::cout << "Checkmates:  " << checkmates << std::endl;
+    //\std::cout << "Captures: " << capture << std::endl;
+    //\std::cout << "EP: " << ep << std::endl;
+    //\std::cout << "Castles: " << castles << std::endl;
+    //\std::cout << "Promotions:  " << promotions << std::endl;
+    //\std::cout << "Checks:  " << checks << std::endl;
+    //\std::cout << "Checkmates:  " << checkmates << std::endl;
 }
 
 void Search::OrderMoves()
@@ -273,14 +279,14 @@ void Search::OrderMoves()
         orderVector.push_back(std::make_pair(*it,moveScore));
     }
 
-    for(auto it = orderVector.begin(); it != orderVector.end(); it++)
-    {
-        std::cout << "'Tis an orderVector: (" << std::flush;
-        it->first.LogMove();
-        std::cout << ", " << it->second << ")" << std::endl;
-    }
+    //\for(auto it = orderVector.begin(); it != orderVector.end(); it++)
+    //\{
+        //\std::cout << "'Tis an orderVector: (" << std::flush;
+        //\it->first.LogMove();
+        //\std::cout << ", " << it->second << ")" << std::endl;
+    //\}
 
-    std::cout << "We got before the qsort" << std::endl;
+    //\std::cout << "We got before the qsort" << std::endl;
 
     /*std::qsort(&orderVector, orderVector.size(), sizeof(std::pair<Move,int>), [](const void *a, const void *b)
     {
@@ -307,8 +313,8 @@ void Search::OrderMoves()
         int evalA = a.second;
         int evalB = b.second;
 
-        std::cout << "evalA: " << evalA << std::endl;
-        std::cout << "evalB: " << evalB << std::endl;
+        //\std::cout << "evalA: " << evalA << std::endl;
+        //\std::cout << "evalB: " << evalB << std::endl;
 
         if(evalA > evalB)
             return true;
@@ -318,17 +324,17 @@ void Search::OrderMoves()
     );
 
     std::vector<std::pair<Move,int>>::iterator debugIt = orderVector.begin();
-    std::cout << (debugIt == orderVector.end()) << std::endl;
+    //\std::cout << (debugIt == orderVector.end()) << std::endl;
     debugIt++;
 
-    std::cout << "We got after the qsort" << std::endl;
+    //\std::cout << "We got after the qsort" << std::endl;
 
-    for(auto it = orderVector.begin(); it != orderVector.end(); it++)
-    {
-        std::cout << "'Tis an orderVector: (" << std::flush;
-        it->first.LogMove();
-        std::cout << ", " << it->second << ")" << std::endl;
-    }
+    //\for(auto it = orderVector.begin(); it != orderVector.end(); it++)
+    //\{
+        //\std::cout << "'Tis an orderVector: (" << std::flush;
+        //\it->first.LogMove();
+        //\std::cout << ", " << it->second << ")" << std::endl;
+    //\}
     
     /*SearchBoard.thisMoveTable.CurrentMoveList.clear();
 

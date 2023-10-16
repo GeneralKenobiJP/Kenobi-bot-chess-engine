@@ -75,7 +75,7 @@ int main(){
     //Thread searchThread(std::bind(&Search::LogDebugSearch,&thisSearch,1));
     int negMax = Search::NegMax;
     int posMax = Search::PosMax;
-    Thread searchThread(std::bind(&Search::SearchMoves,&thisSearch,1,negMax,posMax));
+    Thread searchThread(std::bind(&Search::SearchMoves,&thisSearch,6,negMax,posMax));
     searchThread.launch();
 
     /// DEBUGGING CODE ENDS HERE
