@@ -229,8 +229,8 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
     int pieceColor;
     //FEN currentFEN;
     Piece::ReadPiece(squareState[startSquare], pieceType, pieceColor);
-    std::cout << "The piece was hereby read as: " << squareState[startSquare] <<", " << pieceType << ", " << pieceColor << std::endl;
-    std::cout << "Move" << startSquare << "->" << targetSquare << "(" << promotionNum << ")" << std::endl;
+    //\std::cout << "The piece was hereby read as: " << squareState[startSquare] <<", " << pieceType << ", " << pieceColor << std::endl;
+    //\std::cout << "Move" << startSquare << "->" << targetSquare << "(" << promotionNum << ")" << std::endl;
 
     int capturedPiece;
 
@@ -262,7 +262,7 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
         }
         if (promotionNum != 0) // PROMOTION
         {
-            std::cout << "We are approaching the promotion, sir" << std::endl;
+            //\std::cout << "We are approaching the promotion, sir" << std::endl;
             if (squareState[targetSquare] != 0) // enemy piece
             {
                 hasCaptured = true;
@@ -278,7 +278,7 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
                 // Board::SwitchPlayer();
                 // break;
             }
-            std::cout << "We've successfully completed the promotion" << std::endl;
+            //\std::cout << "We've successfully completed the promotion" << std::endl;
         }
     }
     else
@@ -351,14 +351,14 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
         this->RemoveFromSquare(targetSquare);
         hasCaptured = true;
     }
-    //std::cout << "We got through the capture stage" << std::endl;
+    //\std::cout << "We got through the capture stage" << std::endl;
 
     if(hasCaptured && !isEnPassant)
         CaptureHistory.push_back(capturedPiece);
     else
         CaptureHistory.push_back(0); //Piece::none
 
-    //std::cout << "We got through the capture history stage" << std::endl;
+    //\std::cout << "We got through the capture history stage" << std::endl;
 
     if (pieceType != Piece::pawn && !hasCaptured)
         thisMoveTable.consecutiveMoves++;
@@ -368,9 +368,9 @@ void VirtualBoard::MakeMove(int startSquare, int targetSquare, int promotionNum)
     if(promotionNum==0)
         this->PutOnSquare(targetSquare, squareState[startSquare]);
     this->RemoveFromSquare(startSquare);
-    std::cout << "We got through the Put piece stage" << std::endl;
+    //std::cout << "We got through the Put piece stage" << std::endl;
     this->SwitchPlayer();
-    std::cout << "We got through the switch player stage" << std::endl;
+    //std::cout << "We got through the switch player stage" << std::endl;
     // break;
 
     //std::cout << "We got through the consecutive moves stage" << std::endl;
@@ -404,15 +404,15 @@ void VirtualBoard::UnmakeMove(Move move)
     //1std::cout << "Unmaking move... :" << move.startSquare << "->" << move.targetSquare << "(" << move.promotionPiece << ")" << std::endl;
     if(move.promotionPiece == 0)
     {
-        std::cout << "heyyeahyeah" << std::endl;
+        //\std::cout << "heyyeahyeah" << std::endl;
         //std::cout << "squareState: " << squareState[move.targetSquare] << std::endl;
         this->PutOnSquare(move.startSquare, squareState[move.targetSquare]);
     }
     else
     {
         this->PutOnSquare(move.startSquare, Piece::pawn, ((activePlayer%2)+1)*8);
-        std::cout << "move.startSquare = " << move.startSquare << std::endl;
-        std::cout << "squareState = " << squareState[move.startSquare] << std::endl;
+        //\std::cout << "move.startSquare = " << move.startSquare << std::endl;
+        //\std::cout << "squareState = " << squareState[move.startSquare] << std::endl;
     }
 
     //std::cout << "Thy piece has been cast upon the mortal soil of your choice" << std::endl;
@@ -501,7 +501,7 @@ void VirtualBoard::UnmakeMove(Move move)
 void VirtualBoard::SwitchPlayer()
 {
     thisMoveTable.GenerateAttacks();
-    std::cout << "Generated attacks" << std::endl;
+    //\std::cout << "Generated attacks" << std::endl;
     activePlayer = (activePlayer % 2) + 1;
     CurrentEvalution = VirtualEvaluation::Evaluate();
     //FEN curFEN;
@@ -518,10 +518,10 @@ void VirtualBoard::RevertPlayer()
 {
     FEN thisFEN;
     thisFEN.GetPosition(squareState, activePlayer, thisMoveTable.W_CanCastleKingside, thisMoveTable.W_CanCastleQueenside, thisMoveTable.B_CanCastleKingside, thisMoveTable.B_CanCastleQueenside, thisMoveTable.enPassantSquare, thisMoveTable.consecutiveMoves);
-    std::cout << "Reverend: " << thisFEN.FENtext << std::endl;
-    std::cout << "squareState[8]: " << squareState[8] << std::endl;
-    std::cout << "squareState[9]: " << squareState[9] << std::endl;
-    std::cout << "squareState[10]: " << squareState[10] << std::endl;
+    //\std::cout << "Reverend: " << thisFEN.FENtext << std::endl;
+    //\std::cout << "squareState[8]: " << squareState[8] << std::endl;
+    //\std::cout << "squareState[9]: " << squareState[9] << std::endl;
+    //\std::cout << "squareState[10]: " << squareState[10] << std::endl;
     thisMoveTable.GenerateAttacks();
     activePlayer = (activePlayer % 2) + 1;
     CurrentEvalution = VirtualEvaluation::Evaluate();

@@ -8,6 +8,8 @@ class Search
     long long pieceMoveNum[6];
     int counter;
     long long capture, ep, castles, promotions, checks, checkmates, draws;
+    int numOfMoves[3];
+    bool change;
 
     public:
 
@@ -20,7 +22,7 @@ class Search
     
     int SearchMoves(int depth, int alpha, int beta);
     int SearchCaptures(int alpha, int beta);
-    int OrderMoves(/*sth*/);
+    void OrderMoves(/*sth*/);
 
     Search();
 
